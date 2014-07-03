@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Artifactory>
+  <UserName>admin</UserName>
+  <Password>password</Password>
+  <Url>http://localhost:8080/artifactory</Url>
+  <BuildServer>TFS</BuildServer>
+</Artifactory>

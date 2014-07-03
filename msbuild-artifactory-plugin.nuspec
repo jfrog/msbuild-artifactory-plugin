@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Artifactory</id>
+    <version>1.0.1.2</version>
+    <title>Artifactory</title>
+    <authors>Jfrog</authors>
+    <owners>Jfrog</owners>
+    <licenseUrl>http://www.jfrog.com/home/v_privacypolicy</licenseUrl>
+    <projectUrl>http://www.jfrog.com/</projectUrl>
+    <iconUrl>http://www.jfrog.com/assets/img/jfrog-logo-badge.jpg</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Artifactory for C# .NET users - Alpha</description>
+    <summary>Artifactory for C# .NET users - Alpha</summary>
+    <releaseNotes>first upload to nuget , for testing by jfrog only.</releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <language />
+    <tags>artifactory</tags>
+  </metadata>
+  
+  <files>
+    <file src="nupkg\content\artifactory.build" target="content" />
+    <file src="nupkg\targets\Artifactory.targets" target="build" />
+
+    <!-- TO DO 
+      * decide from where we to take the dll file(s)
+      * decide the framework(s) we support 
+    -->
+    <file src="bin\Debug\*.dll" target="lib\net45" /> 
+  </files>
+</package>

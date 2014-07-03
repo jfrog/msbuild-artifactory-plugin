@@ -34,7 +34,7 @@ namespace JFrog.Artifactory
         private readonly Sha1Reference sha1;
         private readonly MD5CheckSum md5;
 
-        private const string defaultBuildName = "Not specified";
+        private const string defaultBuildName = "Not specified***********";
         private const string defaultbuildNumber = "1.0";
         /// <summary>
         /// initiate sha1,md5, _buildInfoModel
