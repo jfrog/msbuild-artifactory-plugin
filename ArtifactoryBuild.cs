@@ -90,7 +90,7 @@ namespace JFrog.Artifactory
                 _buildInfoModel.durationMillis =
                     Convert.ToInt64((DateTime.Now - DateTime.Parse(StartTime)).TotalMilliseconds);
                 jsonString = _buildInfoModel.ToJsonString();
-                Log.LogMessageFromText("JSON... \n"  + jsonString, MessageImportance.High);
+                Log.LogMessageFromText("JSON output: \n"  + jsonString, MessageImportance.High);
 
                 //upload json file to artifactory
                 Log.LogMessageFromText("Uploading build info to Artifactory...", MessageImportance.High);
