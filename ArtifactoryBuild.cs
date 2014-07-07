@@ -16,6 +16,11 @@ namespace JFrog.Artifactory
         [Required]
         public ITaskItem[] projRefList { get; set; }
 
+        public string BuildPath { get; set; }
+        public string BaseAddress { get; set; }
+        public string OutputType { get; set; }
+
+        
         public string BuildUNCPath { get; set; }
         public string BuildURI { get; set; }
         public string BuildName { get; set; }

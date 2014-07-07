@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{50503E1E-FCD6-4FBE-8B21-C4DFD0373D40}</ProjectGuid>
+    <ProjectGuid>{3280F70A-8A97-4DB7-9379-8F0732FAE84F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>JFrog.Artifactory</RootNamespace>
@@ -28,6 +28,13 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Optimize>true</Optimize>
+    <OutputPath>lib</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -60,6 +67,15 @@
     <Compile Include="Utils\UploadBuildInfo.cs" />
     <Compile Include="ArtifactoryXmlRead.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="nupkg\content\artifactory.build">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="nupkg\targets\Artifactory.targets">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

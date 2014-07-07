@@ -27,6 +27,9 @@
 		</PropertyGroup>
 	</Target>
 	<Target Name="Artifactory" AfterTargets="Build">
-    <ArtifactoryBuild dllList="@(Reference)" projRefList="@(ProjectReference)" Configuration="$(Configuration)" StartTime="$(startTime)" BuildUNCPath="$(buildUNCPath)" ProjectName="$(AssemblyName)" BuildURI="$(buildURI)" BuildReason="$(buildReason)" BuildNumber="$(buildNumber)" User="$(artifactoryUserName)" Password="$(artifactoryPassword)" Url="$(artifactoryUrl)" BuildName="$(buildName)" />
+    <ArtifactoryBuild dllList="@(Reference)" projRefList="@(ProjectReference)" Configuration="$(Configuration)" StartTime="$(startTime)" 
+                      BuildUNCPath="$(buildUNCPath)" ProjectName="$(AssemblyName)" BuildURI="$(buildURI)" BuildReason="$(buildReason)" 
+                      BuildNumber="$(buildNumber)" User="$(artifactoryUserName)" Password="$(artifactoryPassword)" Url="$(artifactoryUrl)" 
+                      BuildName="$(buildName)" OutputType="$(OutputType)"/>
   </Target>
 </Project>

@@ -26,6 +26,6 @@
       * decide from where we to take the dll file(s)
       * decide the framework(s) we support 
     -->
-    <file src="bin\Debug\*.dll" target="lib\net45" /> 
+    <file src="..\lib\*.dll" target="lib\net45" /> 
   </files>
 </package>

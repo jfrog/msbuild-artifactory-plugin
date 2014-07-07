@@ -4,4 +4,8 @@
   <Password>password</Password>
   <Url>http://localhost:8080/artifactory</Url>
   <BuildServer>TFS</BuildServer>
+  <TfsUserName>lena</TfsUserName>
+  <TfsPassword>12345678</TfsPassword>
+  <TfsProjectName>Jfrog</TfsProjectName>
+  <TfsDomain>http://192.168.56.2:8080/tfs/DefaultCollection</TfsDomain>
 </Artifactory>
