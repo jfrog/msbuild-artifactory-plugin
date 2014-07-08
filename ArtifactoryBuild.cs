@@ -1,5 +1,6 @@
 ﻿using JFrog.Artifactory.Model;
 using JFrog.Artifactory.Utils;
+using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using System;
@@ -16,10 +17,11 @@ namespace JFrog.Artifactory
         [Required]
         public ITaskItem[] projRefList { get; set; }
 
-        public string BuildPath { get; set; }
+        public string OutputPath { get; set; }
         public string BaseAddress { get; set; }
         public string OutputType { get; set; }
-
+        public string AssemblyName { get; set; }
+        public string BaseOutputPath { get; set; }
         
         public string BuildUNCPath { get; set; }
         public string BuildURI { get; set; }
@@ -39,7 +41,7 @@ namespace JFrog.Artifactory
         private readonly Sha1Reference sha1;
         private readonly MD5CheckSum md5;
 
-        private const string defaultBuildName = "Not specified***********";
+        private const string defaultBuildName = "Not specified";
         private const string defaultbuildNumber = "1.0";
         /// <summary>
         /// initiate sha1,md5, _buildInfoModel
@@ -54,11 +56,6 @@ namespace JFrog.Artifactory
             };
         }
 
-        /// <summary>
-        /// this function is called by the msbuild post event.
-        /// it will iterate over the dllList and projRefList defined in the csporj file.
-        /// </summary>
-        /// <returns></returns>
         public override bool Execute()
         {
             try
@@ -100,7 +97,10 @@ namespace JFrog.Artifactory
                 //upload json file to artifactory
                 Log.LogMessageFromText("Uploading build info to Artifactory...", MessageImportance.High);
                 UploadBuildInfo.UploadBuildInfoJson(jsonString, string.Format(Url + "/api/build", ServerName), User, Password);
-                Log.LogMessageFromText("Artifactory Post-Build task succeeded", MessageImportance.High);
+
+                Log.LogMessageFromText("Build successfully deployed. Browse it in Artifactory under " + string.Format(Url + "/webapp/builds", ServerName) +
+                    "/" + _buildInfoModel.name + "/" + _buildInfoModel.version + "/" + _buildInfoModel.started + "/" , MessageImportance.High);
+
                 return true;
             }
             catch (Exception ex)
@@ -147,7 +147,7 @@ namespace JFrog.Artifactory
                 var projectParser = new CSProjParser(Environment.CurrentDirectory + "..\\" + task.ItemSpec);
                 var projectRef = projectParser.Parse();
                 if (projectRef == null) continue;
-                module = new Module(projectRef.AssemblyName)
+                module = new Module(ProjectName)
                 {
                     Dependencies = projectRef.LstProjectMetadata
                         .Select(x => new {reference = GetRefrenceDetails(x.EvaluatedValue), hint = x.EvaluatedValue})
@@ -223,7 +223,7 @@ namespace JFrog.Artifactory
             }
             catch(Exception ex)
             {
-                //TODO handle this exption - do not hide
+                Log.LogMessageFromText("Exception: " + ex.Message, MessageImportance.High);
             }
 
             return null;
@@ -234,7 +234,7 @@ namespace JFrog.Artifactory
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        private static string FindNupkg(string path)
+        private string FindNupkg(string path)
         {
             try
             {
@@ -245,7 +245,7 @@ namespace JFrog.Artifactory
             }
             catch (Exception ex)
             {
-                //TODO handle this exption - do not hide
+                Log.LogMessageFromText("Exception: " + ex.Message, MessageImportance.High);
                 return null;
             }
 
