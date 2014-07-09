@@ -19,6 +19,8 @@ namespace JFrog.Artifactory.Model
             log.LogMessageFromText("Uploading build info to Artifactory...", MessageImportance.High);
             ArtifactoryBuildInfoClient client = new ArtifactoryBuildInfoClient(task.Url, task.User, task.Password, log);
             client.sendBuildInfo(build);
+
+            client.Dispose();
         }
     }
 }

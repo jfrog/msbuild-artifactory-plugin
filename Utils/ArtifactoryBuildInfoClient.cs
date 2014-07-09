@@ -14,7 +14,7 @@ namespace JFrog.Artifactory.Utils
     {
         private static String BUILD_REST_URL = "/api/build";
         private static String BUILD_BROWSE_URL = "/webapp/builds";
-        private WebClient _httpClient;
+        private ArtifactoryHttpClient _httpClient;
         private string _artifactoryUrl;
         private TaskLoggingHelper _log;
 
@@ -24,21 +24,14 @@ namespace JFrog.Artifactory.Utils
 
         public ArtifactoryBuildInfoClient(string artifactoryUrl, string username, string password, TaskLoggingHelper log)
         {
-            _httpClient = new WebClient();
+            _artifactoryUrl = artifactoryUrl;
+            _httpClient = new ArtifactoryHttpClient(artifactoryUrl, username, password);
             //client.Credentials = credentials;
             _artifactoryUrl = artifactoryUrl; 
-            var _auth = string.Format("{0}:{1}", username, password);
-            var _enc = Convert.ToBase64String(Encoding.UTF8.GetBytes(_auth));
-            var _cred = string.Format("{0} {1}", "Basic ", _enc);
-
-            _httpClient.Headers.Add(HttpRequestHeader.Authorization, _cred);
             _log = log;
-        
         }
 
-        public void setTimeout() { }
-
-        public void setProxy() { }
+        
 
         public void sendBuildInfo(Build buildInfo) {
 
@@ -66,8 +59,10 @@ namespace JFrog.Artifactory.Utils
                 var bytes = Encoding.Default.GetBytes(buildInfoJson);
                 {
                     //Custom headers
-                    _httpClient.Headers.Add(HttpRequestHeader.ContentType, "application/vnd.org.jfrog.build.BuildInfo+json");
-                    var response = _httpClient.UploadData(url, "PUT", bytes);
+                    WebHeaderCollection headers = new WebHeaderCollection();
+
+                    _httpClient.getHttpClient().Headers.Add(HttpRequestHeader.ContentType, "application/vnd.org.jfrog.build.BuildInfo+json");
+                    var response = _httpClient.getHttpClient().UploadData(url, "PUT", bytes);
 
                     var responsedata = Encoding.Default.GetString(response);
                 }
@@ -81,5 +76,13 @@ namespace JFrog.Artifactory.Utils
         
         
         }
+
+        public void Dispose()
+        {
+            if (_httpClient != null)
+            {
+                _httpClient.Dispose();
+            }
+        } 
     }
 }
