@@ -56,6 +56,7 @@
     <Compile Include="ArtifactoryBuild.cs" />
     <Compile Include="Model\Build.cs" />
     <Compile Include="Model\BuildDeploymentHelper.cs" />
+    <Compile Include="Model\DeployDetails.cs" />
     <Compile Include="Model\NuSpec.cs" />
     <Compile Include="Model\ProjectRefModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

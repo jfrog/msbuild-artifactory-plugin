@@ -14,6 +14,7 @@ namespace JFrog.Artifactory.Utils
     {
         private static String BUILD_REST_URL = "/api/build";
         private static String BUILD_BROWSE_URL = "/webapp/builds";
+        private static readonly int CHECKSUM_DEPLOY_MIN_FILE_SIZE = 10240; // Try checksum deploy of files greater than 10KB
         private ArtifactoryHttpClient _httpClient;
         private string _artifactoryUrl;
         private TaskLoggingHelper _log;
@@ -75,6 +76,46 @@ namespace JFrog.Artifactory.Utils
         public void deployArtifact() { 
         
         
+        }
+
+        public void uploadFile(DeployDetails details, String uploadUrl)
+        {
+            if (tryChecksumDeploy(details, uploadUrl))
+            {
+                return;
+            }
+
+        }
+
+
+        /// <summary>
+        ///  Deploy an artifact to the specified destination by checking if the artifact content already exists in Artifactory
+        /// </summary>
+        private Boolean tryChecksumDeploy(DeployDetails details, String uploadUrl) 
+        {
+            // Try checksum deploy only on file size greater than CHECKSUM_DEPLOY_MIN_FILE_SIZE
+            if (details.file.Length < CHECKSUM_DEPLOY_MIN_FILE_SIZE) {
+                _log.LogMessageFromText("Skipping checksum deploy of file size " + details.file.Length + " , falling back to regular deployment.",
+                                            MessageImportance.Normal);
+                return false;
+            }
+
+            _httpClient.getHttpClient().Headers = createHttpPutMethod(details);
+            _httpClient.getHttpClient().Headers.Add("X-Checksum-Deploy", "true");
+
+            //....
+
+
+            return false;
+        }
+
+        private WebHeaderCollection createHttpPutMethod(DeployDetails details)
+        {
+            WebHeaderCollection putHeaders = new WebHeaderCollection();
+            putHeaders.Add("X-Checksum-Sha1", details.sha1);
+            putHeaders.Add("X-Checksum-Md5", details.md5);
+
+            return putHeaders;
         }
 
         public void Dispose()

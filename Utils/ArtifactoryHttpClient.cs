@@ -39,10 +39,8 @@ namespace JFrog.Artifactory.Utils
             {
                 WebClient httpClient = new WebClient();                          
                 deployClient = httpClient;
+                deployClient.Credentials = new NetworkCredential(_username, _password);
             }
-
-            //Reset header that will hold only the 'Authorization'
-            deployClient.Headers = _header;
 
             return deployClient;
         }
@@ -61,7 +59,7 @@ namespace JFrog.Artifactory.Utils
             var _cred = string.Format("{0} {1}", "Basic ", _enc);
             WebHeaderCollection header = new WebHeaderCollection();
             header.Add(HttpRequestHeader.Authorization, _cred);
-
+            
             return header;
         }
     }
