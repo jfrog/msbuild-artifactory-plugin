@@ -10,7 +10,7 @@ namespace JFrog.Artifactory.Utils
 {
     public static class Helpers
     {
-        public static string ToJsonString(this BuildInfoModel model)
+        public static string ToJsonString(this Build model)
         {
             // sb.AppendFormat("\"\":\"{0}\",", model);
             var json = new StringBuilder();
@@ -67,7 +67,7 @@ namespace JFrog.Artifactory.Utils
             return json.ToString();
         }
 
-        private static void createModule(BuildInfoModel model, StringBuilder sb, int i)
+        private static void createModule(Build model, StringBuilder sb, int i)
         {
             //module start
             sb.Append("{");

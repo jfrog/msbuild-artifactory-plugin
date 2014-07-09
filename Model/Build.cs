@@ -9,8 +9,10 @@ namespace JFrog.Artifactory.Model
     /// <summary>
     /// Artifactory MsBuild info model 
     /// </summary>
-    public class BuildInfoModel
+    public class Build
     {
+        private readonly static string STARTED_FORMAT = "{0}.000+0000";
+
         /// <summary>
         /// build/assembly  version
         /// </summary>

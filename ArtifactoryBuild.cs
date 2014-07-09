@@ -22,6 +22,7 @@ namespace JFrog.Artifactory
         public string OutputType { get; set; }
         public string AssemblyName { get; set; }
         public string BaseOutputPath { get; set; }
+        public string WebProjectOutputDir { get; set; }
         
         public string BuildUNCPath { get; set; }
         public string BuildURI { get; set; }
@@ -36,8 +37,7 @@ namespace JFrog.Artifactory
         public string ServerName { get; set; }
         public string ToolVersion { get; set; }
         public string Configuration { get; set; }
-        private readonly BuildInfoModel _buildInfoModel;
-        private string jsonString;
+        //private readonly 
         private readonly Sha1Reference sha1;
         private readonly MD5CheckSum md5;
 
@@ -50,10 +50,7 @@ namespace JFrog.Artifactory
         {
             sha1 = new Sha1Reference();
             md5 = new MD5CheckSum();
-            _buildInfoModel = new BuildInfoModel
-            {
-                modules = new List<Module>(),
-            };
+            
         }
 
         public override bool Execute()
@@ -62,45 +59,12 @@ namespace JFrog.Artifactory
             {
                 Log.LogMessageFromText("Artifactory Post-Build task started", MessageImportance.High);
 
-                //generate json general meta-data
-                Log.LogMessageFromText("Processong build info...", MessageImportance.High);
-                _buildInfoModel.started = string.Format("{0}.000+0000", StartTime); //2014-04-29T00:47:41.906+0000
-                _buildInfoModel.artifactoryPrincipal = User;
-                _buildInfoModel.buildAgent = new BuildAgent {name = "msbuild", version = ToolVersion};
+                Build build = extractBuild();
+                BuildDeploymentHelper buildDeploymentHelper = new BuildDeploymentHelper();
+                buildDeploymentHelper.deploy(this, build, Log);
 
-                _buildInfoModel.number = string.IsNullOrWhiteSpace(BuildNumber) ? defaultbuildNumber : BuildNumber;
-                _buildInfoModel.name = BuildName ?? defaultBuildName;
-                _buildInfoModel.url = BuildURI;
-                //TODO where are we getting version number?
-                _buildInfoModel.version = "1.0";
                 
-                //get the current use from the windows OS
-                System.Security.Principal.WindowsIdentity user;
-                user = System.Security.Principal.WindowsIdentity.GetCurrent();
-                if (user != null) _buildInfoModel.principal = string.Format(@"{0}", user.Name);
-
-                //add system variables to the json file
-                Log.LogMessageFromText("Collecting system variables...", MessageImportance.High);
-                _buildInfoModel.properties = AddSystemVariables();
-
-                Log.LogMessageFromText("Processing build modules...", MessageImportance.High);
-                //accumulate all refrenced dlls in the project 
-                ProccessMainModule();
-                //accumulate all referenced projects
-                ProccessModuleRef();
-                //calculate how long it took to do the build
-                _buildInfoModel.durationMillis =
-                    Convert.ToInt64((DateTime.Now - DateTime.Parse(StartTime)).TotalMilliseconds);
-                jsonString = _buildInfoModel.ToJsonString();
-                Log.LogMessageFromText("JSON output: \n"  + jsonString, MessageImportance.High);
-
-                //upload json file to artifactory
-                Log.LogMessageFromText("Uploading build info to Artifactory...", MessageImportance.High);
-                UploadBuildInfo.UploadBuildInfoJson(jsonString, string.Format(Url + "/api/build", ServerName), User, Password);
-
-                Log.LogMessageFromText("Build successfully deployed. Browse it in Artifactory under " + string.Format(Url + "/webapp/builds", ServerName) +
-                    "/" + _buildInfoModel.name + "/" + _buildInfoModel.version + "/" + _buildInfoModel.started + "/" , MessageImportance.High);
-
+                
                 return true;
             }
             catch (Exception ex)
@@ -110,10 +74,50 @@ namespace JFrog.Artifactory
             }
         }
 
+        private Build extractBuild()
+        {
+            Build build = new Build
+            {
+                modules = new List<Module>(),
+            };
+
+            //generate json general meta-data
+            Log.LogMessageFromText("Processong build info...", MessageImportance.High);
+            build.started = string.Format("{0}.000+0000", StartTime); //2014-04-29T00:47:41.906+0000
+            build.artifactoryPrincipal = User;
+            build.buildAgent = new BuildAgent { name = "msbuild", version = ToolVersion };
+
+            build.number = string.IsNullOrWhiteSpace(BuildNumber) ? defaultbuildNumber : BuildNumber;
+            build.name = BuildName ?? defaultBuildName;
+            build.url = BuildURI;
+            //TODO where are we getting version number?
+            build.version = "1.0";
+
+            //get the current use from the windows OS
+            System.Security.Principal.WindowsIdentity user;
+            user = System.Security.Principal.WindowsIdentity.GetCurrent();
+            if (user != null) build.principal = string.Format(@"{0}", user.Name);
+
+            //add system variables to the json file
+            Log.LogMessageFromText("Collecting system variables...", MessageImportance.High);
+            build.properties = AddSystemVariables();
+
+            Log.LogMessageFromText("Processing build modules...", MessageImportance.High);
+            //accumulate all refrenced dlls in the project 
+            ProccessMainModule(build);
+            //accumulate all referenced projects
+            ProccessModuleRef(build);
+            //calculate how long it took to do the build
+            build.durationMillis =
+                Convert.ToInt64((DateTime.Now - DateTime.Parse(StartTime)).TotalMilliseconds);
+
+            return build;
+        }
+
         /// <summary>
         /// read all refrenced dll's in the .csproj calculate their md5, sha1 and id.
         /// </summary>
-        private void ProccessMainModule()
+        private void ProccessMainModule(Build build)
         {
             var module = new Module(ProjectName);
             foreach (var task in dllList)
@@ -124,46 +128,48 @@ namespace JFrog.Artifactory
                 if (spec == null) continue;
                 module.Dependencies.Add(new Dependency
                 {
-                    type = "dll",
+                    type = "dll", //?????? what about nuget type
                     md5 = md5.GenerateMD5(FindNupkg(hint)),
                     sha1 = sha1.GenerateSHA1(FindNupkg(hint)),
                     name = spec.Id,
                     scopes = new List<string> {Configuration}
                 });
             }
-            _buildInfoModel.modules.Add(module);
+            build.modules.Add(module);
         }
 
         /// <summary>
         /// find all projects refefreneced by the current .csporj
         /// </summary>
-        private void ProccessModuleRef()
+        private void ProccessModuleRef(Build build)
         {
             Module module;
             foreach (var task in projRefList)
             {
-
+                
                 //get dll nuget information
                 var projectParser = new CSProjParser(Environment.CurrentDirectory + "..\\" + task.ItemSpec);
                 var projectRef = projectParser.Parse();
-                if (projectRef == null) continue;
-                module = new Module(ProjectName)
+                if (projectRef != null)
                 {
-                    Dependencies = projectRef.LstProjectMetadata
-                        .Select(x => new {reference = GetRefrenceDetails(x.EvaluatedValue), hint = x.EvaluatedValue})
-                        .Where(x => x != null && x.reference != null && x.hint != string.Empty)
-                        //extract only nuget dlls - only if hintpath is not empty
-                        .Select(x => new Dependency
-                        {
-                            type = "dll",
-                            name = x.reference.Id,
-                            md5 = md5.GenerateMD5(FindNupkg(x.hint)),
-                            sha1 = sha1.GenerateSHA1(x.hint),
-                            scopes = new List<string> {Configuration}
-                        }).ToList()
-                };
+                    module = new Module(projectRef.AssemblyName)
+                    {
+                        Dependencies = projectRef.LstProjectMetadata
+                            .Select(x => new { reference = GetRefrenceDetails(x.EvaluatedValue), hint = x.EvaluatedValue })
+                            .Where(x => x != null && x.reference != null && x.hint != string.Empty)
+                            //extract only nuget dlls - only if hintpath is not empty
+                            .Select(x => new Dependency
+                            {
+                                type = "dll",
+                                name = x.reference.Id,
+                                md5 = md5.GenerateMD5(FindNupkg(x.hint)),
+                                sha1 = sha1.GenerateSHA1(x.hint),
+                                scopes = new List<string> { Configuration }
+                            }).ToList()
+                    };
 
-                _buildInfoModel.modules.Add(module);
+                    build.modules.Add(module);
+                }
             }
         }
 
@@ -247,9 +253,7 @@ namespace JFrog.Artifactory
             {
                 Log.LogMessageFromText("Exception: " + ex.Message, MessageImportance.High);
                 return null;
-            }
-
-            
+            }          
         }
 
     }
