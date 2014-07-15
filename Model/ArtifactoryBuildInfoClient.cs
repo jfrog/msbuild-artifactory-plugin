@@ -1,4 +1,5 @@
 ﻿using JFrog.Artifactory.Model;
+using JFrog.Artifactory.Utils.httpClient;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using System;
@@ -61,29 +62,46 @@ namespace JFrog.Artifactory.Utils
                 {
                     //Custom headers
                     WebHeaderCollection headers = new WebHeaderCollection();
-
-                    _httpClient.getHttpClient().Headers.Add(HttpRequestHeader.ContentType, "application/vnd.org.jfrog.build.BuildInfo+json");
-                    var response = _httpClient.getHttpClient().UploadData(url, "PUT", bytes);
-
-                    var responsedata = Encoding.Default.GetString(response);
+                    headers.Add(HttpRequestHeader.ContentType, "application/vnd.org.jfrog.build.BuildInfo+json");
+                    _httpClient.getHttpClient().setHeader(headers);
+                        
+                    HttpResponse response = _httpClient.getHttpClient().execute(url, "PUT", bytes);
+                    
+                    if (response._statusCode != HttpStatusCode.NoContent) 
+                    {
+                        throw new WebException("Failed to send build info:" + response._message);  
+                    }
+                    
                 }
             }
-            catch (WebException we) {
-                throw new WebException("UploadBuildInfo.UploadBuildInfoJson | Artifactory build info upload failed", we);
+            catch (Exception we) {
+                _log.LogMessageFromText(we.Message, MessageImportance.High);
+                throw new WebException("UploadBuildInfo.UploadBuildInfoJson: " + we, we);
             }
         }
 
-        public void deployArtifact() { 
-        
-        
-        }
-
-        public void uploadFile(DeployDetails details, String uploadUrl)
+        public void deployArtifact(DeployDetails details) 
         {
-            if (tryChecksumDeploy(details, uploadUrl))
+            if (tryChecksumDeploy(details, _artifactoryUrl))
             {
                 return;
             }
+
+            //Custom headers
+            WebHeaderCollection headers = new WebHeaderCollection();
+            headers = createHttpPutMethod(details);
+           // headers.Add("Expect", );
+
+            //_httpClient.getHttpClient().setHeader
+        
+        }
+
+        public void uploadFile()
+        {
+            
+
+
+
 
         }
 
@@ -100,11 +118,26 @@ namespace JFrog.Artifactory.Utils
                 return false;
             }
 
-            _httpClient.getHttpClient().Headers = createHttpPutMethod(details);
-            _httpClient.getHttpClient().Headers.Add("X-Checksum-Deploy", "true");
+            string url = uploadUrl + "/" + details.artifactPath;
+            WebHeaderCollection headers = createHttpPutMethod(details);
+            headers.Add("X-Checksum-Deploy", "true");
+            headers.Add(HttpRequestHeader.ContentType, "application/vnd.org.jfrog.artifactory.storage.ItemCreated+json");
 
-            //....
+            _httpClient.getHttpClient().setHeader(headers);
+            HttpResponse response = _httpClient.getHttpClient().execute(url, "PUT");
 
+            if (response._statusCode == HttpStatusCode.Created || response._statusCode == HttpStatusCode.OK)
+            {
+
+                _log.LogMessageFromText(string.Format("Successfully performed checksum deploy of file {0} : {1}", details.file.FullName, details.sha1)
+                                                , MessageImportance.Normal);
+                return true;
+            }
+            else 
+            {
+                _log.LogMessageFromText(string.Format("Failed checksum deploy of checksum '{0}' with statusCode: {1}", details.sha1, response._statusCode)
+                                                , MessageImportance.Normal);
+            }
 
             return false;
         }

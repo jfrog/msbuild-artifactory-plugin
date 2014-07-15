@@ -3,6 +3,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +20,13 @@ namespace JFrog.Artifactory.Model
             log.LogMessageFromText("Uploading build info to Artifactory...", MessageImportance.High);
             ArtifactoryBuildInfoClient client = new ArtifactoryBuildInfoClient(task.Url, task.User, task.Password, log);
             client.sendBuildInfo(build);
+
+
+            
+
+            
+
+
 
             client.Dispose();
         }
