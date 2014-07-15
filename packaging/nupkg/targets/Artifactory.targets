@@ -1,6 +1,6 @@
 <Project ToolsVersion="4.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<UsingTask TaskName="JFrog.Artifactory.ArtifactoryBuild" AssemblyFile="C:\Work\nuget-project\msbuild-artifactory-plugin\bin\Debug\JFrog.Artifactory.dll" />
-	<UsingTask TaskName="JFrog.Artifactory.ArtifactoryXmlRead" AssemblyFile="C:\Work\nuget-project\msbuild-artifactory-plugin\bin\Debug\JFrog.Artifactory.dll" />
+  <UsingTask TaskName="JFrog.Artifactory.ArtifactoryBuild" AssemblyFile="..\..\..\packages\Artifactory.1.0.1.2\lib\net45\JFrog.Artifactory.dll" />
+  <UsingTask TaskName="JFrog.Artifactory.ArtifactoryXmlRead" AssemblyFile="..\..\..\packages\Artifactory.1.0.1.2\lib\net45\JFrog.Artifactory.dll" />
 	<Target Name="ArtifactoryBefore" BeforeTargets="Build">
 		<ArtifactoryXmlRead Property="StartTime">
 		  <Output TaskParameter="Value" PropertyName="startTime" />
