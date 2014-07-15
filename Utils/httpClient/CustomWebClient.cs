@@ -33,7 +33,7 @@ namespace JFrog.Artifactory.Utils.httpClient
             var _enc = Convert.ToBase64String(Encoding.UTF8.GetBytes(_auth));
             var _cred = string.Format("{0} {1}", "Basic ", _enc);
             request.Headers["Authorization"] = _cred;
-
+            
             //Add Agent
             ((HttpWebRequest)request).UserAgent = "ArtifactoryBuildClient/.NET" + CLIENT_VERSION;
 

@@ -4,6 +4,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -82,6 +83,7 @@ namespace JFrog.Artifactory.Utils
 
         public void deployArtifact(DeployDetails details) 
         {
+
             if (tryChecksumDeploy(details, _artifactoryUrl))
             {
                 return;
@@ -90,18 +92,30 @@ namespace JFrog.Artifactory.Utils
             //Custom headers
             WebHeaderCollection headers = new WebHeaderCollection();
             headers = createHttpPutMethod(details);
-           // headers.Add("Expect", );
+            headers.Add(HttpRequestHeader.ContentType, "binary/octet-stream");
 
-            //_httpClient.getHttpClient().setHeader
-        
+            /*
+             * "100 (Continue)" status is to allow a client that is sending a request message with a request body to determine if the origin server is
+             *  willing to accept the request (based on the request headers) before the client sends the request body.
+             */
+            headers.Add("Expect", "100-continue");
+
+            byte[] data = File.ReadAllBytes(details.file.FullName);
+
+            string deploymentPath = _artifactoryUrl + "/" + details.artifactPath;
+
+            _log.LogMessageFromText("Deploying artifact: " + deploymentPath, MessageImportance.High);
+            HttpResponse response = _httpClient.getHttpClient().execute(deploymentPath, "PUT", data);
+
+            if ((response._statusCode != HttpStatusCode.OK) && (response._statusCode != HttpStatusCode.Created))
+            {
+                _log.LogMessageFromText("Error occurred while publishing artifact to Artifactory: " + details.file, MessageImportance.High);
+                throw new WebException("Failed to deploy file:" + response._message);
+            }    
         }
 
         public void uploadFile()
         {
-            
-
-
-
 
         }
 
