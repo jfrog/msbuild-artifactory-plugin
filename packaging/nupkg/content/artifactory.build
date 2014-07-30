@@ -1,11 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Artifactory>
-  <UserName>admin</UserName>
-  <Password>password</Password>
-  <Url>http://localhost:8080/artifactory</Url>
-  <BuildServer>TFS</BuildServer>
-  <TfsUserName>lena</TfsUserName>
-  <TfsPassword>12345678</TfsPassword>
-  <TfsProjectName>Jfrog</TfsProjectName>
-  <TfsDomain>http://192.168.56.2:8080/tfs/DefaultCollection</TfsDomain>
-</Artifactory>
+﻿<Project ToolsVersion="4.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ArtifactoryUrl>http://localhost:8080/artifactory</ArtifactoryUrl>
+    <ArtifactoryUserName>admin</ArtifactoryUserName>
+    <ArtifactoryPassword>password</ArtifactoryPassword>
+    <ResolutionRepository>nuget-local</ResolutionRepository>
+  </PropertyGroup>
+</Project>

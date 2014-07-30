@@ -1,35 +1,34 @@
-<Project ToolsVersion="4.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <UsingTask TaskName="JFrog.Artifactory.ArtifactoryBuild" AssemblyFile="..\..\..\packages\Artifactory.1.0.1.2\lib\net45\JFrog.Artifactory.dll" />
-  <UsingTask TaskName="JFrog.Artifactory.ArtifactoryXmlRead" AssemblyFile="..\..\..\packages\Artifactory.1.0.1.2\lib\net45\JFrog.Artifactory.dll" />
-	<Target Name="ArtifactoryBefore" BeforeTargets="Build">
-		<ArtifactoryXmlRead Property="StartTime">
-		  <Output TaskParameter="Value" PropertyName="startTime" />
-		</ArtifactoryXmlRead>
-		<ArtifactoryXmlRead Property="UserName">
-		  <Output TaskParameter="Value" PropertyName="artifactoryUserName" />
-		</ArtifactoryXmlRead>
-		<ArtifactoryXmlRead Property="Password">
-		  <Output TaskParameter="Value" PropertyName="artifactoryPassword" />
-		</ArtifactoryXmlRead>
-		<ArtifactoryXmlRead Property="Url">
-		  <Output TaskParameter="Value" PropertyName="artifactoryUrl" />
-		</ArtifactoryXmlRead>
-		<ArtifactoryXmlRead Property="BuildServer">
-		  <Output TaskParameter="Value" PropertyName="buildServer" />
-		</ArtifactoryXmlRead>
-		<ArtifactoryXmlRead Property="End" />
-		<PropertyGroup>
-		  <buildNumber Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDNUMBER)</buildNumber>
-		  <buildName Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDDEFINITIONNAME)</buildName>
-		  <buildUNCPath Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_DROPLOCATION)</buildUNCPath>
-		  <buildURI Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDURI)</buildURI>
-		  <buildReason Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDREASON)</buildReason>
-		</PropertyGroup>
-	</Target>
-	<Target Name="Artifactory" AfterTargets="Build">
-    <ArtifactoryBuild dllList="@(Reference)" projRefList="@(ProjectReference)" Configuration="$(Configuration)" StartTime="$(startTime)" 
-                      BuildUNCPath="$(buildUNCPath)" ProjectName="$(AssemblyName)" BuildURI="$(buildURI)" BuildReason="$(buildReason)" 
-                      BuildNumber="$(buildNumber)" User="$(artifactoryUserName)" Password="$(artifactoryPassword)" Url="$(artifactoryUrl)" 
+<Project ToolsVersion="4.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">  
+  
+  <!--
+	Import the artifactory.build properties configured for thsi build.
+	The artifactory.build file is located at the root directory of the project.
+  -->
+  <Import Project="$(MSBuildProjectDirectory)\artifactory.build" />
+  
+  <!--
+	In order to resolve artifacts (Nuget packages) from Artifactory, we include the Artifactory Nuget repository, as it is configured in the artifactory.build file.
+  -->
+  <ItemGroup Condition=" '$(PackageSources)' == '' ">
+		<PackageSource Include="$(ArtifactoryUrl)/api/nuget/$(ResolutionRepository)" />
+   </ItemGroup>
+  
+  <PropertyGroup>
+		<BuildServer>DevEnv</BuildServer>
+		<buildNumber Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDNUMBER)</buildNumber>
+		<buildName Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDDEFINITIONNAME)</buildName>
+		<buildUNCPath Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_DROPLOCATION)</buildUNCPath>
+		<buildURI Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDURI)</buildURI>
+		<buildReason Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDREASON)</buildReason>
+		
+		<startTime>2008-05-01T07:34:42-5:00</startTime>
+  </PropertyGroup>
+
+  <UsingTask TaskName="JFrog.Artifactory.ArtifactoryBuild" AssemblyFile="..\..\..\packages\Artifactory.1.0.1.2\lib\net45\JFrog.Artifactory.dll" /> 
+  <Target Name="Artifactory" AfterTargets="Build">
+    <ArtifactoryBuild dllList="@(Reference)" projRefList="@(ProjectReference)" Configuration="$(Configuration)" StartTime="$(startTime)"
+                      BuildUNCPath="$(buildUNCPath)" ProjectName="$(AssemblyName)" BuildURI="$(buildURI)" BuildReason="$(buildReason)"
+                      BuildNumber="$(buildNumber)" User="$(ArtifactoryUserName)" Password="$(ArtifactoryPassword)" Url="$(ArtifactoryUrl)/$(ResolutionRepository)"
                       BuildName="$(buildName)" OutputType="$(OutputType)"/>
   </Target>
 </Project>
