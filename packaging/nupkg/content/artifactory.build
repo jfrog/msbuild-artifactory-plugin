@@ -3,6 +3,7 @@
     <ArtifactoryUrl>http://localhost:8080/artifactory</ArtifactoryUrl>
     <ArtifactoryUserName>admin</ArtifactoryUserName>
     <ArtifactoryPassword>password</ArtifactoryPassword>
+    <ResolveFromArtifactory>true</ResolveFromArtifactory>
     <ResolutionRepository>nuget-local</ResolutionRepository>
   </PropertyGroup>
 </Project>

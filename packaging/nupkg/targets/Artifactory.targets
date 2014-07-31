@@ -7,9 +7,10 @@
   <Import Project="$(MSBuildProjectDirectory)\artifactory.build" />
   
   <!--
-	In order to resolve artifacts (Nuget packages) from Artifactory, we include the Artifactory Nuget repository, as it is configured in the artifactory.build file.
+	In order to resolve artifacts (Nuget packages) from Artifactory, we include the Artifactory Nuget repository, as it is configured in the 'artifactory.build' file.
+	Setting 'ResolveFromArtifactory' to false in 'artifactory.build' cancells the override.
   -->
-  <ItemGroup Condition=" '$(PackageSources)' == '' ">
+  <ItemGroup Condition=" '$(ResolveFromArtifactory)' == 'true' AND '$(PackageSources)' == '' ">
 		<PackageSource Include="$(ArtifactoryUrl)/api/nuget/$(ResolutionRepository)" />
    </ItemGroup>
   
