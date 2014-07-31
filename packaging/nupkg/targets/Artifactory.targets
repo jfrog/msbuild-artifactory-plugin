@@ -1,31 +1,30 @@
-<Project ToolsVersion="4.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">  
-  
+<Project ToolsVersion="4.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
   <!--
 	Import the artifactory.build properties configured for thsi build.
 	The artifactory.build file is located at the root directory of the project.
   -->
   <Import Project="$(MSBuildProjectDirectory)\artifactory.build" />
-  
+
   <!--
 	In order to resolve artifacts (Nuget packages) from Artifactory, we include the Artifactory Nuget repository, as it is configured in the 'artifactory.build' file.
 	Setting 'ResolveFromArtifactory' to false in 'artifactory.build' cancells the override.
   -->
   <ItemGroup Condition=" '$(ResolveFromArtifactory)' == 'true' AND '$(PackageSources)' == '' ">
-		<PackageSource Include="$(ArtifactoryUrl)/api/nuget/$(ResolutionRepository)" />
-   </ItemGroup>
-  
+    <PackageSource Include="$(ArtifactoryUrl)/api/nuget/$(ResolutionRepository)" />
+  </ItemGroup>
+
   <PropertyGroup>
-		<BuildServer>DevEnv</BuildServer>
-		<buildNumber Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDNUMBER)</buildNumber>
-		<buildName Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDDEFINITIONNAME)</buildName>
-		<buildUNCPath Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_DROPLOCATION)</buildUNCPath>
-		<buildURI Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDURI)</buildURI>
-		<buildReason Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDREASON)</buildReason>
-		
-		<startTime>2008-05-01T07:34:42-5:00</startTime>
+    <startTime>$([System.DateTime]::Now.ToString(yyyy-MM-dd-HH-mm-ss))</startTime>
+    <BuildServer>DevEnv</BuildServer>
+    <buildNumber Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDNUMBER)</buildNumber>
+    <buildName Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDDEFINITIONNAME)</buildName>
+    <buildUNCPath Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_DROPLOCATION)</buildUNCPath>
+    <buildURI Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDURI)</buildURI>
+    <buildReason Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDREASON)</buildReason>
   </PropertyGroup>
 
-  <UsingTask TaskName="JFrog.Artifactory.ArtifactoryBuild" AssemblyFile="..\..\..\packages\Artifactory.1.0.1.2\lib\net45\JFrog.Artifactory.dll" /> 
+  <UsingTask TaskName="JFrog.Artifactory.ArtifactoryBuild" AssemblyFile="..\..\..\packages\Artifactory.1.0.1.2\lib\net45\JFrog.Artifactory.dll" />
   <Target Name="Artifactory" AfterTargets="Build">
     <ArtifactoryBuild dllList="@(Reference)" projRefList="@(ProjectReference)" Configuration="$(Configuration)" StartTime="$(startTime)"
                       BuildUNCPath="$(buildUNCPath)" ProjectName="$(AssemblyName)" BuildURI="$(buildURI)" BuildReason="$(buildReason)"

@@ -108,9 +108,9 @@ namespace JFrog.Artifactory
             //accumulate all referenced projects
             ProccessModuleRef(build);
             //calculate how long it took to do the build
-            build.durationMillis =
-                Convert.ToInt64((DateTime.Now - DateTime.Parse(StartTime)).TotalMilliseconds);
-
+            DateTime start = DateTime.ParseExact(StartTime, "yyyy-MM-dd-HH-mm-ss", null);
+            build.durationMillis = Convert.ToInt64((DateTime.Now - start).TotalMilliseconds);
+            
             return build;
         }
 
