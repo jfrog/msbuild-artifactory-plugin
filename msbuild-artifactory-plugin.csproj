@@ -78,10 +78,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packaging\msbuild-artifactory-plugin.nuspec" />
-    <None Include="packaging\nupkg\content\artifactory.build" />
+    <None Include="packaging\nupkg\artifactory\artifactory.build" />
     <None Include="packaging\nupkg\targets\Artifactory.targets">
       <SubType>Designer</SubType>
     </None>
+    <None Include="packaging\nupkg\artifactory\resolve.targets" />
+    <None Include="packaging\nupkg\tools\Install.ps1" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

@@ -22,6 +22,20 @@ namespace JFrog.Artifactory.Model
             ArtifactoryBuildInfoClient client = new ArtifactoryBuildInfoClient(task.Url, task.User, task.Password, log);
             client.sendBuildInfo(build);
 
+
+
+            
+
+            try
+            {
+                client.sendBuildInfo(build);
+               // client.deployArtifact(dd);
+            }
+            catch (Exception e) 
+            {
+                log.LogMessageFromText("Exception has append from ArtifactoryBuildInfoClient: " + e.Message, MessageImportance.High);          
+            }
+
             client.Dispose();
         }
     }
