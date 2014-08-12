@@ -102,7 +102,7 @@ namespace JFrog.Artifactory.Utils
 
             byte[] data = File.ReadAllBytes(details.file.FullName);
 
-            string deploymentPath = _artifactoryUrl + "/" + details.artifactPath;
+            string deploymentPath = _artifactoryUrl + "/" + details.targetRepository + "/" + details.artifactPath;
 
             _log.LogMessageFromText("Deploying artifact: " + deploymentPath, MessageImportance.High);
             HttpResponse response = _httpClient.getHttpClient().execute(deploymentPath, "PUT", data);
@@ -128,11 +128,11 @@ namespace JFrog.Artifactory.Utils
             // Try checksum deploy only on file size greater than CHECKSUM_DEPLOY_MIN_FILE_SIZE
             if (details.file.Length < CHECKSUM_DEPLOY_MIN_FILE_SIZE) {
                 _log.LogMessageFromText("Skipping checksum deploy of file size " + details.file.Length + " , falling back to regular deployment.",
-                                            MessageImportance.Normal);
+                                            MessageImportance.High);
                 return false;
             }
 
-            string url = uploadUrl + "/" + details.artifactPath;
+            string url = uploadUrl + "/" + details.targetRepository + "/" + details.artifactPath;
             WebHeaderCollection headers = createHttpPutMethod(details);
             headers.Add("X-Checksum-Deploy", "true");
             headers.Add(HttpRequestHeader.ContentType, "application/vnd.org.jfrog.artifactory.storage.ItemCreated+json");
@@ -144,13 +144,13 @@ namespace JFrog.Artifactory.Utils
             {
 
                 _log.LogMessageFromText(string.Format("Successfully performed checksum deploy of file {0} : {1}", details.file.FullName, details.sha1)
-                                                , MessageImportance.Normal);
+                                                , MessageImportance.High);
                 return true;
             }
             else 
             {
                 _log.LogMessageFromText(string.Format("Failed checksum deploy of checksum '{0}' with statusCode: {1}", details.sha1, response._statusCode)
-                                                , MessageImportance.Normal);
+                                                , MessageImportance.High);
             }
 
             return false;

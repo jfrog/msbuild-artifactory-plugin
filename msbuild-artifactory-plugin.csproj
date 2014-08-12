@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArtifactoryBuild.cs" />
+    <Compile Include="ArtifactoryResolve.cs" />
     <Compile Include="Model\ArtifactoryBuildInfoClient.cs" />
     <Compile Include="Model\Build.cs" />
     <Compile Include="Model\BuildDeploymentHelper.cs" />

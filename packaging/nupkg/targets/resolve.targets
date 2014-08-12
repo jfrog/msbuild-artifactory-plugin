@@ -1,0 +1,7 @@
+<Project ToolsVersion="4.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Condition=" '$(ResolveFromArtifactory)' == 'true' AND '$(PackageSources)' == '' ">
+		<PackageSource Include="$(ArtifactoryUrl)/api/nuget/$(ResolutionRepository)" />
+	</ItemGroup>
+
+  <Import Project="$(solutionDir)\artifactory.build" Condition="Exists('$(solutionDir)\artifactory.build')"/>
+</Project>

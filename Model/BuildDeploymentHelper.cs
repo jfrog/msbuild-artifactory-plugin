@@ -20,10 +20,21 @@ namespace JFrog.Artifactory.Model
             //Upload Build Info json file to artifactory
             log.LogMessageFromText("Uploading build info to Artifactory...", MessageImportance.High);
             ArtifactoryBuildInfoClient client = new ArtifactoryBuildInfoClient(task.Url, task.User, task.Password, log);
-            client.sendBuildInfo(build);
+            //client.sendBuildInfo(build);
 
-            //client.deployArtifact
 
+            DeployDetails dd = new DeployDetails();
+            dd.file = new FileInfo("C:\\Work\\nuget-project\\multi-project\\packages\\AWSSDK.2.0.15.0\\AWSSDK.2.0.15.0.nupkg");
+            dd.targetRepository="nuget-local";
+            dd.artifactPath = "AWSSDK.2.0.15.0.nupkg";
+
+            MD5CheckSum md = new MD5CheckSum();
+            dd.md5 = md.GenerateMD5(dd.file.FullName);
+
+            Sha1Reference sha = new Sha1Reference();
+            dd.sha1 = sha.GenerateSHA1(dd.file.FullName);
+
+            client.deployArtifact(dd);
             client.Dispose();
         }
     }

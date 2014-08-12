@@ -1,21 +1,23 @@
 <Project ToolsVersion="4.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!--
-	Import the artifactory.build properties configured for thsi build.
+	Import the artifactory.build properties configured for this build.
 	The artifactory.build file is located at the root directory of the project.
+  
+  Incase the user dose not uses Nuget Enable, the artifactory.build import is from this file instead.
   -->
-  <Import Project="$(MSBuildProjectDirectory)\artifactory.build" />
-
-  <!--
+  <Import Project="$(solutionDir)\artifactory.build" Condition="'$(NuGetToolsPath)' == '' And Exists('$(solutionDir)\artifactory.build')" />
+  
+ <!--
 	In order to resolve artifacts (Nuget packages) from Artifactory, we include the Artifactory Nuget repository, as it is configured in the 'artifactory.build' file.
 	Setting 'ResolveFromArtifactory' to false in 'artifactory.build' cancells the override.
   -->
-  <ItemGroup Condition=" '$(ResolveFromArtifactory)' == 'true' AND '$(PackageSources)' == '' ">
+  <!--<ItemGroup Condition=" '$(ResolveFromArtifactory)' == 'true' AND '$(PackageSources)' == '' ">
     <PackageSource Include="$(ArtifactoryUrl)/api/nuget/$(ResolutionRepository)" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <PropertyGroup>
-    <startTime>$([System.DateTime]::Now.ToString(yyyy-MM-dd-HH-mm-ss))</startTime>
+    <startTime>$([System.DateTime]::Now.ToString(yyyy-MM-ddTHH:mm:ss))</startTime>
     <BuildServer>DevEnv</BuildServer>
     <buildNumber Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDNUMBER)</buildNumber>
     <buildName Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDDEFINITIONNAME)</buildName>
@@ -28,7 +30,7 @@
   <Target Name="Artifactory" AfterTargets="Build">
     <ArtifactoryBuild dllList="@(Reference)" projRefList="@(ProjectReference)" Configuration="$(Configuration)" StartTime="$(startTime)"
                       BuildUNCPath="$(buildUNCPath)" ProjectName="$(AssemblyName)" BuildURI="$(buildURI)" BuildReason="$(buildReason)"
-                      BuildNumber="$(buildNumber)" User="$(ArtifactoryUserName)" Password="$(ArtifactoryPassword)" Url="$(ArtifactoryUrl)/$(ResolutionRepository)"
-                      BuildName="$(buildName)" OutputType="$(OutputType)"/>
+                      BuildNumber="$(buildNumber)" User="$(ArtifactoryUserName)" Password="$(ArtifactoryPassword)" Url="$(ArtifactoryUrl)"
+                      BuildName="$(buildName)" OutputType="$(OutputType)" ResolutionRepository="$(ResolutionRepository)" />
   </Target>
 </Project>

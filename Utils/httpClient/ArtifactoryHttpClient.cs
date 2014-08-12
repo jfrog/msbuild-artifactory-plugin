@@ -35,7 +35,7 @@ namespace JFrog.Artifactory.Utils
         {
             if (deployClient == null)
             {
-                if (connectionTimeout == null || connectionTimeout == 0)
+                if (connectionTimeout == 0)
                     connectionTimeout = DEFAULT_CONNECTION_TIMEOUT_SECS;
 
                 PreemptiveHttpClient client = new PreemptiveHttpClient(_username, _password, connectionTimeout);

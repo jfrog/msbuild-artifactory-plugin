@@ -33,6 +33,7 @@ namespace JFrog.Artifactory
         public string User { get; set; }
         public string Password { get; set; }
         public string Url { get; set; }
+        public string ResolutionRepository { get; set; }
         public string ProjectName { get; set; }
         public string ServerName { get; set; }
         public string ToolVersion { get; set; }
@@ -108,7 +109,7 @@ namespace JFrog.Artifactory
             //accumulate all referenced projects
             ProccessModuleRef(build);
             //calculate how long it took to do the build
-            DateTime start = DateTime.ParseExact(StartTime, "yyyy-MM-dd-HH-mm-ss", null);
+            DateTime start = DateTime.ParseExact(StartTime, "yyyy-MM-ddTHH:mm:ss", null);
             build.durationMillis = Convert.ToInt64((DateTime.Now - start).TotalMilliseconds);
             
             return build;
