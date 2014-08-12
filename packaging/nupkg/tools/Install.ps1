@@ -18,12 +18,16 @@ $nugetPath = join-path $(SolutionDir) '\.nuget\NuGet.targets'
 
 $doc = [System.Xml.XmlDocument](Get-Content $nugetPath); 
 
+$solutionPath = '$(solutionDir)' + '\packages\Artifactory.1.0.1.3\artifactory\resolve.targets'
+
 $child = $doc.Project.AppendChild($doc.CreateElement("Import"))
-$child.SetAttribute("Project","$installPath\artifactory\resolve.targets");
-$child.SetAttribute("Condition","Exists('$installPath\artifactory\resolve.targets')");
+$child.SetAttribute("Project",$solutionPath);
+$child.SetAttribute("Condition","Exists('$solutionPath')");
 
 $doc = [xml] $doc.OuterXml.Replace(" xmlns=`"`"", "")
 $doc.Save($nugetPath);
 
 write-host "Artifactory Package Install Script end"
+
+
 
