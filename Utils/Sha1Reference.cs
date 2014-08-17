@@ -34,14 +34,14 @@ namespace JFrog.Artifactory.Utils
         /// <summary>
         /// generate the SHA1 for a file 
         /// </summary>
-        /// <param name="stream">the stream for the file</param>
+        /// <param name="bytes">the bytes for the file</param>
         /// <returns>SHA1 as string</returns>
-        public static string GenerateSHA1(Stream stream)
+        public static string GenerateSHA1(byte[] bytes)
         {
-            if (stream == null) return string.Empty;
+            if (bytes == null) return string.Empty;
                 using (var sha1 = new SHA1Managed())
                 {
-                    return BitConverter.ToString(sha1.ComputeHash(stream)).Replace("-", "").ToLower();
+                    return BitConverter.ToString(sha1.ComputeHash(bytes)).Replace("-", "").ToLower();
                 }
         }
     }

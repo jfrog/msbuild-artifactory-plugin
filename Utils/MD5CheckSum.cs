@@ -31,14 +31,14 @@ namespace JFrog.Artifactory.Utils
         /// <summary>
         /// generate the MD5 for a file
         /// </summary>
-        /// <param name="stream">the stream for the file</param>
+        /// <param name="bytes">the bytes for the file</param>
         /// <returns>MD5 as string</returns>
-        public static string GenerateMD5(Stream stream)
+        public static string GenerateMD5(byte[] bytes)
         {
-            if (stream == null) return string.Empty;
+            if (bytes == null) return string.Empty;
             using (var md5 = MD5.Create())
             {
-                return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLower();
+                return BitConverter.ToString(md5.ComputeHash(bytes)).Replace("-", "").ToLower();
             }
         }
     }

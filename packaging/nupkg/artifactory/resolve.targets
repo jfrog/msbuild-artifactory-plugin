@@ -3,19 +3,19 @@
 		<PackageSource Include="$(ArtifactoryUrl)/api/nuget/$(ResolutionRepository)" />
 	</ItemGroup>
 
-  <!--<Target Name="InitCredentialsPackages" BeforeTargets="RestorePackages">
-      <Exec Command="$(NuGetCommand) sources Update -Name Artifactory -Source @(PackageSource) -UserName admin -Password password"
-            ContinueOnError="true">
-        <Output TaskParameter="exitcode" ItemName="exitcodes"/>  
-      </Exec>
+  <Target Name="InitCredentialsPackages" BeforeTargets="RestorePackages">
+    <Exec Command="$(NuGetCommand) sources Update -Name Artifactory -Source @(PackageSource) -UserName admin -Password password"
+          ContinueOnError="true">
+      <Output TaskParameter="exitcode" ItemName="exitcodes"/>
+    </Exec>
 
-      <Exec Command="$(NuGetCommand) sources Add -Name Artifactory -Source @(PackageSource) -UserName admin -Password password"
-            ContinueOnError="true" Condition="'%(exitcodes.identity)'>0 AND @(PackageSource) != '' ">        
-      </Exec>
+    <Exec Command="$(NuGetCommand) sources Add -Name Artifactory -Source @(PackageSource) -UserName admin -Password password"
+          ContinueOnError="true" Condition="'%(exitcodes.identity)'>0 AND @(PackageSource) != '' ">
+    </Exec>
 
-      --><!--<Error Text="One thing errored" Condition="'%(exitcodes.identity)'>0"/>--><!--
-      
-    </Target>-->
+    <!--<Error Text="One thing errored" Condition="'%(exitcodes.identity)'>0"/>-->
+
+  </Target>
   
   <Import Project="$(solutionDir)\artifactory.build" Condition="Exists('$(solutionDir)\artifactory.build')"/>
 </Project>

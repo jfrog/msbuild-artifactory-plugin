@@ -158,8 +158,8 @@ namespace JFrog.Artifactory
                             module.Dependencies.Add(new Dependency
                             {
                                 type = "nupkg",
-                                md5 = MD5CheckSum.GenerateMD5(packageStream),
-                                sha1 = Sha1Reference.GenerateSHA1(packageStream),
+                                md5 = MD5CheckSum.GenerateMD5(buf),
+                                sha1 = Sha1Reference.GenerateSHA1(buf),
                                 name = package.Id,
                                 scopes = new List<string> { Configuration }
                             });
