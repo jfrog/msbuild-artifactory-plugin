@@ -18,19 +18,20 @@
 
   <PropertyGroup>
     <startTime>$([System.DateTime]::Now.ToString(yyyy-MM-ddTHH:mm:ss))</startTime>
-    <BuildServer>DevEnv</BuildServer>
-    <buildNumber Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDNUMBER)</buildNumber>
-    <buildName Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDDEFINITIONNAME)</buildName>
-    <buildUNCPath Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_DROPLOCATION)</buildUNCPath>
-    <buildURI Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDURI)</buildURI>
-    <buildReason Condition="'$(buildServer)' == 'TFS'">$(TF_BUILD_BUILDREASON)</buildReason>
+    
+    <buildNumber Condition="'$(TF_BUILD)' == 'True'">$(TF_BUILD_BUILDNUMBER)</buildNumber>
+    <buildName Condition="'$(TF_BUILD)' == 'True'">$(TF_BUILD_BUILDDEFINITIONNAME)</buildName>
+    <buildUNCPath Condition="'$(TF_BUILD)' == 'True'">$(TF_BUILD_DROPLOCATION)</buildUNCPath>
+    <buildURI Condition="'$(TF_BUILD)' == 'True'">$(TF_BUILD_BUILDURI)</buildURI>
+    <buildReason Condition="'$(TF_BUILD)' == 'True'">$(TF_BUILD_BUILDREASON)</buildReason>
   </PropertyGroup>
 
   <UsingTask TaskName="JFrog.Artifactory.ArtifactoryBuild" AssemblyFile="..\..\..\packages\Artifactory.1.0.1.3\lib\net45\JFrog.Artifactory.dll" />
   <Target Name="Artifactory" AfterTargets="Build">
-    <ArtifactoryBuild dllList="@(Reference)" projRefList="@(ProjectReference)" Configuration="$(Configuration)" StartTime="$(startTime)"
+  <ArtifactoryBuild dllList="@(Reference)" projRefList="@(ProjectReference)" Configuration="$(Configuration)" StartTime="$(startTime)"
                       BuildUNCPath="$(buildUNCPath)" ProjectName="$(AssemblyName)" BuildURI="$(buildURI)" BuildReason="$(buildReason)"
                       BuildNumber="$(buildNumber)" User="$(ArtifactoryUserName)" Password="$(ArtifactoryPassword)" Url="$(ArtifactoryUrl)"
-                      BuildName="$(buildName)" OutputType="$(OutputType)" ResolutionRepository="$(ResolutionRepository)" />
+                      BuildName="$(buildName)" TfsActive="$(TF_BUILD)" ResolutionRepository="$(ResolutionRepository)" CurrentVersion="$(CurrentVersion)"
+                      SolutionRoot="$(solutionDir)"/>
   </Target>
 </Project>

@@ -5,5 +5,9 @@
     <ArtifactoryPassword>password</ArtifactoryPassword>
     <ResolveFromArtifactory>true</ResolveFromArtifactory>
     <ResolutionRepository>nuget-local</ResolutionRepository>
+
+    <CurrentVersion>2.0</CurrentVersion>
+    <!--<BuildServer>TFS</BuildServer>-->
+    
   </PropertyGroup>
 </Project>

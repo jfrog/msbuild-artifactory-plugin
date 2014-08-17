@@ -27,6 +27,18 @@ $child.SetAttribute("Condition","Exists('$solutionPath')");
 $doc = [xml] $doc.OuterXml.Replace(" xmlns=`"`"", "")
 $doc.Save($nugetPath);
 
+try
+{
+	$url = "https://www.jfrog.com/"
+	$dte2 = Get-Interface $dte ([EnvDTE80.DTE2])
+	
+	$dte2.ItemOperations.Navigate($url) | Out-Null
+}
+catch
+{
+
+}
+
 write-host "Artifactory Package Install Script end"
 
 

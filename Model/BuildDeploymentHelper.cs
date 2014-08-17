@@ -21,6 +21,17 @@ namespace JFrog.Artifactory.Model
             log.LogMessageFromText("Uploading build info to Artifactory...", MessageImportance.High);
             ArtifactoryBuildInfoClient client = new ArtifactoryBuildInfoClient(task.Url, task.User, task.Password, log);
 
+            //DeployDetails dd = new DeployDetails();
+            //dd.file = new FileInfo("C:\\Builds\\1\\msbuild-plugin\\DemoSolution\\src\\Work\\nuget-project\\multi-project\\packages\\Antlr.3.4.1.9004\\Antlr.3.4.1.9004.nupkg");
+            //dd.targetRepository = "nuget-local";
+            //dd.artifactPath = "Antlr.3.4.1.9004.nupkg";
+
+            //MD5CheckSum md = new MD5CheckSum();
+            //dd.md5 = md.GenerateMD5(dd.file.FullName);
+
+            //Sha1Reference sha = new Sha1Reference();
+            //dd.sha1 = sha.GenerateSHA1(dd.file.FullName);
+
             try
             {
                 client.sendBuildInfo(build);

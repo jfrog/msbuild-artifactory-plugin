@@ -3,9 +3,12 @@ using JFrog.Artifactory.Utils;
 using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using NuGet;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace JFrog.Artifactory
 {
@@ -19,17 +22,18 @@ namespace JFrog.Artifactory
 
         public string OutputPath { get; set; }
         public string BaseAddress { get; set; }
-        public string OutputType { get; set; }
+        public string TfsActive { get; set; }
         public string AssemblyName { get; set; }
         public string BaseOutputPath { get; set; }
         public string WebProjectOutputDir { get; set; }
-        
+        public string SolutionRoot { get; set; }
         public string BuildUNCPath { get; set; }
         public string BuildURI { get; set; }
         public string BuildName { get; set; }
         public string BuildReason { get; set; }
         public string StartTime { get; set; }
         public string BuildNumber { get; set; }
+        public string CurrentVersion { get; set; }
         public string User { get; set; }
         public string Password { get; set; }
         public string Url { get; set; }
@@ -39,18 +43,20 @@ namespace JFrog.Artifactory
         public string ToolVersion { get; set; }
         public string Configuration { get; set; }
         //private readonly 
-        private readonly Sha1Reference sha1;
-        private readonly MD5CheckSum md5;
+        //private readonly Sha1Reference sha1;
+        //private readonly MD5CheckSum md5;
 
         private const string defaultBuildName = "Not specified";
-        private const string defaultbuildNumber = "1.0";
+        private const string defaultBuildNumber = "1.0";
+        private const string defaultCurrentVersion = "1.0";
+        private const string artifactoryDateFormat = "yyyy-MM-ddTHH:mm:ss";
         /// <summary>
         /// initiate sha1,md5, _buildInfoModel
         /// </summary>
         public ArtifactoryBuild()
         {
-            sha1 = new Sha1Reference();
-            md5 = new MD5CheckSum();
+            //sha1 = new Sha1Reference();
+            //md5 = new MD5CheckSum();
             
         }
 
@@ -58,8 +64,13 @@ namespace JFrog.Artifactory
         {
             try
             {
+                //System.Diagnostics.Debugger.Launch();
                 Log.LogMessageFromText("Artifactory Post-Build task started", MessageImportance.High);
 
+                if (TfsActive != null && TfsActive.Equals("True"))
+                {
+                    Log.LogMessageFromText("TFS is Active: " + TfsActive + ";" + BuildNumber + ";" + BuildName, MessageImportance.High);
+                }
                 Build build = extractBuild();
                 BuildDeploymentHelper buildDeploymentHelper = new BuildDeploymentHelper();
                 buildDeploymentHelper.deploy(this, build, Log);
@@ -84,15 +95,17 @@ namespace JFrog.Artifactory
 
             //generate json general meta-data
             Log.LogMessageFromText("Processong build info...", MessageImportance.High);
-            build.started = string.Format("{0}.000+0000", StartTime); //2014-04-29T00:47:41.906+0000
+
+            /*yyyy-MM-ddTHH:mm:ss.906+0000*/
+            build.started = string.Format("{0}.000+0000", StartTime); 
             build.artifactoryPrincipal = User;
             build.buildAgent = new BuildAgent { name = "msbuild", version = ToolVersion };
 
-            build.number = string.IsNullOrWhiteSpace(BuildNumber) ? defaultbuildNumber : BuildNumber;
+            build.number = string.IsNullOrWhiteSpace(BuildNumber) ? defaultBuildNumber : BuildNumber;
             build.name = BuildName ?? defaultBuildName;
             build.url = BuildURI;
-            //TODO where are we getting version number?
-            build.version = "1.0";
+
+            build.version = string.IsNullOrWhiteSpace(CurrentVersion) ? defaultCurrentVersion : CurrentVersion;
 
             //get the current use from the windows OS
             System.Security.Principal.WindowsIdentity user;
@@ -105,11 +118,11 @@ namespace JFrog.Artifactory
 
             Log.LogMessageFromText("Processing build modules...", MessageImportance.High);
             //accumulate all refrenced dlls in the project 
-            ProccessMainModule(build);
+            ProccessMainModule(build, ProjectName);
             //accumulate all referenced projects
             ProccessModuleRef(build);
             //calculate how long it took to do the build
-            DateTime start = DateTime.ParseExact(StartTime, "yyyy-MM-ddTHH:mm:ss", null);
+            DateTime start = DateTime.ParseExact(StartTime, artifactoryDateFormat, null);
             build.durationMillis = Convert.ToInt64((DateTime.Now - start).TotalMilliseconds);
             
             return build;
@@ -118,24 +131,83 @@ namespace JFrog.Artifactory
         /// <summary>
         /// read all refrenced dll's in the .csproj calculate their md5, sha1 and id.
         /// </summary>
-        private void ProccessMainModule(Build build)
+        private void ProccessMainModule(Build build, string projectName)
         {
-            var module = new Module(ProjectName);
-            foreach (var task in dllList)
+            var module = new Module(projectName);
+
+            string localSource = Path.Combine(SolutionRoot, "packages");          
+            string[] directoryPaths = Directory.GetDirectories(SolutionRoot, projectName, SearchOption.AllDirectories);
+            string[] packageConfigPath = Directory.GetFiles(directoryPaths[0], "packages.config", SearchOption.TopDirectoryOnly);
+
+
+            if (packageConfigPath.Length != 0)
             {
-                var hint = task.GetMetadata("HintPath");
-                if (string.IsNullOrEmpty(hint)) continue;
-                var spec = GetRefrenceDetails(hint);
-                if (spec == null) continue;
-                module.Dependencies.Add(new Dependency
+                var sharedPackages = new LocalPackageRepository(localSource);
+                var packageReferenceFile = new PackageReferenceFile(packageConfigPath[0]);
+                IEnumerable<PackageReference> projectPackages = packageReferenceFile.GetPackageReferences();
+
+                foreach (PackageReference package in projectPackages)
                 {
-                    type = "dll", //?????? what about nuget type
-                    md5 = md5.GenerateMD5(FindNupkg(hint)),
-                    sha1 = sha1.GenerateSHA1(FindNupkg(hint)),
-                    name = spec.Id,
-                    scopes = new List<string> {Configuration}
-                });
+                    var pack = sharedPackages.FindPackage(package.Id, package.Version);
+
+                    using (Stream packageStream = ((NuGet.OptimizedZipPackage)(pack)).GetStream())
+                    {
+                            byte[] buf = new byte[packageStream.Length];
+                            int byteread = packageStream.Read(buf, 0, buf.Length);                
+
+                            module.Dependencies.Add(new Dependency
+                            {
+                                type = "nupkg",
+                                md5 = MD5CheckSum.GenerateMD5(packageStream),
+                                sha1 = Sha1Reference.GenerateSHA1(packageStream),
+                                name = package.Id,
+                                scopes = new List<string> { Configuration }
+                            });
+                    }
+                }
             }
+            else 
+            {
+                Log.LogMessageFromText("Warning - packages.config dosn`t exists in project: " + projectName, MessageImportance.High);
+            }
+            
+            //IQueryable<IPackage> packages = repo.GetPackages();
+
+            //foreach (IPackage package in packages)
+            //{              
+            //    //foreach (var dependency in package.DependencySets){
+
+            //    //}
+            //    Stream packageStream = ((NuGet.OptimizedZipPackage)(package)).GetStream();
+            //    string id = package.Id;
+            //    module.Dependencies.Add(new Dependency
+            //    {
+            //        type = "nupkg",
+            //        md5 = md5.GenerateMD5(packageStream),
+            //        sha1 = sha1.GenerateSHA1(packageStream),
+            //        name = package.Id,
+            //        scopes = new List<string> { Configuration }
+            //    });
+            //}
+            
+            
+            
+            
+            //foreach (var task in dllList)
+            //{
+            //    var hint = task.GetMetadata("HintPath");
+            //    if (string.IsNullOrEmpty(hint)) continue;
+            //    var spec = GetRefrenceDetails(hint);
+            //    if (spec == null) continue;
+            //    module.Dependencies.Add(new Dependency
+            //    {
+            //        type = "nupkg", //?????? dll OR nupkg
+            //        md5 = md5.GenerateMD5(FindNupkg(hint)),
+            //        sha1 = sha1.GenerateSHA1(FindNupkg(hint)),
+            //        name = spec.Id,
+            //        scopes = new List<string> {Configuration}
+            //    });
+            //}
             build.modules.Add(module);
         }
 
@@ -144,32 +216,35 @@ namespace JFrog.Artifactory
         /// </summary>
         private void ProccessModuleRef(Build build)
         {
-            Module module;
+            //Module module;
             foreach (var task in projRefList)
             {
                 
                 //get dll nuget information
-                var projectParser = new CSProjParser(Environment.CurrentDirectory + "..\\" + task.ItemSpec);
+                var projectParser = new CSProjParser(Environment.CurrentDirectory + "..\\" +  task.ItemSpec);
                 var projectRef = projectParser.Parse();
                 if (projectRef != null)
                 {
-                    module = new Module(projectRef.AssemblyName)
-                    {
-                        Dependencies = projectRef.LstProjectMetadata
-                            .Select(x => new { reference = GetRefrenceDetails(x.EvaluatedValue), hint = x.EvaluatedValue })
-                            .Where(x => x != null && x.reference != null && x.hint != string.Empty)
-                            //extract only nuget dlls - only if hintpath is not empty
-                            .Select(x => new Dependency
-                            {
-                                type = "dll",
-                                name = x.reference.Id,
-                                md5 = md5.GenerateMD5(FindNupkg(x.hint)),
-                                sha1 = sha1.GenerateSHA1(x.hint),
-                                scopes = new List<string> { Configuration }
-                            }).ToList()
-                    };
 
-                    build.modules.Add(module);
+                    ProccessMainModule(build, projectRef.AssemblyName);
+
+                    //module = new Module(projectRef.AssemblyName)
+                    //{
+                    //    Dependencies = projectRef.LstProjectMetadata
+                    //        .Select(x => new { reference = GetRefrenceDetails(x.EvaluatedValue), hint = x.EvaluatedValue })
+                    //        .Where(x => x != null && x.reference != null && x.hint != string.Empty)
+                    //        //extract only nuget dlls - only if hintpath is not empty
+                    //        .Select(x => new Dependency
+                    //        {
+                    //            type = "dll",
+                    //            name = x.reference.Id,
+                    //            md5 = md5.GenerateMD5(FindNupkg(x.hint)),
+                    //            sha1 = sha1.GenerateSHA1(x.hint),
+                    //            scopes = new List<string> { Configuration }
+                    //        }).ToList()
+                    //};
+
+                    //build.modules.Add(module);
                 }
             }
         }
@@ -216,6 +291,22 @@ namespace JFrog.Artifactory
         {
             try
             {
+
+                //var repository = PackageRepositoryFactory.Default.CreateRepository(Environment.CurrentDirectory + "..\\packages");
+                var repo = new LocalPackageRepository("C:\\Work\\nuget-project\\multi-project\\packages");
+                IQueryable<IPackage> packages = repo.GetPackages();
+
+                foreach (IPackage package in packages)
+                {
+                    //((NuGet.OptimizedZipPackage)(package)).FindDependency();
+                    //foreach (var dependency in package.DependencySets){
+                    
+                    //}
+                    
+                    string id = package.Id;
+
+                }
+
                 //Debug.WriteLine(String.Format("Reading Nuget Reference for : {0} {1}", Environment.CurrentDirectory + "..\\", path));
                 var cr = new DirectoryCrawler();
                 var info = cr.FindPath(Environment.CurrentDirectory + "..\\" + path);

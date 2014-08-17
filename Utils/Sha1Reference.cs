@@ -30,5 +30,19 @@ namespace JFrog.Artifactory.Utils
                 }
             }
         }
+
+        /// <summary>
+        /// generate the SHA1 for a file 
+        /// </summary>
+        /// <param name="stream">the stream for the file</param>
+        /// <returns>SHA1 as string</returns>
+        public static string GenerateSHA1(Stream stream)
+        {
+            if (stream == null) return string.Empty;
+                using (var sha1 = new SHA1Managed())
+                {
+                    return BitConverter.ToString(sha1.ComputeHash(stream)).Replace("-", "").ToLower();
+                }
+        }
     }
 }

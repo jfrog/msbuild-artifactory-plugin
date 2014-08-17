@@ -7,6 +7,7 @@ using Microsoft.Build.Utilities;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Evaluation;
 using System.IO;
+using NuGet;
 
 namespace JFrog.Artifactory
 {
@@ -20,10 +21,12 @@ namespace JFrog.Artifactory
         {
             try
             {
-                Project projectParser = new Project("C:\\Work\\nuget-project\\multi-project\\.nuget\\NuGet.targets");
-                projectParser.SetProperty("PackageSources", "http://192.168.56.1:8080/artifactory/api/nuget/nuget-virtual");
-                projectParser.Save();
-                projectParser.ReevaluateIfNecessary();
+                //Project projectParser = new Project("C:\\Work\\nuget-project\\multi-project\\.nuget\\NuGet.targets");
+                //projectParser.SetProperty("PackageSources", "http://192.168.56.1:8080/artifactory/api/nuget/nuget-virtual");
+                //projectParser.Save();
+                //projectParser.ReevaluateIfNecessary();
+
+                var repository = PackageRepositoryFactory.Default.CreateRepository(Environment.CurrentDirectory + "..\\packages");
 
                 Log.LogMessageFromText("Resoling variables...", MessageImportance.High);
                 return true;

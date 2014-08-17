@@ -32,10 +32,10 @@ namespace JFrog.Artifactory.Utils
                 return new ProjectRefModel
                 {
                    AssemblyName = project.GetProperty("AssemblyName").EvaluatedValue,
-                   LstProjectMetadata = project.GetItems("Reference")
-                        .Where(x => x.Metadata.Count > 0)
-                        .Select(x => x.Metadata.FirstOrDefault( m=> m.Name.Contains("HintPath")))
-                        .ToList()
+                   //LstProjectMetadata = project.GetItems("Reference")
+                   //     .Where(x => x.Metadata.Count > 0)
+                   //     .Select(x => x.Metadata.FirstOrDefault( m=> m.Name.Contains("HintPath")))
+                   //     .ToList()
 
                 };
 

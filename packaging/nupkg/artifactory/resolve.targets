@@ -4,16 +4,16 @@
 	</ItemGroup>
 
   <!--<Target Name="InitCredentialsPackages" BeforeTargets="RestorePackages">
-      <Exec Command="$(NuGetCommand) sources Update -Name Artifactory -Source @(PackageSourceslior) -UserName admin -Password password"
+      <Exec Command="$(NuGetCommand) sources Update -Name Artifactory -Source @(PackageSource) -UserName admin -Password password"
             ContinueOnError="true">
         <Output TaskParameter="exitcode" ItemName="exitcodes"/>  
       </Exec>
 
-      <Exec Command="$(NuGetCommand) sources Add -Name Artifactory -Source @(PackageSourceslior) -UserName admin -Password password"
-            Condition="'%(exitcodes.identity)'>0 AND @(PackageSourceslior) != '' ">        
+      <Exec Command="$(NuGetCommand) sources Add -Name Artifactory -Source @(PackageSource) -UserName admin -Password password"
+            ContinueOnError="true" Condition="'%(exitcodes.identity)'>0 AND @(PackageSource) != '' ">        
       </Exec>
 
-      <Error Text="One thing errored" Condition="'%(exitcodes.identity)'>0"/>
+      --><!--<Error Text="One thing errored" Condition="'%(exitcodes.identity)'>0"/>--><!--
       
     </Target>-->
   

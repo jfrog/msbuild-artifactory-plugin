@@ -16,9 +16,6 @@
     <copyright>Copyright 2014</copyright>
     <language />
     <tags>artifactory</tags>
-    <dependencies>
-      <dependency id="NuGetPowerTools" version="0.26" />
-    </dependencies>
   </metadata>
   
   <files>
