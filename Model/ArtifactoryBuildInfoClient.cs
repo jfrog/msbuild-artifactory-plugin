@@ -16,7 +16,9 @@ namespace JFrog.Artifactory.Utils
     {
         private static String BUILD_REST_URL = "/api/build";
         private static String BUILD_BROWSE_URL = "/webapp/builds";
-        private static readonly int CHECKSUM_DEPLOY_MIN_FILE_SIZE = 10240; // Try checksum deploy of files greater than 10KB
+
+        /* Try checksum deploy of files greater than 10KB */
+        private static readonly int CHECKSUM_DEPLOY_MIN_FILE_SIZE = 10240; 
         private ArtifactoryHttpClient _httpClient;
         private string _artifactoryUrl;
         private TaskLoggingHelper _log;
@@ -37,7 +39,6 @@ namespace JFrog.Artifactory.Utils
         
 
         public void sendBuildInfo(Build buildInfo) {
-
             try
             {               
                 sendBuildInfo(buildInfo.ToJsonString());
@@ -98,7 +99,9 @@ namespace JFrog.Artifactory.Utils
              * "100 (Continue)" status is to allow a client that is sending a request message with a request body to determine if the origin server is
              *  willing to accept the request (based on the request headers) before the client sends the request body.
              */
-            headers.Add("Expect", "100-continue");
+            //headers.Add("Expect", "100-continue");
+
+            _httpClient.getHttpClient().setHeader(headers);
 
             byte[] data = File.ReadAllBytes(details.file.FullName);
 
@@ -171,6 +174,16 @@ namespace JFrog.Artifactory.Utils
             {
                 _httpClient.Dispose();
             }
-        } 
+        }
+
+        private string buildMatrixParamsString(Dictionary<string, string> matrixParam) 
+        {
+            StringBuilder matrix = new StringBuilder();
+      
+            matrixParam.Select(param => matrix.Append(";").Append(WebUtility.UrlEncode(param.Key)).
+                Append("=").Append(WebUtility.UrlEncode(param.Value)));
+
+            return matrix.ToString();
+        }
     }
 }

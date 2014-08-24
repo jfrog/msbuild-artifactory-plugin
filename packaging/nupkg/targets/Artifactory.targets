@@ -29,9 +29,9 @@
   <UsingTask TaskName="JFrog.Artifactory.ArtifactoryBuild" AssemblyFile="..\..\..\packages\Artifactory.1.0.1.3\lib\net45\JFrog.Artifactory.dll" />
   <Target Name="Artifactory" AfterTargets="Build">
   <ArtifactoryBuild dllList="@(Reference)" projRefList="@(ProjectReference)" Configuration="$(Configuration)" StartTime="$(startTime)"
-                      BuildUNCPath="$(buildUNCPath)" ProjectName="$(AssemblyName)" BuildURI="$(buildURI)" BuildReason="$(buildReason)"
-                      BuildNumber="$(buildNumber)" User="$(ArtifactoryUserName)" Password="$(ArtifactoryPassword)" Url="$(ArtifactoryUrl)"
-                      BuildName="$(buildName)" TfsActive="$(TF_BUILD)" ResolutionRepository="$(ResolutionRepository)" CurrentVersion="$(CurrentVersion)"
-                      SolutionRoot="$(solutionDir)"/>
+                      BuildUNCPath="$(buildUNCPath)" ProjectPath="$(MSBuildProjectDirectory)" AssemblyName="$(AssemblyName)" BuildURI="$(buildURI)" 
+                      BuildReason="$(buildReason)" BuildNumber="$(buildNumber)" User="$(ArtifactoryUserName)" Password="$(ArtifactoryPassword)" 
+                      Url="$(ArtifactoryUrl)" BuildName="$(buildName)" TfsActive="$(TF_BUILD)" ResolutionRepository="$(ResolutionRepository)" 
+                      DeploymentRepository="$(DeploymentRepository)" CurrentVersion="$(CurrentVersion)" SolutionRoot="$(solutionDir)"/>
   </Target>
 </Project>

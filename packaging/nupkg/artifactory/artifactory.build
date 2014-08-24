@@ -9,5 +9,8 @@
     <CurrentVersion>2.0</CurrentVersion>
     <!--<BuildServer>TFS</BuildServer>-->
     
+    
+    
+    <!--  (?:$)-->
   </PropertyGroup>
 </Project>

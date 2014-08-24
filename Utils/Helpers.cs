@@ -80,7 +80,7 @@ namespace JFrog.Artifactory.Utils
                 sb.AppendFormat("\"type\":\"{0}\",", model.modules[i].Dependencies[ii].type);
                 sb.AppendFormat("\"sha1\":\"{0}\",", model.modules[i].Dependencies[ii].sha1);
                 sb.AppendFormat("\"md5\":\"{0}\",", model.modules[i].Dependencies[ii].md5);
-                sb.AppendFormat("\"id\":\"{0}\",", model.modules[i].Dependencies[ii].name);
+                sb.AppendFormat("\"id\":\"{0}\",", model.modules[i].Dependencies[ii].id);
                 sb.Append("\"scopes\":[");
                 for (var n = 0; n < model.modules[i].Dependencies[ii].scopes.Count; n++)
                 {
@@ -97,6 +97,22 @@ namespace JFrog.Artifactory.Utils
             sb.Append("],");
 
             sb.Append("\"artifacts\": [");
+
+            for (var ii = 0; ii < model.modules[i].Artifacts.Count(); ii++)
+            {
+                sb.Append("{");
+                sb.AppendFormat("\"type\":\"{0}\",", model.modules[i].Artifacts[ii].type);
+                sb.AppendFormat("\"sha1\":\"{0}\",", model.modules[i].Artifacts[ii].sha1);
+                sb.AppendFormat("\"md5\":\"{0}\",", model.modules[i].Artifacts[ii].md5);
+                sb.AppendFormat("\"name\":\"{0}\"", model.modules[i].Artifacts[ii].name);
+                sb.Append("}");
+
+                if ((ii + 1) < model.modules[i].Artifacts.Count())
+                {
+                    sb.Append(",");
+                }
+            }
+
             sb.Append("]");
 
             //module end

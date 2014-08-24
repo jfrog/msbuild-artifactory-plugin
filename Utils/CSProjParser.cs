@@ -1,7 +1,11 @@
 ﻿using JFrog.Artifactory.Model;
 using Microsoft.Build.Evaluation;
+using Microsoft.Build.Framework;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace JFrog.Artifactory.Utils
 {
@@ -11,12 +15,17 @@ namespace JFrog.Artifactory.Utils
     /// </summary>
     public class CSProjParser
     {
-        private string ProjectPath {get;set;}
+        private string ProjectName { get; set; }
+        private string ProjectArtifactoryConfigPath { get; set; }
+        private string ProjectDirectory { get; set; }
+        private XDocument ArtifactoryConfiguration { get; set; }
 
         //default cotur.
-        public CSProjParser(string projectPath)
+        public CSProjParser(string projectName, string projectArtifactoryConfigPath, string projectDirectory)
         {
-            ProjectPath = projectPath;
+            ProjectName = projectName;
+            ProjectArtifactoryConfigPath = projectArtifactoryConfigPath;
+            ProjectDirectory = projectDirectory;
         }
 
         /// <summary>
@@ -27,17 +36,35 @@ namespace JFrog.Artifactory.Utils
         {
             try
             {
-                var project = new Project(ProjectPath);
-                
-                return new ProjectRefModel
+                ProjectRefModel projectRefModel = new ProjectRefModel();
+                FileInfo artifactoryConfigurationFile = new FileInfo(ProjectArtifactoryConfigPath + "artifactory.build");
+                if (artifactoryConfigurationFile.Exists) 
                 {
-                   AssemblyName = project.GetProperty("AssemblyName").EvaluatedValue,
-                   //LstProjectMetadata = project.GetItems("Reference")
-                   //     .Where(x => x.Metadata.Count > 0)
-                   //     .Select(x => x.Metadata.FirstOrDefault( m=> m.Name.Contains("HintPath")))
-                   //     .ToList()
+                    ArtifactoryConfiguration = XDocument.Load(artifactoryConfigurationFile.FullName, LoadOptions.None);
+                 
+                    var patterns = ArtifactoryConfiguration.Root.Descendants().
+                        Where(tag => tag.Name.LocalName == "DeployAttribute").Select(pattern => pattern.Descendants());
+                           
+                    projectRefModel.artifactoryDeploy = new List<ProjectRefModel.DeployAttribute>();
+                    foreach (var p in patterns)
+                    {
+                        ProjectRefModel.DeployAttribute deployAttribute = new ProjectRefModel.DeployAttribute();
+                        var pattern = p.FirstOrDefault(a => a.Name.LocalName == "pattern");
+                        deployAttribute.Pattern = (pattern != null ? pattern.Value : string.Empty);
 
-                };
+                        var properties = p.FirstOrDefault(a => a.Name.LocalName == "properties");
+                        deployAttribute.properties = (properties != null ? properties.Value : string.Empty);
+
+                        projectRefModel.artifactoryDeploy.Add(deployAttribute);
+                    }                  
+                }
+
+                //var project = new Project(ProjectCsprojPath);
+
+                projectRefModel.AssemblyName = ProjectName;
+                projectRefModel.projectDirectory = ProjectDirectory;
+
+                return projectRefModel;
 
             }
             catch (Exception ex)

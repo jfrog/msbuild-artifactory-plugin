@@ -19,16 +19,20 @@ namespace JFrog.Artifactory.Utils
         /// </summary>
         /// <param name="path">the path for the file and its name</param>
         /// <returns>SHA1 as string</returns>
-        public string GenerateSHA1(string path)
+        public static string GenerateSHA1(string path)
         {
             if (path == null) return string.Empty;
-            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-            {
-                using (var sha1 = new SHA1Managed())
+                using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                //using (FileStream fs = File.OpenRead(path))
                 {
-                    return BitConverter.ToString(sha1.ComputeHash(fs)).Replace("-", "").ToLower();
+                    //byte[] buf = new byte[fs.Length];
+                    // int byteread = fs.Read(buf, 0, buf.Length);SHA256CryptoServiceProvider
+                    fs.Position = 0;
+                    using (var sha1 = new SHA1Managed())
+                    {
+                        return BitConverter.ToString(sha1.ComputeHash(fs)).Replace("-", String.Empty).ToLower();
+                    }
                 }
-            }
         }
 
         /// <summary>

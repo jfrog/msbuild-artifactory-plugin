@@ -5,7 +5,7 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "msbuild-artifactory-plugin", "msbuild-artifactory-plugin.csproj", "{3280F70A-8A97-4DB7-9379-8F0732FAE84F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "msbuild-tests", "..\msbuild-tests\msbuild-tests.csproj", "{7EB004E8-5FA8-435D-A0D5-0F67D47005C9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "msbuild_tests", "msbuild_tests\msbuild_tests.csproj", "{2ADE7952-4BD2-48DD-BA86-44AE3D1F897C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{3280F70A-8A97-4DB7-9379-8F0732FAE84F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3280F70A-8A97-4DB7-9379-8F0732FAE84F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3280F70A-8A97-4DB7-9379-8F0732FAE84F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7EB004E8-5FA8-435D-A0D5-0F67D47005C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7EB004E8-5FA8-435D-A0D5-0F67D47005C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7EB004E8-5FA8-435D-A0D5-0F67D47005C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7EB004E8-5FA8-435D-A0D5-0F67D47005C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2ADE7952-4BD2-48DD-BA86-44AE3D1F897C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ADE7952-4BD2-48DD-BA86-44AE3D1F897C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ADE7952-4BD2-48DD-BA86-44AE3D1F897C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2ADE7952-4BD2-48DD-BA86-44AE3D1F897C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
