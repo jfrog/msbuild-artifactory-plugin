@@ -4,6 +4,8 @@
     <CurrentVersion>2.0</CurrentVersion>
     <!--<BuildServer>TFS</BuildServer>-->
 
+    <!--Enable Artifactory plug-in to publish Build Info -->
+    <BuildInfo-Enable>true</BuildInfo-Enable>
 
     <!-- Resolution-->
 
@@ -21,6 +23,8 @@
 
     <!-- Deployment-->
 
+    <!--Enable Artifactory plug-in to publish artifacts -->
+    <Deploy-Enable>true</Deploy-Enable>
     <!--The base Artifactory URL for the publisher-->
     <Deploy-ArtifactoryUrl>http://192.168.56.1:8080/artifactory</Deploy-ArtifactoryUrl>
     <!--The publisher user name-->

@@ -29,6 +29,8 @@ namespace JFrog.Artifactory
         public string Configuration { get; set; }
 
         /* Artifactory parameters */
+        public string BuildInfoEnable { get; set; }
+        public string DeployEnable { get; set;}
         public string User { get; set; }
         public string Password { get; set; }
         public string Url { get; set; }        

@@ -2,10 +2,15 @@
 
   <!--
 	In order to resolve artifacts (Nuget packages) from Artifactory, we include the Artifactory Nuget repository, 
-  as it is configured in the 'artifactory.build' file. 
-  Setting 'Resolve.Enable' to false in 'artifactory.build' cancels the override.
+    as it is configured in the 'artifactory.build' file. 
+    Setting 'Resolve-Enable' to false in 'artifactory.build' cancels the override.
   -->
-  <ItemGroup Condition=" '$(Resolve-Enable)' == 'true' AND '$(PackageSources)' == '' ">
+  <ItemGroup Condition="'$(Resolve-Enable)' == 'true' AND '$(Resolve-ArtifactoryUserName)' != '' AND '$(Resolve-ArtifactoryPassword)' != '' AND 
+						'$(Resolve-ArtifactoryUrl)' != '' AND '$(Resolve-Repository)' != '' ">
+    <ValidateResolution Include="true"/>
+  </ItemGroup>
+
+  <ItemGroup Condition=" @(ValidateResolution) == 'true' AND '$(PackageSources)' == '' ">
     <PackageSource Include="$(Resolve-ArtifactoryUrl)/api/nuget/$(Resolve-Repository)" />
   </ItemGroup>
 
@@ -13,15 +18,14 @@
       Updating the resolution credentials in the NuGet.Config file (under .nuget)  
   -->
   <Target Name="InitCredentialsPackages" BeforeTargets="RestorePackages">
-    <Exec Command="attrib -R $(NuGetToolsPath)\NuGet.Config" ContinueOnError="true" Condition="'$(Resolve-Enable)' == 'true'"/>
+    <Exec Command="attrib -R $(NuGetToolsPath)\NuGet.Config" ContinueOnError="true" Condition=" @(ValidateResolution) == 'true' "/>
     <Exec Command="$(NuGetCommand) sources Update -Name Artifactory -Source @(PackageSource) -UserName $(Resolve-ArtifactoryUserName) -Password $(Resolve-ArtifactoryPassword) -Config $(NuGetToolsPath)\NuGet.Config"
-          ContinueOnError="true" Condition="'$(Resolve-Enable)' == 'true' AND '$(Resolve-ArtifactoryUserName)' != '' AND '$(Resolve-ArtifactoryPassword)' != ''">
+          ContinueOnError="true" Condition=" @(ValidateResolution) == 'true' AND @(PackageSource) != '' ">
       <Output TaskParameter="exitcode" ItemName="exitcodes"/>
     </Exec>
 
     <Exec Command="$(NuGetCommand) sources Add -Name Artifactory -Source @(PackageSource) -UserName $(Resolve-ArtifactoryUserName) -Password $(Resolve-ArtifactoryPassword) -Config $(NuGetToolsPath)\NuGet.Config"
-          ContinueOnError="true" Condition="'$(Resolve-Enable)' == 'true' AND '%(exitcodes.identity)'>0 AND @(PackageSource) != '' AND 
-                                            '$(Resolve-ArtifactoryUserName)' != '' AND '$(Resolve-ArtifactoryPassword)' != '' ">
+          ContinueOnError="true" Condition=" @(ValidateResolution) == 'true' AND '%(exitcodes.identity)'>0 AND @(PackageSource) != '' ">
     </Exec>
   </Target>
 
