@@ -6,20 +6,32 @@
 
 
     <!-- Resolution-->
+
+    <!--Enable Artifactory plug-in to interfere Nuget "Package Restore" -->
     <Resolve-Enable>true</Resolve-Enable>
+    <!--The base Artifactory URL for the resolver-->
     <Resolve-ArtifactoryUrl>http://192.168.56.1:8080/artifactory</Resolve-ArtifactoryUrl>
+    <!--The resolver user name-->
     <Resolve-ArtifactoryUserName>admin</Resolve-ArtifactoryUserName>
+    <!--The resolver password-->
     <Resolve-ArtifactoryPassword>password</Resolve-ArtifactoryPassword>
+    <!--The Artifactory (preferably virtual) repository key to resolve from-->
     <Resolve-Repository>nuget-local</Resolve-Repository>
 
 
     <!-- Deployment-->
+
+    <!--The base Artifactory URL for the publisher-->
     <Deploy-ArtifactoryUrl>http://192.168.56.1:8080/artifactory</Deploy-ArtifactoryUrl>
+    <!--The publisher user name-->
     <Deploy-ArtifactoryUserName>admin</Deploy-ArtifactoryUserName>
+    <!--The publisher password-->
     <Deploy-ArtifactoryPassword>password</Deploy-ArtifactoryPassword>
+    <!--The Artifactory repository key to publish to-->
     <Deploy-Repository>libs-snapshot-local</Deploy-Repository>
 
 
+    <!-- Here you can supply path to files (with Capturing Groups) for the plug-in to publish to Artifactory -->
     <ArtifactoryDeploy>
       <DeployAttribute>
         <Input>obj\(.+)\(.+).dll</Input>
