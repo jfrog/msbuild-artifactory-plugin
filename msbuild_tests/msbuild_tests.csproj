@@ -55,12 +55,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\msbuild-artifactory-plugin.csproj">
-      <Project>{3280f70a-8a97-4db7-9379-8f0732fae84f}</Project>
-      <Name>msbuild-artifactory-plugin</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="regex_test\bin\" />
   </ItemGroup>
   <ItemGroup>
@@ -71,6 +65,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="regex_test\lib\Artifactory.1.0.1.3.nupkg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\msbuild-artifactory-plugin\msbuild-artifactory-plugin.csproj">
+      <Project>{3280f70a-8a97-4db7-9379-8f0732fae84f}</Project>
+      <Name>msbuild-artifactory-plugin</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
@@ -95,8 +95,9 @@
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
-  </Target>
+  </Target>-->
   <Target Name="AfterBuild">
+    <!--Run MSTest.exe-->
+    <Exec Command="MSTest\mstest.exe /testcontainer:bin\Debug\msbuild_tests.dll" />
   </Target>
-  -->
 </Project>

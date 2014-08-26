@@ -31,7 +31,7 @@
       * decide from where we to take the dll file(s)
       * decide the framework(s) we support 
     -->
-    <file src="..\lib\*.dll" target="lib\net45" /> 
+    <file src="..\msbuild-artifactory-plugin\lib\*.dll" target="lib\net45" /> 
   </files>
 
   

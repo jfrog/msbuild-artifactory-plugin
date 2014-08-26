@@ -12,41 +12,6 @@ namespace msbuild_tests
     [TestClass]
     public class RegexpCapturingGroupTest
     {
-        //[TestMethod]
-        //public void Test_Split_Multi_Patterns_In_One_Line()
-        //{
-        //    string patterns = "a/(.+)/(.+).dll => a/$1/$2.dll,(.+)/(.+)/(.+).dll => a-$1-$2-$3.dll";
-        //    List<BuildArtifactsMapping> artifactsMapping = BuildArtifactsMappingResolver.splitPatterns(patterns);
-
-        //    List<BuildArtifactsMapping> artifactsMappingExpected = new List<BuildArtifactsMapping>();
-        //    artifactsMappingExpected.Add(new BuildArtifactsMapping("a/(.+)/(.+).dll", "a/$1/$2.dll"));
-        //    artifactsMappingExpected.Add(new BuildArtifactsMapping("(.+)/(.+)/(.+).dll", "a-$1-$2-$3.dll"));           
-
-        //    Assert.AreEqual(artifactsMapping, artifactsMappingExpected);
-        //}
-
-        //[TestMethod]
-        //public void TestSplitTargetAndDes()
-        //{
-        //    string input = "a/(.+)/(.+).dll => a/$1/$2.dll";
-        //    BuildArtifactsMapping mapping = BuildArtifactsMappingResolver.getArtifactsMapping(input);
-                       
-        //    BuildArtifactsMapping mappingExpect = new BuildArtifactsMapping();
-        //    mappingExpect.input = "a/(.+)/(.+).dll";
-        //    mappingExpect.output = "a/$1/$2.dll";
-
-        //    Assert.AreEqual(mappingExpect, mapping);
-        //}
-
-        //[TestMethod]
-        //[ExpectedException(typeof(ArgumentException))]
-        //public void TestValidateCaptureGroups()
-        //{
-        //    string input = "a/(.+)/(.+).dll => a-$1-$2-$3.dll";
-        //    BuildArtifactsMapping mapping = BuildArtifactsMappingResolver.getArtifactsMapping(input);
-        //    // assert is handled by the ExcpectedException
-        //}
-
         [TestMethod]
         public void TestExtractRegex()
         {

@@ -15,37 +15,26 @@ namespace JFrog.Artifactory
 {
     public class ArtifactoryBuild : Task
     {
-        [Required]
-        public ITaskItem[] dllList { get; set; }
 
+        /* MSBuild parameters */
         [Required]
-        public ITaskItem[] projRefList { get; set; }
-
-        public string OutputPath { get; set; }
-        public string BaseAddress { get; set; }
-        
+        public ITaskItem[] projRefList { get; set; }     
         public string AssemblyName { get; set; }
-       // public string BaseOutputPath { get; set; }
-        public string WebProjectOutputDir { get; set; }
         public string SolutionRoot { get; set; }
-        public string ProjectPath { get; set; }
-        
+        public string ProjectPath { get; set; }       
         public string StartTime { get; set; }       
         public string CurrentVersion { get; set; }
-        
-        public string ProjectName { get; set; }
         public string ServerName { get; set; }
         public string ToolVersion { get; set; }
         public string Configuration { get; set; }
 
-        /* Artifactory parameters*/
+        /* Artifactory parameters */
         public string User { get; set; }
         public string Password { get; set; }
-        public string Url { get; set; }
-        public string ResolutionRepository { get; set; }
+        public string Url { get; set; }        
         public string DeploymentRepository { get; set; }
 
-        /* TFS parameters*/
+        /* TFS parameters */
         public string TfsActive { get; set; }
         public string BuildNumber { get; set; }
         public string BuildUNCPath { get; set; }
@@ -53,7 +42,7 @@ namespace JFrog.Artifactory
         public string BuildName { get; set; }
         public string BuildReason { get; set; }
 
-        public Dictionary<string, DeployDetails> deployableArtifactBuilderMap = new Dictionary<string, DeployDetails>();
+        public Dictionary<string, List<DeployDetails>> deployableArtifactBuilderMap = new Dictionary<string, List<DeployDetails>>();
 
         private const string defaultBuildName = "Not specified";
         private const string defaultBuildNumber = "1.0";
@@ -119,12 +108,10 @@ namespace JFrog.Artifactory
             Log.LogMessageFromText("Processing build modules...", MessageImportance.High);
 
             ProjectRefModel p = new ProjectRefModel();
-            //p.AssemblyName = ProjectName;
-            //accumulate all refrenced dlls in the project 
-            //ProccessModule(build, ProjectName);
-            //accumulate all referenced projects
+
+            //Accumulate all projects
             ProccessModuleRef(build);
-            //calculate how long it took to do the build
+            //Calculate how long it took to do the build
             DateTime start = DateTime.ParseExact(StartTime, artifactoryDateFormat, null);
             build.durationMillis = Convert.ToInt64((DateTime.Now - start).TotalMilliseconds);
             
@@ -132,12 +119,13 @@ namespace JFrog.Artifactory
         }
 
         /// <summary>
-        /// find all projects refefreneced by the current .csporj
+        /// find all projects referenced by the current .csporj
         /// </summary>
         private void ProccessModuleRef(Build build)
         {
             /*Main project*/
-            var mainProjectParser = new CSProjParser(AssemblyName, SolutionRoot + "\\", ProjectPath);
+            var mainProjectParser = new CSProjParser(AssemblyName, ProjectPath);
+            mainProjectParser.parseArtifactoryConfigFile(SolutionRoot + "\\");
             var mainProject = mainProjectParser.Parse();
             if (mainProject != null)
             {
@@ -147,7 +135,16 @@ namespace JFrog.Artifactory
             //Module module;
             foreach (var task in projRefList)
             {
-                var projectParser = new CSProjParser(task.GetMetadata("Name"), task.GetMetadata("RelativeDir"), task.GetMetadata("RelativeDir"));
+                var projectParser = new CSProjParser(task.GetMetadata("Name"), task.GetMetadata("RelativeDir"));
+
+                /*
+                 * Trying to check if Artifactory configuration file exists (overrides) in the sub module level.
+                 *  If not we will use the configurations from the solution level
+                 */
+                if (!projectParser.parseArtifactoryConfigFile(task.GetMetadata("RelativeDir"))) 
+                {
+                   projectParser.parseArtifactoryConfigFile(SolutionRoot + "\\");
+                }
                 var projectRef = projectParser.Parse();
                 if (projectRef != null)
                 {
@@ -157,7 +154,7 @@ namespace JFrog.Artifactory
         }
 
         /// <summary>
-        /// read all refrenced dll's in the .csproj calculate their md5, sha1 and id.
+        /// read all referenced nuget`s in the .csproj calculate their md5, sha1 and id.
         /// </summary>
         private void ProccessModule(Build build, ProjectRefModel project)
         {
@@ -184,8 +181,15 @@ namespace JFrog.Artifactory
                             name = artifactName
                         });
 
-                        if (!deployableArtifactBuilderMap.ContainsKey(module.id + ":" + artifactName))
-                            deployableArtifactBuilderMap.Add(module.id + ":" + artifactName, artifactDetail);
+                        string artifactId = module.id + ":" + artifactName;
+                        if (deployableArtifactBuilderMap.ContainsKey(artifactId)) 
+                        {
+                            deployableArtifactBuilderMap[artifactId].Add(artifactDetail);                       
+                        }
+                        else
+                        {
+                            deployableArtifactBuilderMap.Add(artifactId, new List<DeployDetails> { artifactDetail });
+                        }                       
                     }
                 }
             }
@@ -193,6 +197,11 @@ namespace JFrog.Artifactory
             build.modules.Add(module);
         }
 
+        /*<summary>
+        *   Using Nuget.Core API, we gather all nuget`s packages that specific project depend on them.
+        * </summary>
+        * <returns></returns>
+        */
         private void addDependencies(string projectName, Module module, string localSource, string[] packageConfigPath)
         {
             if (packageConfigPath.Length != 0)
@@ -223,14 +232,14 @@ namespace JFrog.Artifactory
             }
             else
             {
-                Log.LogMessageFromText("Warning - packages.config dosn`t exists in project: " + projectName, MessageImportance.High);
+                Log.LogMessageFromText("Warning - packages.config doesn't exists in project: " + projectName, MessageImportance.High);
             }
         }
 
         
 
         /// <summary>
-        /// gather all windows system variables and their values
+        /// Gather all windows system variables and their values
         /// </summary>
         /// <returns></returns>
         private Dictionary<string,string> AddSystemVariables()

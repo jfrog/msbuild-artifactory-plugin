@@ -97,21 +97,19 @@ namespace JFrog.Artifactory.Utils
             sb.Append("],");
 
             sb.Append("\"artifacts\": [");
-
-            for (var ii = 0; ii < model.modules[i].Artifacts.Count(); ii++)
+               
+            foreach (var artifact in model.modules[i].Artifacts)
             {
                 sb.Append("{");
-                sb.AppendFormat("\"type\":\"{0}\",", model.modules[i].Artifacts[ii].type);
-                sb.AppendFormat("\"sha1\":\"{0}\",", model.modules[i].Artifacts[ii].sha1);
-                sb.AppendFormat("\"md5\":\"{0}\",", model.modules[i].Artifacts[ii].md5);
-                sb.AppendFormat("\"name\":\"{0}\"", model.modules[i].Artifacts[ii].name);
-                sb.Append("}");
-
-                if ((ii + 1) < model.modules[i].Artifacts.Count())
-                {
-                    sb.Append(",");
-                }
+                sb.AppendFormat("\"type\":\"{0}\",", artifact.type);
+                sb.AppendFormat("\"sha1\":\"{0}\",", artifact.sha1);
+                sb.AppendFormat("\"md5\":\"{0}\",", artifact.md5);
+                sb.AppendFormat("\"name\":\"{0}\"", artifact.name);
+                sb.Append("},");
             }
+
+            if (model.modules[i].Artifacts.Count != 0)
+                sb = (sb.Remove(sb.Length - 1, 1));
 
             sb.Append("]");
 

@@ -3,9 +3,32 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "msbuild-artifactory-plugin", "msbuild-artifactory-plugin.csproj", "{3280F70A-8A97-4DB7-9379-8F0732FAE84F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "msbuild-artifactory-plugin", "msbuild-artifactory-plugin\msbuild-artifactory-plugin.csproj", "{3280F70A-8A97-4DB7-9379-8F0732FAE84F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "msbuild_tests", "msbuild_tests\msbuild_tests.csproj", "{2ADE7952-4BD2-48DD-BA86-44AE3D1F897C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "packaging", "packaging", "{36019A31-F497-41FD-A174-5F012828BF7B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nupkg", "nupkg", "{2530B43E-6385-4F8E-A9D2-4FEC1800D815}"
+	ProjectSection(SolutionItems) = preProject
+		packaging\msbuild-artifactory-plugin.nuspec = packaging\msbuild-artifactory-plugin.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "artifactory", "artifactory", "{197C5D76-0D7A-4CD8-A21B-1A5B61BBC82E}"
+	ProjectSection(SolutionItems) = preProject
+		packaging\nupkg\artifactory\artifactory.build = packaging\nupkg\artifactory\artifactory.build
+		packaging\nupkg\artifactory\resolve.targets = packaging\nupkg\artifactory\resolve.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "targets", "targets", "{E986C82B-8F29-45B0-BC8B-B7D529ADC670}"
+	ProjectSection(SolutionItems) = preProject
+		packaging\nupkg\targets\Artifactory.targets = packaging\nupkg\targets\Artifactory.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{106631A7-1235-4350-93B3-18F6CBCCEE5E}"
+	ProjectSection(SolutionItems) = preProject
+		packaging\nupkg\tools\Install.ps1 = packaging\nupkg\tools\Install.ps1
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +47,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2530B43E-6385-4F8E-A9D2-4FEC1800D815} = {36019A31-F497-41FD-A174-5F012828BF7B}
+		{197C5D76-0D7A-4CD8-A21B-1A5B61BBC82E} = {2530B43E-6385-4F8E-A9D2-4FEC1800D815}
+		{E986C82B-8F29-45B0-BC8B-B7D529ADC670} = {2530B43E-6385-4F8E-A9D2-4FEC1800D815}
+		{106631A7-1235-4350-93B3-18F6CBCCEE5E} = {2530B43E-6385-4F8E-A9D2-4FEC1800D815}
 	EndGlobalSection
 EndGlobal

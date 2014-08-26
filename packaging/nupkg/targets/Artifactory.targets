@@ -7,18 +7,10 @@
   Incase the user dose not uses Nuget Enable, the artifactory.build import is from this file instead.
   -->
   <Import Project="$(solutionDir)\artifactory.build" Condition="'$(NuGetToolsPath)' == '' And Exists('$(solutionDir)\artifactory.build')" />
-  
- <!--
-	In order to resolve artifacts (Nuget packages) from Artifactory, we include the Artifactory Nuget repository, as it is configured in the 'artifactory.build' file.
-	Setting 'ResolveFromArtifactory' to false in 'artifactory.build' cancells the override.
-  -->
-  <!--<ItemGroup Condition=" '$(ResolveFromArtifactory)' == 'true' AND '$(PackageSources)' == '' ">
-    <PackageSource Include="$(ArtifactoryUrl)/api/nuget/$(ResolutionRepository)" />
-  </ItemGroup>-->
 
   <PropertyGroup>
     <startTime>$([System.DateTime]::Now.ToString(yyyy-MM-ddTHH:mm:ss))</startTime>
-    
+
     <buildNumber Condition="'$(TF_BUILD)' == 'True'">$(TF_BUILD_BUILDNUMBER)</buildNumber>
     <buildName Condition="'$(TF_BUILD)' == 'True'">$(TF_BUILD_BUILDDEFINITIONNAME)</buildName>
     <buildUNCPath Condition="'$(TF_BUILD)' == 'True'">$(TF_BUILD_DROPLOCATION)</buildUNCPath>
@@ -28,10 +20,10 @@
 
   <UsingTask TaskName="JFrog.Artifactory.ArtifactoryBuild" AssemblyFile="..\..\..\packages\Artifactory.1.0.1.3\lib\net45\JFrog.Artifactory.dll" />
   <Target Name="Artifactory" AfterTargets="Build">
-  <ArtifactoryBuild dllList="@(Reference)" projRefList="@(ProjectReference)" Configuration="$(Configuration)" StartTime="$(startTime)"
-                      BuildUNCPath="$(buildUNCPath)" ProjectPath="$(MSBuildProjectDirectory)" AssemblyName="$(AssemblyName)" BuildURI="$(buildURI)" 
-                      BuildReason="$(buildReason)" BuildNumber="$(buildNumber)" User="$(ArtifactoryUserName)" Password="$(ArtifactoryPassword)" 
-                      Url="$(ArtifactoryUrl)" BuildName="$(buildName)" TfsActive="$(TF_BUILD)" ResolutionRepository="$(ResolutionRepository)" 
-                      DeploymentRepository="$(DeploymentRepository)" CurrentVersion="$(CurrentVersion)" SolutionRoot="$(solutionDir)"/>
+    <ArtifactoryBuild   projRefList="@(ProjectReference)" AssemblyName="$(AssemblyName)" SolutionRoot="$(solutionDir)"
+                        ProjectPath="$(MSBuildProjectDirectory)" Configuration="$(Configuration)" StartTime="$(startTime)"
+                        TfsActive="$(TF_BUILD)" BuildUNCPath="$(buildUNCPath)"   BuildURI="$(buildURI)" BuildReason="$(buildReason)" BuildNumber="$(buildNumber)"
+                        User="$(Deploy-ArtifactoryUserName)" Password="$(Deploy-ArtifactoryPassword)" Url="$(Deploy-ArtifactoryUrl)" BuildName="$(buildName)"
+                        DeploymentRepository="$(Deploy-Repository)" CurrentVersion="$(CurrentVersion)" />
   </Target>
 </Project>

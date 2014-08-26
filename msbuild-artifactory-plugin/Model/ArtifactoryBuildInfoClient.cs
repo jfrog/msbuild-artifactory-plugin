@@ -107,6 +107,9 @@ namespace JFrog.Artifactory.Utils
 
             string deploymentPath = _artifactoryUrl + "/" + details.targetRepository + "/" + details.artifactPath;
 
+            /* Add properties to the artifact, if any */
+            deploymentPath = deploymentPath + details.properties;
+
             _log.LogMessageFromText("Deploying artifact: " + deploymentPath, MessageImportance.High);
             HttpResponse response = _httpClient.getHttpClient().execute(deploymentPath, "PUT", data);
 
@@ -135,13 +138,17 @@ namespace JFrog.Artifactory.Utils
                 return false;
             }
 
-            string url = uploadUrl + "/" + details.targetRepository + "/" + details.artifactPath;
+            string checksumUrlPath = uploadUrl + "/" + details.targetRepository + "/" + details.artifactPath;
+
+            /* Add properties to the artifact, if any */
+            checksumUrlPath = checksumUrlPath + details.properties;
+
             WebHeaderCollection headers = createHttpPutMethod(details);
             headers.Add("X-Checksum-Deploy", "true");
             headers.Add(HttpRequestHeader.ContentType, "application/vnd.org.jfrog.artifactory.storage.ItemCreated+json");
 
             _httpClient.getHttpClient().setHeader(headers);
-            HttpResponse response = _httpClient.getHttpClient().execute(url, "PUT");
+            HttpResponse response = _httpClient.getHttpClient().execute(checksumUrlPath, "PUT");
 
             if (response._statusCode == HttpStatusCode.Created || response._statusCode == HttpStatusCode.OK)
             {
@@ -174,16 +181,6 @@ namespace JFrog.Artifactory.Utils
             {
                 _httpClient.Dispose();
             }
-        }
-
-        private string buildMatrixParamsString(Dictionary<string, string> matrixParam) 
-        {
-            StringBuilder matrix = new StringBuilder();
-      
-            matrixParam.Select(param => matrix.Append(";").Append(WebUtility.UrlEncode(param.Key)).
-                Append("=").Append(WebUtility.UrlEncode(param.Value)));
-
-            return matrix.ToString();
         }
     }
 }

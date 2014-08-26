@@ -1,21 +1,29 @@
 <Project ToolsVersion="4.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<ItemGroup Condition=" '$(ResolveFromArtifactory)' == 'true' AND '$(PackageSources)' == '' ">
-		<PackageSource Include="$(ArtifactoryUrl)/api/nuget/$(ResolutionRepository)" />
-	</ItemGroup>
 
+  <!--
+	In order to resolve artifacts (Nuget packages) from Artifactory, we include the Artifactory Nuget repository, 
+  as it is configured in the 'artifactory.build' file. 
+  Setting 'Resolve.Enable' to false in 'artifactory.build' cancels the override.
+  -->
+  <ItemGroup Condition=" '$(Resolve-Enable)' == 'true' AND '$(PackageSources)' == '' ">
+    <PackageSource Include="$(Resolve-ArtifactoryUrl)/api/nuget/$(Resolve-Repository)" />
+  </ItemGroup>
+
+  <!-- 
+      Updating the resolution credentials in the NuGet.Config file (under .nuget)  
+  -->
   <Target Name="InitCredentialsPackages" BeforeTargets="RestorePackages">
-    <Exec Command="$(NuGetCommand) sources Update -Name Artifactory -Source @(PackageSource) -UserName admin -Password password"
-          ContinueOnError="true">
+    <Exec Command="attrib -R $(NuGetToolsPath)\NuGet.Config" ContinueOnError="true" Condition="'$(Resolve-Enable)' == 'true'"/>
+    <Exec Command="$(NuGetCommand) sources Update -Name Artifactory -Source @(PackageSource) -UserName $(Resolve-ArtifactoryUserName) -Password $(Resolve-ArtifactoryPassword) -Config $(NuGetToolsPath)\NuGet.Config"
+          ContinueOnError="true" Condition="'$(Resolve-Enable)' == 'true' AND '$(Resolve-ArtifactoryUserName)' != '' AND '$(Resolve-ArtifactoryPassword)' != ''">
       <Output TaskParameter="exitcode" ItemName="exitcodes"/>
     </Exec>
 
-    <Exec Command="$(NuGetCommand) sources Add -Name Artifactory -Source @(PackageSource) -UserName admin -Password password"
-          ContinueOnError="true" Condition="'%(exitcodes.identity)'>0 AND @(PackageSource) != '' ">
+    <Exec Command="$(NuGetCommand) sources Add -Name Artifactory -Source @(PackageSource) -UserName $(Resolve-ArtifactoryUserName) -Password $(Resolve-ArtifactoryPassword) -Config $(NuGetToolsPath)\NuGet.Config"
+          ContinueOnError="true" Condition="'$(Resolve-Enable)' == 'true' AND '%(exitcodes.identity)'>0 AND @(PackageSource) != '' AND 
+                                            '$(Resolve-ArtifactoryUserName)' != '' AND '$(Resolve-ArtifactoryPassword)' != '' ">
     </Exec>
-
-    <!--<Error Text="One thing errored" Condition="'%(exitcodes.identity)'>0"/>-->
-
   </Target>
-  
+
   <Import Project="$(solutionDir)\artifactory.build" Condition="Exists('$(solutionDir)\artifactory.build')"/>
 </Project>

@@ -14,7 +14,7 @@ namespace JFrog.Artifactory.Utils.regexCapturing
         public static List<DeployDetails> resolve(ProjectRefModel.DeployAttribute deployAttribute, string projectDirectory, string repository)
         {          
             Dictionary<string, string> resultMap = new Dictionary<string, string>();
-            BuildArtifactsMapping mapping = BuildArtifactsMappingResolver.getArtifactsMapping(deployAttribute.Pattern);
+            BuildArtifactsMapping mapping = new BuildArtifactsMapping(deployAttribute.InputPattern, deployAttribute.OutputPattern);
             BuildArtifactsMappingResolver.matchMappingArtifacts(mapping, projectDirectory, resultMap);
 
             
@@ -25,7 +25,7 @@ namespace JFrog.Artifactory.Utils.regexCapturing
                 md5 = MD5CheckSum.GenerateMD5(a.Key),
                 sha1 = Sha1Reference.GenerateSHA1(a.Key),
                 targetRepository = repository,
-                //properties = deployAttribute.
+                properties = deployAttribute.properties
             }).ToList();
         }
     }

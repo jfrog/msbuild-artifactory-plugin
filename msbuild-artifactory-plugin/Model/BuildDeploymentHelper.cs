@@ -23,12 +23,11 @@ namespace JFrog.Artifactory.Model
             
             try
             {
+                /* Send Build Info  */
                 client.sendBuildInfo(build);
 
-                foreach(KeyValuePair<string, DeployDetails> entry  in task.deployableArtifactBuilderMap)
-                {
-                    client.deployArtifact(entry.Value);
-                }
+                /* Deploy every artifacts from the Map< module.name : artifact.name > => List<DeployDetails> */
+                task.deployableArtifactBuilderMap.ToList().ForEach(entry => entry.Value.ForEach(artifact => client.deployArtifact(artifact)));
             }
             catch (Exception e) 
             {

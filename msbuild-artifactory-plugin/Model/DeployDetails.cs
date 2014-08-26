@@ -19,7 +19,7 @@ namespace JFrog.Artifactory.Model
 
         public string md5 { set; get; }
 
-        public Dictionary<string, string> properties;
+        public string properties;
     }
 
     //public static class Builder
