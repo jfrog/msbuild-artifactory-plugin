@@ -8,7 +8,7 @@
     <owners>Jfrog</owners>
     <licenseUrl>http://www.jfrog.com/home/v_privacypolicy</licenseUrl>
     <projectUrl>http://www.jfrog.com/</projectUrl>
-    <iconUrl>http://www.jfrog.com/assets/img/jfrog-logo-badge.jpg</iconUrl>
+    <iconUrl>http://www.jfrog.com/wp-content/uploads/2014/05/logo.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Artifactory for C# .NET users - Alpha</description>
     <summary>Artifactory for C# .NET users - Alpha</summary>
