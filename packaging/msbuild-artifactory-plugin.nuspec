@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Artifactory</id>
-    <version>1.0.1.3</version>
+    <version>0.9.0</version>
     <title>Artifactory</title>
     <authors>Jfrog</authors>
     <owners>Jfrog</owners>
@@ -10,8 +10,8 @@
     <projectUrl>http://www.jfrog.com/</projectUrl>
     <iconUrl>http://www.jfrog.com/wp-content/uploads/2014/05/logo.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Artifactory for C# .NET users - Alpha</description>
-    <summary>Artifactory for C# .NET users - Alpha</summary>
+    <description>Artifactory for C# .NET users - Beta</description>
+    <summary>Artifactory for C# .NET users - Beta</summary>
     <releaseNotes>first upload to nuget , for testing by jfrog only.</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <language />

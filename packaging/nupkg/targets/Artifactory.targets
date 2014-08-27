@@ -18,7 +18,7 @@
     <buildReason Condition="'$(TF_BUILD)' == 'True'">$(TF_BUILD_BUILDREASON)</buildReason>
   </PropertyGroup>
 
-  <UsingTask TaskName="JFrog.Artifactory.ArtifactoryBuild" AssemblyFile="..\..\..\packages\Artifactory.1.0.1.3\lib\net45\JFrog.Artifactory.dll" />
+  <UsingTask TaskName="JFrog.Artifactory.ArtifactoryBuild" AssemblyFile="..\..\..\packages\Artifactory.0.9.0\lib\net45\JFrog.Artifactory.dll" />
   <Target Name="Artifactory" AfterTargets="Build">
     <ArtifactoryBuild   projRefList="@(ProjectReference)" AssemblyName="$(AssemblyName)" SolutionRoot="$(solutionDir)"
                         ProjectPath="$(MSBuildProjectDirectory)" Configuration="$(Configuration)" StartTime="$(startTime)"
