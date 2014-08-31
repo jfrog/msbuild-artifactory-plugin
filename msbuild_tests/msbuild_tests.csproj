@@ -100,9 +100,19 @@
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>-->
-  <Target Name="AfterBuild">
-    <!--Run MSTest.exe-->
-    <Exec Command="..\packages\NUnit.Runners.2.6.3\tools\nunit-console.exe /xml:TestResults/msbuild_tests.xml bin\Debug\msbuild_tests.dll" />
+
+  <PropertyGroup>
+    <OutputDirectory>TestResults</OutputDirectory>
+  </PropertyGroup>
+  
+  <Target Name="CreateTestResultDirectory" AfterTargets="Build">
+    <MakeDir
+        Directories="$(OutputDirectory)"/>
+  </Target>
+  
+  <Target Name="NUnit" AfterTargets="CreateTestResultDirectory">
+    <!--Run NUnit.exe-->
+    <Exec Command="..\packages\NUnit.Runners.2.6.3\tools\nunit-console.exe /xml:$(OutputDirectory)\msbuild_tests.xml bin\Debug\msbuild_tests.dll" />
   </Target>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>
