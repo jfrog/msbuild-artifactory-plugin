@@ -25,6 +25,8 @@ bld/
 TestResult.xml
 !msbuild_tests/regex_test/[Bb]in/
 !msbuild_tests/regex_test/[Oo]bj/
+!msbuild_tests/regex_test/**/[Dd]ebug/
+!msbuild_tests/regex_test/**/[Rr]elease/
 
 
 # Build Results of an ATL Project
