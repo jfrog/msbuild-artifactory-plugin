@@ -23,6 +23,9 @@ bld/
 #NUNIT
 *.VisualState.xml
 TestResult.xml
+!msbuild_tests/regex_test/[Bb]in/
+!msbuild_tests/regex_test/[Oo]bj/
+
 
 # Build Results of an ATL Project
 [Dd]ebugPS/
