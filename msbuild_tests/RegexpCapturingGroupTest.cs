@@ -58,16 +58,20 @@ namespace msbuild_tests
             mapping.output = "msbuild-test\\$1\\$2.dll";
             
             Dictionary<string, string> resultMap = new Dictionary<string, string>();
-            string projectPath = "C:\\Work\\nuget-project\\msbuild-artifactory-plugin\\msbuild_tests";
+            string wanted_path = Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Directory.GetCurrentDirectory()));
+            string projectPath = wanted_path;
+
+            
+            //Assert.AreEqual(wanted_path, "C:\\Work\\nuget-project\\msbuild-artifactory-plugin\\msbuild_test");
 
             BuildArtifactsMappingResolver.matchMappingArtifacts(mapping, projectPath, resultMap);
 
             Dictionary<string, string> resultMapExpected = new Dictionary<string, string>();
-            resultMapExpected.Add("C:\\Work\\nuget-project\\msbuild-artifactory-plugin\\msbuild_tests\\regex_test\\lib\\JFrog.Artifactory.dll",
+            resultMapExpected.Add(wanted_path + "\\regex_test\\lib\\JFrog.Artifactory.dll",
                                         "msbuild-test\\lib\\JFrog.Artifactory.dll");
-            resultMapExpected.Add("C:\\Work\\nuget-project\\msbuild-artifactory-plugin\\msbuild_tests\\regex_test\\obj\\Debug\\JFrog.Artifactory.dll",
+            resultMapExpected.Add(wanted_path + "\\regex_test\\obj\\Debug\\JFrog.Artifactory.dll",
                                         "msbuild-test\\obj\\Debug\\JFrog.Artifactory.dll");
-            resultMapExpected.Add("C:\\Work\\nuget-project\\msbuild-artifactory-plugin\\msbuild_tests\\regex_test\\obj\\Release\\JFrog.Artifactory.dll",
+            resultMapExpected.Add(wanted_path + "\\regex_test\\obj\\Release\\JFrog.Artifactory.dll",
                                         "msbuild-test\\obj\\Release\\JFrog.Artifactory.dll");
 
             CollectionAssert.AreEqual(resultMap, resultMapExpected);

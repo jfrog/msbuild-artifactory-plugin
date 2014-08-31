@@ -112,7 +112,7 @@
   
   <Target Name="NUnit" AfterTargets="CreateTestResultDirectory">
     <!--Run NUnit.exe-->
-    <Exec Command="..\packages\NUnit.Runners.2.6.3\tools\nunit-console.exe /xml:$(OutputDirectory)\msbuild_tests.xml bin\Debug\msbuild_tests.dll" />
+    <Exec Command="..\packages\NUnit.Runners.2.6.3\tools\nunit-console.exe /framework=4.5 /xml:$(OutputDirectory)\msbuild_tests.xml bin\Debug\msbuild_tests.dll" />
   </Target>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>
