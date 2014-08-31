@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace JFrog.Artifactory.Utils
 {
+    /// <summary>
+    /// Artifactory client to perform build info related tasks.
+    /// <summary>
     class ArtifactoryBuildInfoClient
     {
         private static String BUILD_REST_URL = "/api/build";
@@ -23,20 +26,17 @@ namespace JFrog.Artifactory.Utils
         private string _artifactoryUrl;
         private TaskLoggingHelper _log;
 
-        public ArtifactoryBuildInfoClient(string artifactoryUrl) {
-            //(artifactoryUrl, null, null);
-        }
+        //public ArtifactoryBuildInfoClient(string artifactoryUrl) {
+        //    (artifactoryUrl, null, null);
+        //}
 
         public ArtifactoryBuildInfoClient(string artifactoryUrl, string username, string password, TaskLoggingHelper log)
         {
             _artifactoryUrl = artifactoryUrl;
             _httpClient = new ArtifactoryHttpClient(artifactoryUrl, username, password);
-            //client.Credentials = credentials;
             _artifactoryUrl = artifactoryUrl; 
             _log = log;
         }
-
-        
 
         public void sendBuildInfo(Build buildInfo) {
             try
@@ -55,7 +55,7 @@ namespace JFrog.Artifactory.Utils
         public void sendBuildInfo(String buildInfoJson)
         {
             string url = _artifactoryUrl + BUILD_REST_URL;
-            //upload json file to artifactory
+            
             _log.LogMessageFromText("Uploading build info to Artifactory...", MessageImportance.High);
 
             try
@@ -69,22 +69,21 @@ namespace JFrog.Artifactory.Utils
                         
                     HttpResponse response = _httpClient.getHttpClient().execute(url, "PUT", bytes);
                     
+                    ///When sending build info, Expecting for NoContent (204) response from Artifactory 
                     if (response._statusCode != HttpStatusCode.NoContent) 
                     {
                         throw new WebException("Failed to send build info:" + response._message);  
-                    }
-                    
+                    }                   
                 }
             }
             catch (Exception we) {
                 _log.LogMessageFromText(we.Message, MessageImportance.High);
-                throw new WebException("UploadBuildInfo.UploadBuildInfoJson: " + we, we);
+                throw new WebException("Exception in Uploading BuildInfo: " + we.Message, we);
             }
         }
 
         public void deployArtifact(DeployDetails details) 
         {
-
             if (tryChecksumDeploy(details, _artifactoryUrl))
             {
                 return;
@@ -113,18 +112,13 @@ namespace JFrog.Artifactory.Utils
             _log.LogMessageFromText("Deploying artifact: " + deploymentPath, MessageImportance.High);
             HttpResponse response = _httpClient.getHttpClient().execute(deploymentPath, "PUT", data);
 
+            ///When deploying artifact, Expecting for Created (201) response from Artifactory 
             if ((response._statusCode != HttpStatusCode.OK) && (response._statusCode != HttpStatusCode.Created))
             {
                 _log.LogMessageFromText("Error occurred while publishing artifact to Artifactory: " + details.file, MessageImportance.High);
                 throw new WebException("Failed to deploy file:" + response._message);
             }    
         }
-
-        public void uploadFile()
-        {
-
-        }
-
 
         /// <summary>
         ///  Deploy an artifact to the specified destination by checking if the artifact content already exists in Artifactory
@@ -150,6 +144,7 @@ namespace JFrog.Artifactory.Utils
             _httpClient.getHttpClient().setHeader(headers);
             HttpResponse response = _httpClient.getHttpClient().execute(checksumUrlPath, "PUT");
 
+            ///When sending Checksum deploy, Expecting for Created (201) or Success (200) responses from Artifactory 
             if (response._statusCode == HttpStatusCode.Created || response._statusCode == HttpStatusCode.OK)
             {
 
@@ -166,6 +161,9 @@ namespace JFrog.Artifactory.Utils
             return false;
         }
 
+        /// <summary>
+        /// Typical PUT header with Checksums, for deploying files to Artifactory 
+        /// </summary>
         private WebHeaderCollection createHttpPutMethod(DeployDetails details)
         {
             WebHeaderCollection putHeaders = new WebHeaderCollection();

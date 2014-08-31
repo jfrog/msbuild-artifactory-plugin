@@ -23,10 +23,7 @@ namespace JFrog.Artifactory.Utils
         {
             if (path == null) return string.Empty;
                 using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-                //using (FileStream fs = File.OpenRead(path))
                 {
-                    //byte[] buf = new byte[fs.Length];
-                    // int byteread = fs.Read(buf, 0, buf.Length);SHA256CryptoServiceProvider
                     fs.Position = 0;
                     using (var sha1 = new SHA1Managed())
                     {

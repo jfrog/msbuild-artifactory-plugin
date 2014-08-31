@@ -7,15 +7,12 @@ using System.Net;
 
 namespace JFrog.Artifactory.Model
 {
-    public class ProjectRefModel
+    public class ProjectModel
     {
         public string AssemblyName { get; set; }
         public string projectDirectory { get; set; }
-        //public XDocument ArtifactoryConfigurationXml { get; set; }
         public List<ProjectMetadata> LstProjectMetadata { get; set; }
         public List<DeployAttribute> artifactoryDeploy { get; set; }
-       // public List<string> Pattern { get; set; }
-        //public List<string> properties { get; set; } 
 
         public class DeployAttribute
         {
@@ -24,6 +21,11 @@ namespace JFrog.Artifactory.Model
             public string properties { get; set; }
         }
 
+        /// <summary>
+        /// Preparing the properties (Matrix params) to suitable Url Query 
+        /// </summary>
+        /// <param name="matrixParam"></param>
+        /// <returns></returns>
         public static string buildMatrixParamsString(List<Property> matrixParam) 
         {
             StringBuilder matrix = new StringBuilder();

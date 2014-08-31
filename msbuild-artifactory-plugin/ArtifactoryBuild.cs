@@ -62,18 +62,24 @@ namespace JFrog.Artifactory
 
                 if (TfsActive != null && TfsActive.Equals("True"))
                 {
-                    Log.LogMessageFromText("TFS is Active: " + TfsActive + ";" + BuildNumber + ";" + BuildName, MessageImportance.High);
+                    Log.LogMessageFromText("I`m running inside TFS \n" + " TFS_Build_Number: " + BuildNumber +
+                                                "\n TFS_Build_ Name: " + BuildName, MessageImportance.Normal);
                 }
                 Build build = extractBuild();
                 BuildDeploymentHelper buildDeploymentHelper = new BuildDeploymentHelper();
                 buildDeploymentHelper.deploy(this, build, Log);
-                       
+
                 return true;
             }
             catch (Exception ex)
             {
+                Log.LogMessage(MessageImportance.High, "Exception from Artifactory Task: " + ex.Message);
                 Log.LogErrorFromException(ex, true);
                 return false;
+            }
+            finally 
+            {
+                deployableArtifactBuilderMap.Clear();
             }
         }
 
@@ -84,13 +90,13 @@ namespace JFrog.Artifactory
                 modules = new List<Module>(),
             };
 
-            //generate json general meta-data
+            
             Log.LogMessageFromText("Processong build info...", MessageImportance.High);
 
             /* yyyy-MM-ddTHH:mm:ss.906+0000 */
             build.started = string.Format("{0}.000+0000", StartTime); 
             build.artifactoryPrincipal = User;
-            build.buildAgent = new BuildAgent { name = "msbuild", version = ToolVersion };
+            build.buildAgent = new BuildAgent { name = "MSBuild", version = ToolVersion };
 
             build.number = string.IsNullOrWhiteSpace(BuildNumber) ? defaultBuildNumber : BuildNumber;
             build.name = BuildName ?? defaultBuildName;
@@ -108,11 +114,9 @@ namespace JFrog.Artifactory
             build.properties = AddSystemVariables();
 
             Log.LogMessageFromText("Processing build modules...", MessageImportance.High);
-
-            ProjectRefModel p = new ProjectRefModel();
-
             //Accumulate all projects
             ProccessModuleRef(build);
+
             //Calculate how long it took to do the build
             DateTime start = DateTime.ParseExact(StartTime, artifactoryDateFormat, null);
             build.durationMillis = Convert.ToInt64((DateTime.Now - start).TotalMilliseconds);
@@ -121,7 +125,7 @@ namespace JFrog.Artifactory
         }
 
         /// <summary>
-        /// find all projects referenced by the current .csporj
+        /// Find all projects referenced by the current .csporj
         /// </summary>
         private void ProccessModuleRef(Build build)
         {
@@ -134,7 +138,7 @@ namespace JFrog.Artifactory
                 ProccessModule(build, mainProject);
             }
 
-            //Module module;
+            
             foreach (var task in projRefList)
             {
                 var projectParser = new CSProjParser(task.GetMetadata("Name"), task.GetMetadata("RelativeDir"));
@@ -156,9 +160,9 @@ namespace JFrog.Artifactory
         }
 
         /// <summary>
-        /// read all referenced nuget`s in the .csproj calculate their md5, sha1 and id.
+        /// Read all referenced nuget`s in the .csproj calculate their md5, sha1 and id.
         /// </summary>
-        private void ProccessModule(Build build, ProjectRefModel project)
+        private void ProccessModule(Build build, ProjectModel project)
         {
             var module = new Module(project.AssemblyName);
 
@@ -168,7 +172,7 @@ namespace JFrog.Artifactory
 
             if (project.artifactoryDeploy != null)
             {
-                foreach (ProjectRefModel.DeployAttribute deployAttribute in project.artifactoryDeploy)
+                foreach (ProjectModel.DeployAttribute deployAttribute in project.artifactoryDeploy)
                 {
                     List<DeployDetails> details = BuildArtifacts.resolve(deployAttribute, project.projectDirectory, DeploymentRepository);
 

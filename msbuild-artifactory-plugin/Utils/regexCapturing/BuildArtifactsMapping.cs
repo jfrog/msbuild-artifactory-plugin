@@ -50,7 +50,7 @@ namespace JFrog.Artifactory.Utils.regexCapturing
                 }
                 catch (FormatException e)
                 {                 
-                    throw new ArgumentException(String.Format("Place holder '{0}' from mapping output '{1}' is not a valid number", group, mapping.output));
+                    throw new ArgumentException(String.Format("Place holder '{0}' from mapping output '{1}' is not a valid number", group, mapping.output), e.InnerException);
                 }
 
                 placeHoldersList.Add("$" + capturingNumber);

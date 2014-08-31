@@ -11,13 +11,12 @@ namespace JFrog.Artifactory.Utils.regexCapturing
     public class BuildArtifacts
     {
 
-        public static List<DeployDetails> resolve(ProjectRefModel.DeployAttribute deployAttribute, string projectDirectory, string repository)
+        public static List<DeployDetails> resolve(ProjectModel.DeployAttribute deployAttribute, string projectDirectory, string repository)
         {          
             Dictionary<string, string> resultMap = new Dictionary<string, string>();
             BuildArtifactsMapping mapping = new BuildArtifactsMapping(deployAttribute.InputPattern, deployAttribute.OutputPattern);
             BuildArtifactsMappingResolver.matchMappingArtifacts(mapping, projectDirectory, resultMap);
-
-            
+          
             return resultMap.Select(a => new DeployDetails
             {
                 artifactPath = a.Value,

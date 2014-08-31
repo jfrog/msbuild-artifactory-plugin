@@ -7,14 +7,15 @@ using System.Threading.Tasks;
 
 namespace JFrog.Artifactory.Utils.httpClient
 {
+    /// <summary>
+    /// Extends the WebClient class, for manipulating the Web Request, and Web Response. 
+    /// Creating the Preemptive client.
+    /// </summary>
     class CustomWebClient : WebClient
     {
         private int _timeout;
-
         private string _username;
-
         private string _password;
-
         private readonly string CLIENT_VERSION = "unknown";///!!!!!!!! for now
 
         public CustomWebClient(string username, string password, int timeout) {
@@ -28,7 +29,7 @@ namespace JFrog.Artifactory.Utils.httpClient
             WebRequest request = base.GetWebRequest(uri);
             request.Timeout = _timeout * 1000;
 
-            //Add preemtive 
+            //Add Basic Authentication 
             var _auth = string.Format("{0}:{1}", _username, _password);
             var _enc = Convert.ToBase64String(Encoding.UTF8.GetBytes(_auth));
             var _cred = string.Format("{0} {1}", "Basic ", _enc);
@@ -44,6 +45,8 @@ namespace JFrog.Artifactory.Utils.httpClient
         {
             HttpWebResponse response = (HttpWebResponse)base.GetWebResponse(request);
 
+            //A way to pass the Web Response object.
+            //System.Net.WebClient by default returns only status OK (200)
             if (response.StatusCode != HttpStatusCode.OK) {
                 throw new WebException(response.StatusCode.ToString(), null, WebExceptionStatus.SendFailure, response);
             }

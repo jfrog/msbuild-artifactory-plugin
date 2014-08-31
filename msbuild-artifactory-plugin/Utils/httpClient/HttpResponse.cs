@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace JFrog.Artifactory.Utils.httpClient
 {
+    /// <summary>
+    /// Custom Http response, for upper layers use
+    /// <summary>
     class HttpResponse
     {
         public HttpStatusCode _statusCode { set; get; }

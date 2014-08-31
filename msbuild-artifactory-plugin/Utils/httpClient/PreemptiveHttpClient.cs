@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace JFrog.Artifactory.Utils
 {
+
+    /// <summary>
+    /// Wrapper of HttpClient that forces preemptive BASIC authentication if user credentials exist.
+    /// </summary>
     class PreemptiveHttpClient
     {
         private WebClient _httpClient;
@@ -17,6 +21,12 @@ namespace JFrog.Artifactory.Utils
             _httpClient = createHttpClient(username, password, timeout);  
         }
 
+        /// <summary>
+        /// Execute HTTP request
+        /// </summary>
+        /// <param name="url">address</param>
+        /// <param name="method">HTTP Method Definitions</param>
+        /// <returns>Response object</returns>
         public HttpResponse execute(String url, string method)
         {
             try
@@ -37,6 +47,13 @@ namespace JFrog.Artifactory.Utils
             return new HttpResponse(HttpStatusCode.OK, "Request Succeeded");
         }
 
+        /// <summary>
+        /// Execute HTTP request
+        /// </summary>
+        /// <param name="url">address</param>
+        /// <param name="method">HTTP Method Definitions</param>
+        /// <param name="data">data buffer to send</param>
+        /// <returns>Response object</returns>
         public HttpResponse execute(String url, string method, byte[] data)
         {
             try
@@ -44,6 +61,8 @@ namespace JFrog.Artifactory.Utils
                 _httpClient.UploadData(url, method, data);
             }
             catch (WebException ex) {
+
+                //Creating custom response for upper use.
                 if (ex.Response != null)
                 {
                     var statusCode = ((HttpWebResponse)ex.Response).StatusCode;
@@ -53,6 +72,7 @@ namespace JFrog.Artifactory.Utils
                 throw new WebException(ex.Message, ex);
             }
 
+            //If no exception, the response is in OK status (200)
             return new HttpResponse(HttpStatusCode.OK, "Request Succeeded");
         }
 
@@ -72,7 +92,6 @@ namespace JFrog.Artifactory.Utils
         private WebClient createHttpClient(string username, string password, int timeout) 
         {
             CustomWebClient client = new CustomWebClient(username, password, timeout);
-
             client.Credentials = new NetworkCredential(username, password);
           
             return client;

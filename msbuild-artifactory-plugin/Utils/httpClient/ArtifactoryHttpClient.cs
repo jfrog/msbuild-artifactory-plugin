@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace JFrog.Artifactory.Utils
 {
+    /// <summary>
+    /// Wrapper of Preemptive that creates Singleton of it.
+    /// Handle Client properties like Proxy, timeout, credentials
+    /// </summary>
     class ArtifactoryHttpClient
     {
         private static readonly int DEFAULT_CONNECTION_TIMEOUT_SECS = 300;
@@ -15,10 +19,8 @@ namespace JFrog.Artifactory.Utils
         private string _artifactoryUrl;
         private string _username;
         private string _password;
-        
-        private WebHeaderCollection _header;
-        private PreemptiveHttpClient deployClient;
 
+        private PreemptiveHttpClient deployClient;
 
         public ArtifactoryHttpClient(string artifactoryUrl, string username, string password)
         {

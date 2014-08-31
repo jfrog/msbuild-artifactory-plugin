@@ -61,7 +61,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArtifactoryBuild.cs" />
-    <Compile Include="ArtifactoryResolve.cs" />
     <Compile Include="Model\ArtifactoryBuildInfoClient.cs" />
     <Compile Include="Model\ArtifactoryConfig.cs" />
     <Compile Include="Model\Build.cs" />
@@ -74,7 +73,6 @@
     <Compile Include="Utils\regexCapturing\BuildArtifactsMapping.cs" />
     <Compile Include="Utils\regexCapturing\BuildArtifactsMappingResolver.cs" />
     <Compile Include="Utils\CSProjParser.cs" />
-    <Compile Include="Utils\DirectoryCrawler.cs" />
     <Compile Include="Utils\Helpers.cs" />
     <Compile Include="Utils\httpClient\ArtifactoryHttpClient.cs" />
     <Compile Include="Utils\httpClient\CustomWebClient.cs">
@@ -83,9 +81,7 @@
     <Compile Include="Utils\httpClient\HttpResponse.cs" />
     <Compile Include="Utils\httpClient\PreemptiveHttpClient.cs" />
     <Compile Include="Utils\MD5CheckSum.cs" />
-    <Compile Include="Utils\NuspecParser.cs" />
     <Compile Include="Utils\Sha1Reference.cs" />
-    <Compile Include="Utils\UploadBuildInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

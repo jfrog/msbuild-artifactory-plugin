@@ -1,18 +1,18 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using JFrog.Artifactory.Utils.regexCapturing;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Collections;
 using System.IO;
 using System.Reflection;
+using NUnit.Framework;
 
 namespace msbuild_tests
 {
-    [TestClass]
+    [TestFixture]
     public class RegexpCapturingGroupTest
     {
-        [TestMethod]
+        [Test]
         public void TestExtractRegex()
         {
             BuildArtifactsMapping mapping = new BuildArtifactsMapping();
@@ -23,7 +23,7 @@ namespace msbuild_tests
             Assert.AreEqual(regex, regexExpect);
         }
 
-        [TestMethod]
+        [Test]
         public void TestExtractRootDirectory()
         {
             BuildArtifactsMapping mapping = new BuildArtifactsMapping();
@@ -34,7 +34,7 @@ namespace msbuild_tests
             Assert.AreEqual(path, pathExpect);
         }
 
-        [TestMethod]
+        [Test]
         public void TestPlaceHoldersList()
         {           
             BuildArtifactsMapping mapping = new BuildArtifactsMapping();
@@ -50,7 +50,7 @@ namespace msbuild_tests
             AssertExtension.Throws<ArgumentException>(() => BuildArtifactsMapping.getPlaceHoldersList(mapping, 3));
         }
 
-        [TestMethod]
+        [Test]
         public void TestMatchMapping()
         {
             BuildArtifactsMapping mapping = new BuildArtifactsMapping();
