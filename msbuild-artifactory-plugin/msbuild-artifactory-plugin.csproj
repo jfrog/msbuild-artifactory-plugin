@@ -92,8 +92,9 @@
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
-  
-  <Target Name="AfterBuild">
-  </Target>
   -->
+  <Target Name="Nuget-package" AfterTargets="Build">
+	<Exec Command="$(NuGetCommand) pack $(SolutionDir)\packaging\msbuild-artifactory-plugin.nuspec -OutputDirectory lib" />
+  </Target>
+  
 </Project>
