@@ -24,7 +24,7 @@
   <files>
     <file src="nupkg\artifactory\artifactory.build" target="artifactory" />
     <file src="nupkg\artifactory\resolve.targets" target="artifactory" />
-    <file src="nupkg\targets\Artifactory.targets" target="build" />   
+    <file src="nupkg\targets\Artifactory.targets" target="artifactory" />   
     <file src="nupkg\tools\Install.ps1" target="tools" />
 
     <!-- TO DO 

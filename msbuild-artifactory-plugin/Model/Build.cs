@@ -25,8 +25,9 @@ namespace JFrog.Artifactory.Model
         /// <summary>
         /// build number
         /// </summary>
-        public string number { get; set; } 
-       
+        public string number { get; set; }
+
+        public string type { get; set; }
         public BuildAgent buildAgent { get; set; }
         public Agent agent { get; set; } 
 

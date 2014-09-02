@@ -19,7 +19,7 @@ namespace JFrog.Artifactory
         /* MSBuild parameters */
         [Required]
         public ITaskItem[] projRefList { get; set; }     
-        public string AssemblyName { get; set; }
+        public string ProjectName { get; set; }
         public string SolutionRoot { get; set; }
         public string ProjectPath { get; set; }       
         public string StartTime { get; set; }       
@@ -43,13 +43,17 @@ namespace JFrog.Artifactory
         public string BuildURI { get; set; }
         public string BuildName { get; set; }
         public string BuildReason { get; set; }
+        public string VcsRevision { get; set; }
+        public string VcsUrl { get; set; }
+        
 
         public Dictionary<string, List<DeployDetails>> deployableArtifactBuilderMap = new Dictionary<string, List<DeployDetails>>();
 
-        private const string defaultBuildName = "Not specified";
+        private const string defaultBuildName = "Not_specified";
         private const string defaultBuildNumber = "1.0";
         private const string defaultCurrentVersion = "1.0";
         private const string artifactoryDateFormat = "yyyy-MM-ddTHH:mm:ss";
+        
 
         public ArtifactoryBuild(){}
 
@@ -63,7 +67,9 @@ namespace JFrog.Artifactory
                 if (TfsActive != null && TfsActive.Equals("True"))
                 {
                     Log.LogMessageFromText("I`m running inside TFS \n" + " TFS_Build_Number: " + BuildNumber +
-                                                "\n TFS_Build_ Name: " + BuildName, MessageImportance.Normal);
+                                                "\n TFS_Build_Name: " + BuildName +
+                                                "\n TFS_Vcs_Revision: " + VcsRevision, MessageImportance.Normal);
+
                 }
                 Build build = extractBuild();
                 BuildDeploymentHelper buildDeploymentHelper = new BuildDeploymentHelper();
@@ -91,16 +97,24 @@ namespace JFrog.Artifactory
             };
 
             
-            Log.LogMessageFromText("Processong build info...", MessageImportance.High);
+            Log.LogMessageFromText("Processing build info...", MessageImportance.High);
 
             /* yyyy-MM-ddTHH:mm:ss.906+0000 */
             build.started = string.Format("{0}.000+0000", StartTime); 
             build.artifactoryPrincipal = User;
             build.buildAgent = new BuildAgent { name = "MSBuild", version = ToolVersion };
+            build.type = "MSBuild";
 
+            build.agent = new Agent { name = "MSBuild", version = ToolVersion };
+            if (TfsActive != null && TfsActive.Equals("True"))
+            {
+                build.agent = new Agent { name = "TFS", version = "" };
+            }
+            
             build.number = string.IsNullOrWhiteSpace(BuildNumber) ? defaultBuildNumber : BuildNumber;
             build.name = BuildName ?? defaultBuildName;
             build.url = BuildURI;
+            build.vcsRevision = VcsRevision;
 
             build.version = string.IsNullOrWhiteSpace(CurrentVersion) ? defaultCurrentVersion : CurrentVersion;
 
@@ -130,7 +144,7 @@ namespace JFrog.Artifactory
         private void ProccessModuleRef(Build build)
         {
             /*Main project*/
-            var mainProjectParser = new CSProjParser(AssemblyName, ProjectPath);
+            var mainProjectParser = new CSProjParser(ProjectName, ProjectPath);
             mainProjectParser.parseArtifactoryConfigFile(SolutionRoot + "\\");
             var mainProject = mainProjectParser.Parse();
             if (mainProject != null)

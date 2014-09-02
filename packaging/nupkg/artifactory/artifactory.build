@@ -2,7 +2,7 @@
   <PropertyGroup>
 
     <CurrentVersion>2.0</CurrentVersion>
-    <!--<BuildServer>TFS</BuildServer>-->
+    <!--<buildNumber>3.0</buildNumber>-->
 
     <!--Enable Artifactory plug-in to publish Build Info -->
     <BuildInfo-Enable>true</BuildInfo-Enable>

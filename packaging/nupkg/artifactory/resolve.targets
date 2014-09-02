@@ -1,4 +1,4 @@
-<Project ToolsVersion="4.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!--
 	In order to resolve artifacts (Nuget packages) from Artifactory, we include the Artifactory Nuget repository, 
@@ -6,7 +6,7 @@
     Setting 'Resolve-Enable' to false in 'artifactory.build' cancels the override.
   -->
   <ItemGroup Condition="'$(Resolve-Enable)' == 'true' AND '$(Resolve-ArtifactoryUserName)' != '' AND '$(Resolve-ArtifactoryPassword)' != '' AND 
-						'$(Resolve-ArtifactoryUrl)' != '' AND '$(Resolve-Repository)' != '' ">
+						'$(Resolve-ArtifactoryUrl)' != '' AND '$(Resolve-Repository)' != '' AND '$(NuGetToolsPath)' != '' ">
     <ValidateResolution Include="true"/>
   </ItemGroup>
 

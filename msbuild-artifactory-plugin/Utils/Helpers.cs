@@ -19,7 +19,9 @@ namespace JFrog.Artifactory.Utils
             json.AppendFormat("\"version\":\"{0}\",",model.version);
             json.AppendFormat("\"name\":\"{0}\",", model.name);
             json.AppendFormat("\"number\":\"{0}\",", model.number);
+           // json.AppendFormat("\"type\":\"{0}\",", model.type);
             json.AppendFormat("\"buildAgent\":{{\"name\":\"{0}\",\"version\":\"{1}\"}},", model.buildAgent.name, model.buildAgent.version);
+            json.AppendFormat("\"agent\":{{\"name\":\"{0}\",\"version\":\"{1}\"}},", model.agent.name, model.agent.version);
             json.AppendFormat("\"started\":\"{0}\",", model.started);
             json.AppendFormat("\"durationMillis\":{0},", model.durationMillis);
             var arrString = model.principal.Split('\\');

@@ -1,55 +1,74 @@
-param($installPath, $toolsPath, $package)
+param($installPath, $toolsPath, $package, $project)
 
 write-host "Artifactory Package Install Script start"
 
-write-host "Copying Artifactory.build to Solution"
+write-host "Copying Artifactory configuration files to Solution"
 
 $rootDir = (Get-Item $installPath)
-
 $solution = Get-Interface $dte.Solution ([EnvDTE80.Solution2])
 $solutionDirectory = Split-Path -parent $solution.FileName
 
-$fileFrom = join-path $rootDir '\artifactory\artifactory.build'
+$fileArtifactoryFrom = join-path $rootDir '\artifactory\artifactory.build'
+$fileArtifactoryTo = join-path $solutionDirectory '\artifactory.build'
+Copy-Item $fileArtifactoryFrom $solutionDirectory
 
-$fileTo = join-path $solutionDirectory '\artifactory.build'
+$fileTaskFrom = join-path $rootDir '\artifactory\artifactory.targets'
+$fileTaskTo = join-path $solutionDirectory '\artifactory.targets'
+Copy-Item $fileTaskFrom $solutionDirectory
 
-Copy-Item $fileFrom $solutionDirectory
+$fileResolveFrom = join-path $rootDir '\artifactory\resolve.targets'
+$fileResolveTo = join-path $solutionDirectory '\resolve.targets'
+Copy-Item $fileResolveFrom $solutionDirectory
+
+Copy-Item $fileArtifactoryFrom $solutionDirectory
+Copy-Item $fileTaskFrom $solutionDirectory
+Copy-Item $fileResolveFrom $solutionDirectory
 
 $vsProject = $solution.AddSolutionFolder("Artifactory_items")
+$parentSolutionFolder = Get-Interface $vsProject.Object ([EnvDTE80.SolutionFolder])
 
 $parentProjectFolder = Get-Interface $vsProject.ProjectItems ([EnvDTE.ProjectItems])
+$projectFile = $parentProjectFolder.AddFromFile($fileArtifactoryTo)
 
-$projectFile = $parentProjectFolder.AddFromFile($fileTo)
+$childSolution = $parentSolutionFolder.AddSolutionFolder("Targets")
+$childSolutionFolder = Get-Interface $childSolution.Object ([EnvDTE80.SolutionFolder])
+$childProjectFolder = Get-Interface $childSolution.ProjectItems ([EnvDTE.ProjectItems])
 
-write-host "Updating NuGet.targets file..."
+$projectFile = $childProjectFolder.AddFromFile($fileTaskTo)
+$projectFile = $childProjectFolder.AddFromFile($fileResolveTo)
 
-
+write-host "Updating NuGet.targets file... " 
 
 $nugetPath = join-path $solutionDirectory '\.nuget\NuGet.targets'
 
-$doc = [System.Xml.XmlDocument](Get-Content $nugetPath); 
+$nugetDoc = New-Object xml
+$nugetDoc.psbase.PreserveWhitespace = true
+$nugetDoc.Load($nugetPath)
 
-$resolvePath = '$(solutionDir)' + '\packages\Artifactory.0.9.0\artifactory\resolve.targets'
+$resolvePath = '$(solutionDir)' + '\resolve.targets'
 
-$child = $doc.Project.AppendChild($doc.CreateElement("Import"))
+$child = $nugetDoc.Project.AppendChild($nugetDoc.CreateElement("Import"))
 $child.SetAttribute("Project",$resolvePath);
 $child.SetAttribute("Condition","Exists('$resolvePath')");
 
-$doc = [xml] $doc.OuterXml.Replace(" xmlns=`"`"", "")
-$doc.Save($nugetPath);
+$nugetDoc.LoadXml($nugetDoc.OuterXml.Replace(" xmlns=`"`"", ""))
+$nugetDoc.Save($nugetPath);
 
-try
-{
-	$url = "https://www.jfrog.com/"
-	$dte2 = Get-Interface $dte ([EnvDTE80.DTE2])
-	
-	$dte2.ItemOperations.Navigate($url) | Out-Null
-}
-catch
-{
+write-host "Updating Project csproj file... " 
+$project.Save()
+$projectDoc = New-Object xml
+$projectDoc.psbase.PreserveWhitespace = true
+$projectDoc.Load($project.FileName)
 
-}
+$resolvePath = '$(solutionDir)' + '\Artifactory.targets'
 
+$child = $projectDoc.Project.AppendChild($projectDoc.CreateElement("Import"))
+$child.SetAttribute("Project",$resolvePath);
+$child.SetAttribute("Condition","Exists('$resolvePath')");
+
+$projectDoc.LoadXml($projectDoc.OuterXml.Replace(" xmlns=`"`"", ""))
+$projectDoc.Save($project.FileName);
+$project.Save()
 write-host "Artifactory Package Install Script end"
 
 
