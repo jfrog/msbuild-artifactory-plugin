@@ -18,27 +18,7 @@ namespace JFrog.Artifactory.Model
         {
             public string InputPattern { get; set; }
             public string OutputPattern { get; set; }
-            public string properties { get; set; }
+            public List<KeyValuePair<string, string>> properties { get; set; }
         }
-
-        /// <summary>
-        /// Preparing the properties (Matrix params) to suitable Url Query 
-        /// </summary>
-        /// <param name="matrixParam"></param>
-        /// <returns></returns>
-        public static string buildMatrixParamsString(List<Property> matrixParam) 
-        {
-            StringBuilder matrix = new StringBuilder();
-
-            if (matrixParam != null)
-            {
-                matrixParam.ForEach(prop => matrix.Append(";").Append(WebUtility.UrlEncode(prop.key)).
-                    Append("=").Append(WebUtility.UrlEncode(prop.val)));
-
-            }
-            return matrix.ToString();
-        
-        }
-
     }
 }

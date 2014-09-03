@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,7 +12,7 @@ namespace JFrog.Artifactory.Model
     /// </summary>
     public class Build
     {
-        private readonly static string STARTED_FORMAT = "{0}.000+0000";
+        public readonly static string STARTED_FORMAT = "{0}.000+0000";
 
         /// <summary>
         /// build/assembly  version
@@ -34,7 +35,11 @@ namespace JFrog.Artifactory.Model
         /// <summary>
         /// Build start time
         /// </summary>
-        public string started { get; set; } 
+        public string started { get; set; }
+        /// <summary>
+        /// Build start time
+        /// </summary>
+        public string startedDateMillis { get; set; } 
         /// <summary>
         /// Build duration in millis
         /// </summary>
@@ -71,6 +76,37 @@ namespace JFrog.Artifactory.Model
         /// A list of one or more modules produced by this build
         /// </summary>
         public List<Module> modules { get; set; }
+
+        public Dictionary<string, string> getDefaultProperties()
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+            result.Add("build.name", name);
+            result.Add("build.number", number);
+            result.Add("build.timestamp", startedDateMillis);
+            result.Add("vcs.revision", vcsRevision);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Preparing the properties (Matrix params) to suitable Url Query 
+        /// </summary>
+        /// <param name="matrixParam"></param>
+        /// <returns></returns>
+        public static string buildMatrixParamsString(List<KeyValuePair<string, string>> matrixParam)
+        {
+            StringBuilder matrix = new StringBuilder();
+
+            if (matrixParam != null)
+            {
+                matrixParam.ForEach(
+                            pair => matrix.Append(";").Append(WebUtility.UrlEncode(pair.Key)).Append("=").
+                                    Append(WebUtility.UrlEncode(pair.Value))
+                );
+            }
+
+            return matrix.ToString();
+        }
     }
 
     /// <summary>
@@ -177,4 +213,25 @@ namespace JFrog.Artifactory.Model
         public List<string> scopes { get; set; }
     }
 
+    //public static class Json
+    //{
+    //    public static const string version = "version";
+    //    public static const string name = "name";
+    //    public static const string number = "number";
+    //    public static const string buildAgent = "buildAgent";
+    //    public static const string agent = "agent";
+    //    public static const string started = "started";
+    //    public static const string durationMillis = "durationMillis";
+    //    public static const string principal = "principal";
+    //    public static const string artifactoryPrincipal = "artifactoryPrincipal";
+    //    public static const string url = "url";
+    //    public static const string vcsRevision = "vcsRevision";
+    //    public static const string licenseControl = "licenseControl";
+    //    public static const string buildRetention = "buildRetention";
+    //    public static const string properties = "properties";
+    //    public static const string modules = "modules";
+    //    public static const string dependencies = "dependencies";
+    //    public static const string artifacts = "artifacts";
+    //    public static const string scopes = "scopes";
+    //}
 }

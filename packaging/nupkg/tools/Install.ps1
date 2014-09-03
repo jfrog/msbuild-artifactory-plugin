@@ -24,13 +24,13 @@ Copy-Item $fileArtifactoryFrom $solutionDirectory
 Copy-Item $fileTaskFrom $solutionDirectory
 Copy-Item $fileResolveFrom $solutionDirectory
 
-$vsProject = $solution.AddSolutionFolder("Artifactory_items")
+$vsProject = $solution.AddSolutionFolder(".artifactory")
 $parentSolutionFolder = Get-Interface $vsProject.Object ([EnvDTE80.SolutionFolder])
 
 $parentProjectFolder = Get-Interface $vsProject.ProjectItems ([EnvDTE.ProjectItems])
 $projectFile = $parentProjectFolder.AddFromFile($fileArtifactoryTo)
 
-$childSolution = $parentSolutionFolder.AddSolutionFolder("Targets")
+$childSolution = $parentSolutionFolder.AddSolutionFolder("targets")
 $childSolutionFolder = Get-Interface $childSolution.Object ([EnvDTE80.SolutionFolder])
 $childProjectFolder = Get-Interface $childSolution.ProjectItems ([EnvDTE.ProjectItems])
 

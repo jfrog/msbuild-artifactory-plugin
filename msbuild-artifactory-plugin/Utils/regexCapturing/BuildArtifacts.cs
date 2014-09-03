@@ -23,8 +23,7 @@ namespace JFrog.Artifactory.Utils.regexCapturing
                 file = new FileInfo(a.Key),
                 md5 = MD5CheckSum.GenerateMD5(a.Key),
                 sha1 = Sha1Reference.GenerateSHA1(a.Key),
-                targetRepository = repository,
-                properties = deployAttribute.properties
+                targetRepository = repository
             }).ToList();
         }
     }

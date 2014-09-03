@@ -72,7 +72,7 @@
     <Compile Include="Utils\regexCapturing\BuildArtifacts.cs" />
     <Compile Include="Utils\regexCapturing\BuildArtifactsMapping.cs" />
     <Compile Include="Utils\regexCapturing\BuildArtifactsMappingResolver.cs" />
-    <Compile Include="Utils\CSProjParser.cs" />
+    <Compile Include="Utils\ProjectHandler.cs" />
     <Compile Include="Utils\Helpers.cs" />
     <Compile Include="Utils\httpClient\ArtifactoryHttpClient.cs" />
     <Compile Include="Utils\httpClient\CustomWebClient.cs">
@@ -93,8 +93,13 @@
   <Target Name="BeforeBuild">
   </Target>
   -->
-  <Target Name="Nuget-package" AfterTargets="Build">
-	<Exec Command="$(NuGetCommand) pack $(SolutionDir)\packaging\msbuild-artifactory-plugin.nuspec -OutputDirectory lib" />
-  </Target>
   
+  <PropertyGroup>
+    <PLUGIN_VERSION>0.9.0</PLUGIN_VERSION>
+  </PropertyGroup>
+  
+  <Target Name="Nuget-package" AfterTargets="Build">
+    <Exec Command="$(NuGetCommand) pack $(SolutionDir)\packaging\msbuild-artifactory-plugin.nuspec -OutputDirectory lib -Version $(PLUGIN_VERSION)" Condition=" $(BUILD_NUMBER) == '' "/>
+	<Exec Command="$(NuGetCommand) pack $(SolutionDir)\packaging\msbuild-artifactory-plugin.nuspec -OutputDirectory lib -Version $(PLUGIN_VERSION).$(BUILD_NUMBER)" Condition=" $(BUILD_NUMBER) != '' "/>
+  </Target>
 </Project>

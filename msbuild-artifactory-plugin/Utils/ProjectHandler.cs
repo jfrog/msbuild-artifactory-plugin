@@ -12,23 +12,24 @@ namespace JFrog.Artifactory.Utils
     /// <summary>
     /// Represent Project in the Solution.
     /// </summary>
-    public class CSProjParser
+    public class ProjectHandler
     {
         private string ProjectName { get; set; }
         private string ProjectDirectory { get; set; }
         private ArtifactoryConfig ArtifactoryConfiguration { get; set; }
+        private List<Property> DefaultProperties { get; set; }
 
-        public CSProjParser(string projectName, string projectDirectory)
+        public ProjectHandler(string projectName, string projectDirectory)
         {
             ProjectName = projectName;
             ProjectDirectory = projectDirectory;
         }
 
         /// <summary>
-        /// parse a csproj file and return its references for nuget, local and other projects
+        /// create project model and return its references for nuget, local and other projects
         /// </summary>
-        /// <returns>list of MetaData items</returns>
-        public ProjectModel Parse()
+       
+        public ProjectModel generate()
         {
                 ProjectModel projectRefModel = new ProjectModel();
 
@@ -40,7 +41,7 @@ namespace JFrog.Artifactory.Utils
                     {
                         InputPattern = (attr.Input != null ? attr.Input : string.Empty),
                         OutputPattern = (attr.Output != null ? attr.Output : string.Empty),
-                        properties = ProjectModel.buildMatrixParamsString(attr.Properties.Property)
+                        properties = convertProperties(attr.Properties.Property)
                     });
 
                     projectRefModel.artifactoryDeploy.AddRange(result);
@@ -68,6 +69,14 @@ namespace JFrog.Artifactory.Utils
             }
 
             return false;
-        }       
+        }
+
+        private List<KeyValuePair<string, string>> convertProperties(List<Property> customProperties) 
+        {
+            List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
+            customProperties.ForEach(prop => result.Add(new KeyValuePair<string, string>(prop.key, prop.val)));
+
+            return result;
+        }
     }
 }

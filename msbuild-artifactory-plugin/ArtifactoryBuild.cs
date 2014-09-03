@@ -66,7 +66,8 @@ namespace JFrog.Artifactory
 
                 if (TfsActive != null && TfsActive.Equals("True"))
                 {
-                    Log.LogMessageFromText("I`m running inside TFS \n" + " TFS_Build_Number: " + BuildNumber +
+                    Log.LogMessageFromText("I`m running inside TFS " +
+                                                "\n TFS_Build_Number: " + BuildNumber +
                                                 "\n TFS_Build_Name: " + BuildName +
                                                 "\n TFS_Vcs_Revision: " + VcsRevision, MessageImportance.Normal);
 
@@ -100,7 +101,7 @@ namespace JFrog.Artifactory
             Log.LogMessageFromText("Processing build info...", MessageImportance.High);
 
             /* yyyy-MM-ddTHH:mm:ss.906+0000 */
-            build.started = string.Format("{0}.000+0000", StartTime); 
+            build.started = string.Format(Build.STARTED_FORMAT, StartTime); 
             build.artifactoryPrincipal = User;
             build.buildAgent = new BuildAgent { name = "MSBuild", version = ToolVersion };
             build.type = "MSBuild";
@@ -128,13 +129,15 @@ namespace JFrog.Artifactory
             build.properties = AddSystemVariables();
 
             Log.LogMessageFromText("Processing build modules...", MessageImportance.High);
+            
+            //Calculate how long it took to do the build
+            DateTime start = DateTime.ParseExact(StartTime, artifactoryDateFormat, null);
+            build.startedDateMillis = getTimeStamp(start);
+            build.durationMillis = Convert.ToInt64((DateTime.Now - start).TotalMilliseconds);
+
             //Accumulate all projects
             ProccessModuleRef(build);
 
-            //Calculate how long it took to do the build
-            DateTime start = DateTime.ParseExact(StartTime, artifactoryDateFormat, null);
-            build.durationMillis = Convert.ToInt64((DateTime.Now - start).TotalMilliseconds);
-            
             return build;
         }
 
@@ -144,9 +147,9 @@ namespace JFrog.Artifactory
         private void ProccessModuleRef(Build build)
         {
             /*Main project*/
-            var mainProjectParser = new CSProjParser(ProjectName, ProjectPath);
+            var mainProjectParser = new ProjectHandler(ProjectName, ProjectPath);
             mainProjectParser.parseArtifactoryConfigFile(SolutionRoot + "\\");
-            var mainProject = mainProjectParser.Parse();
+            var mainProject = mainProjectParser.generate();
             if (mainProject != null)
             {
                 ProccessModule(build, mainProject);
@@ -155,7 +158,7 @@ namespace JFrog.Artifactory
             
             foreach (var task in projRefList)
             {
-                var projectParser = new CSProjParser(task.GetMetadata("Name"), task.GetMetadata("RelativeDir"));
+                var projectParser = new ProjectHandler(task.GetMetadata("Name"), task.GetMetadata("RelativeDir"));
 
                 /*
                  * Trying to check if Artifactory configuration file exists (overrides) in the sub module level.
@@ -165,7 +168,7 @@ namespace JFrog.Artifactory
                 {
                    projectParser.parseArtifactoryConfigFile(SolutionRoot + "\\");
                 }
-                var projectRef = projectParser.Parse();
+                var projectRef = projectParser.generate();
                 if (projectRef != null)
                 {
                     ProccessModule(build, projectRef);
@@ -192,6 +195,10 @@ namespace JFrog.Artifactory
 
                     foreach (DeployDetails artifactDetail in details)
                     {
+                        //Add default artifact properties
+                        deployAttribute.properties.AddRange(build.getDefaultProperties());
+                        artifactDetail.properties = Build.buildMatrixParamsString(deployAttribute.properties);
+
                         string artifactName = artifactDetail.file.Name;
                         module.Artifacts.Add(new Artifact
                         {
@@ -288,6 +295,14 @@ namespace JFrog.Artifactory
 
             return dicVariables;
         }
-    
+
+
+        private string getTimeStamp(DateTime dateTime)
+        {
+            DateTime baseDate = new DateTime(1970, 1, 1);
+            TimeSpan diff = dateTime - baseDate;
+           
+            return diff.TotalMilliseconds.ToString();
+        }  
     }
 }

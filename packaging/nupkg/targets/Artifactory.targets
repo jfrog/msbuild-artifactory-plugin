@@ -1,5 +1,9 @@
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <PropertyGroup>
+    <PLUGIN_VERSION>0.9.0</PLUGIN_VERSION>
+  </PropertyGroup>
+  
   <!--
 	Import the artifactory.build properties configured for this build.
 	The artifactory.build file is located at the root directory of the project.
@@ -19,7 +23,7 @@
     <buildRevision Condition="'$(TF_BUILD)' == 'True'">$(TF_BUILD_SOURCEGETVERSION)</buildRevision>
   </PropertyGroup>
 
-  <UsingTask TaskName="JFrog.Artifactory.ArtifactoryBuild" AssemblyFile="$(solutionDir)\packages\Artifactory.0.9.0\lib\net45\JFrog.Artifactory.dll" />
+  <UsingTask TaskName="JFrog.Artifactory.ArtifactoryBuild" AssemblyFile="$(solutionDir)\packages\Artifactory.$(PLUGIN_VERSION)\lib\net45\JFrog.Artifactory.dll" />
   <Target Name="Artifactory" AfterTargets="Build">
     <ArtifactoryBuild   projRefList="@(ProjectReference)" ProjectName="$(MSBuildProjectName)" SolutionRoot="$(solutionDir)"
                         ProjectPath="$(MSBuildProjectDirectory)" Configuration="$(Configuration)" StartTime="$(startTime)"
