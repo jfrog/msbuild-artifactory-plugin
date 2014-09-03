@@ -99,7 +99,8 @@
   </PropertyGroup>
   
   <Target Name="Nuget-package" AfterTargets="Build">
-    <Exec Command="$(NuGetCommand) pack $(SolutionDir)\packaging\msbuild-artifactory-plugin.nuspec -OutputDirectory lib -Version $(PLUGIN_VERSION)" Condition=" $(BUILD_NUMBER) == '' "/>
+  	<Exec Command="del lib\*.nupkg"/>
+    	<Exec Command="$(NuGetCommand) pack $(SolutionDir)\packaging\msbuild-artifactory-plugin.nuspec -OutputDirectory lib -Version $(PLUGIN_VERSION)" Condition=" $(BUILD_NUMBER) == '' "/>
 	<Exec Command="$(NuGetCommand) pack $(SolutionDir)\packaging\msbuild-artifactory-plugin.nuspec -OutputDirectory lib -Version $(PLUGIN_VERSION).$(BUILD_NUMBER)" Condition=" $(BUILD_NUMBER) != '' "/>
   </Target>
 </Project>
