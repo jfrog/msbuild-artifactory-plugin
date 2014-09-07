@@ -29,5 +29,5 @@
     </Exec>
   </Target>
 
-  <Import Project="$(solutionDir)\artifactory.build" Condition="Exists('$(solutionDir)\artifactory.build')"/>
+  <Import Project="$(solutionDir)\.artifactory\artifactory.build" Condition="Exists('$(solutionDir)\.artifactory\artifactory.build')"/>
 </Project>

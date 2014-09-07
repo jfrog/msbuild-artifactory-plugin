@@ -13,7 +13,6 @@ namespace JFrog.Artifactory.Model
 {
     class BuildDeploymentHelper
     {
-
         public void deploy(ArtifactoryBuild task, Build build, TaskLoggingHelper log) 
         {
 
@@ -23,17 +22,16 @@ namespace JFrog.Artifactory.Model
             
             try
             {
-                if (task.BuildInfoEnable != null && task.BuildInfoEnable.Equals("true"))
-                {
-                    /* Send Build Info  */
-                    client.sendBuildInfo(build);
-                }
-
-
                 if (task.DeployEnable != null && task.DeployEnable.Equals("true"))
                 {
                     /* Deploy every artifacts from the Map< module.name : artifact.name > => List<DeployDetails> */
                     task.deployableArtifactBuilderMap.ToList().ForEach(entry => entry.Value.ForEach(artifact => client.deployArtifact(artifact)));
+                }
+
+                if (task.BuildInfoEnable != null && task.BuildInfoEnable.Equals("true"))
+                {
+                    /* Send Build Info  */
+                    client.sendBuildInfo(build);
                 }
             }
             catch (Exception e) 

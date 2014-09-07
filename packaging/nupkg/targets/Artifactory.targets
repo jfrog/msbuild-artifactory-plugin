@@ -10,7 +10,7 @@
   
   Incase the user dose not uses Nuget Enable, the artifactory.build import is from this file instead.
   -->
-  <Import Project="$(solutionDir)\artifactory.build" Condition="'$(NuGetToolsPath)' == '' And Exists('$(solutionDir)\artifactory.build')" />
+  <Import Project="$(solutionDir)\.artifactory\artifactory.build" Condition="'$(NuGetToolsPath)' == '' And Exists('$(solutionDir)\.artifactory\artifactory.build')" />
 
   <PropertyGroup>
     <startTime>$([System.DateTime]::Now.ToString(yyyy-MM-ddTHH:mm:ss))</startTime>

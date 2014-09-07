@@ -2,7 +2,9 @@
   <PropertyGroup>
 
     <CurrentVersion>2.0</CurrentVersion>
-    <!--<buildNumber>3.0</buildNumber>-->
+    
+    <!--<buildNumber>0.0</buildNumber>-->
+    <!--<buildName>msbuild-artifactory</buildName>-->
 
     <!--Enable Artifactory plug-in to publish Build Info -->
     <BuildInfo-Enable>true</BuildInfo-Enable>
