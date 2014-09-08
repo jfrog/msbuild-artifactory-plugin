@@ -29,7 +29,7 @@
                         ProjectPath="$(MSBuildProjectDirectory)" Configuration="$(Configuration)" StartTime="$(startTime)"
                         TfsActive="$(TF_BUILD)" BuildUNCPath="$(buildUNCPath)"   BuildURI="$(buildURI)" BuildReason="$(buildReason)" BuildNumber="$(buildNumber)"
                         VcsRevision="$(buildRevision)"
-                        User="$(Deploy-ArtifactoryUserName)" Password="$(Deploy-ArtifactoryPassword)" Url="$(Deploy-ArtifactoryUrl)" BuildName="$(buildName)"
+                        User="$(ArtifactoryUserName)" Password="$(ArtifactoryPassword)" Url="$(Deploy-ArtifactoryUrl)" BuildName="$(buildName)"
                         DeploymentRepository="$(Deploy-Repository)" CurrentVersion="$(CurrentVersion)" DeployEnable="$(Deploy-Enable)"
                         BuildInfoEnable="$(BuildInfo-Enable)"/>
   </Target> 

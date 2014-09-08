@@ -80,7 +80,7 @@ namespace JFrog.Artifactory
             }
             catch (Exception ex)
             {
-                Log.LogMessage(MessageImportance.High, "Exception from Artifactory Task: " + ex.Message);
+                Log.LogError("Exception from Artifactory Task: " + ex.Message);
                 Log.LogErrorFromException(ex, true);
                 return false;
             }

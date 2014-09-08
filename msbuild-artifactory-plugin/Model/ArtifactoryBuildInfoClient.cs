@@ -47,7 +47,7 @@ namespace JFrog.Artifactory.Utils
             }
             catch (Exception ex)
             {
-                _log.LogMessageFromText("Could not publish the build-info object: " + ex.InnerException, MessageImportance.High);
+                _log.LogError("Could not publish the build-info object: " + ex.InnerException);
                 throw new Exception("Could not publish build-info", ex);
             }            
         }
@@ -55,8 +55,6 @@ namespace JFrog.Artifactory.Utils
         public void sendBuildInfo(String buildInfoJson)
         {
             string url = _artifactoryUrl + BUILD_REST_URL;
-            
-            _log.LogMessageFromText("Uploading build info to Artifactory...", MessageImportance.High);
 
             try
             {
@@ -77,7 +75,7 @@ namespace JFrog.Artifactory.Utils
                 }
             }
             catch (Exception we) {
-                _log.LogMessageFromText(we.Message, MessageImportance.High);
+                _log.LogError(we.Message);
                 throw new WebException("Exception in Uploading BuildInfo: " + we.Message, we);
             }
         }
@@ -115,7 +113,7 @@ namespace JFrog.Artifactory.Utils
             ///When deploying artifact, Expecting for Created (201) response from Artifactory 
             if ((response._statusCode != HttpStatusCode.OK) && (response._statusCode != HttpStatusCode.Created))
             {
-                _log.LogMessageFromText("Error occurred while publishing artifact to Artifactory: " + details.file, MessageImportance.High);
+                _log.LogError("Error occurred while publishing artifact to Artifactory: " + details.file);
                 throw new WebException("Failed to deploy file:" + response._message);
             }    
         }
@@ -127,8 +125,7 @@ namespace JFrog.Artifactory.Utils
         {
             // Try checksum deploy only on file size greater than CHECKSUM_DEPLOY_MIN_FILE_SIZE
             if (details.file.Length < CHECKSUM_DEPLOY_MIN_FILE_SIZE) {
-                _log.LogMessageFromText("Skipping checksum deploy of file size " + details.file.Length + " , falling back to regular deployment.",
-                                            MessageImportance.High);
+                _log.LogMessage(MessageImportance.Low, "Skipping checksum deploy of file size " + details.file.Length + " , falling back to regular deployment.");
                 return false;
             }
 
@@ -148,14 +145,12 @@ namespace JFrog.Artifactory.Utils
             if (response._statusCode == HttpStatusCode.Created || response._statusCode == HttpStatusCode.OK)
             {
 
-                _log.LogMessageFromText(string.Format("Successfully performed checksum deploy of file {0} : {1}", details.file.FullName, details.sha1)
-                                                , MessageImportance.High);
+                _log.LogMessage(MessageImportance.Low, string.Format("Successfully performed checksum deploy of file {0} : {1}", details.file.FullName, details.sha1));
                 return true;
             }
             else 
             {
-                _log.LogMessageFromText(string.Format("Failed checksum deploy of checksum '{0}' with statusCode: {1}", details.sha1, response._statusCode)
-                                                , MessageImportance.High);
+                _log.LogMessage(MessageImportance.Low, string.Format("Failed checksum deploy of checksum '{0}' with statusCode: {1}", details.sha1, response._statusCode));
             }
 
             return false;

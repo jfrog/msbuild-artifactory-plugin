@@ -76,7 +76,7 @@ $child.SetAttribute("Condition","Exists('$resolvePath')");
 $projectDoc.LoadXml($projectDoc.OuterXml.Replace(" xmlns=`"`"", ""))
 $projectDoc.Save($project.FileName);
 $project.Save()
-write-host "Artifactory Package Install Script end"
+write-host "Artifactory Package Install Script ended"
 
 
 
