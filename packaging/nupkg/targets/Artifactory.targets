@@ -3,13 +3,7 @@
   <PropertyGroup>
     <PLUGIN_VERSION>0.9.0</PLUGIN_VERSION>
   </PropertyGroup>
-  
-  <!--
-	Import the artifactory.build properties configured for this build.
-	The artifactory.build file is located at the root directory of the project.
-  
-  Incase the user dose not uses Nuget Enable, the artifactory.build import is from this file instead.
-  -->
+ 
   <Import Project="$(solutionDir)\.artifactory\artifactory.build" Condition="'$(NuGetToolsPath)' == '' And Exists('$(solutionDir)\.artifactory\artifactory.build')" />
 
   <PropertyGroup>

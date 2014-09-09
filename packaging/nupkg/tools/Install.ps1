@@ -7,7 +7,20 @@ $solution = Get-Interface $dte.Solution ([EnvDTE80.Solution2])
 $solutionDirectory = Split-Path -parent $solution.FileName
 $artifactoryDir = join-path $solutionDirectory '\.artifactory'
 $artifactoryTargetsDir = join-path $artifactoryDir '\targets'
+$packageVersion = $package.version.toString()
 
+Function dynamicVersioning(){
+	#Updating the current version of the plugin
+	$taskPath = join-path $solutionDirectory '\.artifactory\targets\artifactory.targets'
+	
+	$taskDoc = New-Object xml
+	$taskDoc.psbase.PreserveWhitespace = true
+	$taskDoc.Load($taskPath)
+	
+	$taskDoc.Project.PropertyGroup[0].PLUGIN_VERSION = $packageVersion
+	$taskDoc.LoadXml($taskDoc.OuterXml)
+	$taskDoc.Save($taskPath)
+}
 
 Function Install()
 {
@@ -22,6 +35,9 @@ Function Install()
 	$fileTaskFrom = join-path $rootDir '\artifactory\artifactory.targets'
 	$fileTaskTo = join-path $artifactoryTargetsDir '\artifactory.targets'
 	Copy-Item $fileTaskFrom $artifactoryTargetsDir
+
+	#Updating the current version of the plugin
+	dynamicVersioning
 
 	$fileResolveFrom = join-path $rootDir '\artifactory\resolve.targets'
 	$fileResolveTo = join-path $artifactoryTargetsDir '\resolve.targets'
@@ -82,10 +98,12 @@ Function Install()
 Function Update()
 {
 	write-host "Recognize Update Mode"
-	
 	$fileTaskFrom = join-path $rootDir '\artifactory\artifactory.targets'
 	$fileTaskTo = join-path $artifactoryTargetsDir '\artifactory.targets'
 	Copy-Item $fileTaskFrom $artifactoryTargetsDir
+	
+	#Updating the current version of the plugin
+	dynamicVersioning
 
 	$fileResolveFrom = join-path $rootDir '\artifactory\resolve.targets'
 	$fileResolveTo = join-path $artifactoryTargetsDir '\resolve.targets'
