@@ -10,7 +10,7 @@ $artifactoryTargetsDir = join-path $artifactoryDir '\targets'
 $packageVersion = $package.version.toString()
 
 Function dynamicVersioning(){
-	#Updating the current version of the plugin
+	# Updating the current version of the plugin
 	$taskPath = join-path $solutionDirectory '\.artifactory\targets\artifactory.targets'
 	
 	$taskDoc = New-Object xml
@@ -36,7 +36,7 @@ Function Install()
 	$fileTaskTo = join-path $artifactoryTargetsDir '\artifactory.targets'
 	Copy-Item $fileTaskFrom $artifactoryTargetsDir
 
-	#Updating the current version of the plugin
+	# Updating the current version of the plugin
 	dynamicVersioning
 
 	$fileResolveFrom = join-path $rootDir '\artifactory\resolve.targets'
@@ -77,20 +77,14 @@ Function Install()
 	$nugetDoc.Save($nugetPath);
 
 	write-host "Updating Project csproj file... " 
+
+	# Grab the loaded MSBuild project for the project
+	$msbuildProject = [Microsoft.Build.Evaluation.ProjectCollection]::GlobalProjectCollection.GetLoadedProjects([System.IO.Path]::GetFullPath($project.FullName)) | Select-Object -First 1
+	$targetsPath = '$(solutionDir)' + '\.artifactory\targets\Artifactory.targets'
 	
-	$project.Save()
-	$projectDoc = New-Object xml
-	$projectDoc.psbase.PreserveWhitespace = true
-	$projectDoc.Load($project.FileName)
+	# Add the import and save the project
+    $msbuildProject.Xml.AddImport($targetsPath) | out-null
 
-	$resolvePath = '$(solutionDir)' + '\.artifactory\targets\Artifactory.targets'
-
-	$child = $projectDoc.Project.AppendChild($projectDoc.CreateElement("Import"))
-	$child.SetAttribute("Project",$resolvePath);
-	$child.SetAttribute("Condition","Exists('$resolvePath')");
-
-	$projectDoc.LoadXml($projectDoc.OuterXml.Replace(" xmlns=`"`"", ""))
-	$projectDoc.Save($project.FileName);
 	$project.Save()
 } 
 
@@ -102,7 +96,7 @@ Function Update()
 	$fileTaskTo = join-path $artifactoryTargetsDir '\artifactory.targets'
 	Copy-Item $fileTaskFrom $artifactoryTargetsDir
 	
-	#Updating the current version of the plugin
+	# Updating the current version of the plugin
 	dynamicVersioning
 
 	$fileResolveFrom = join-path $rootDir '\artifactory\resolve.targets'

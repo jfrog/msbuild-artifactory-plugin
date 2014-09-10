@@ -50,4 +50,65 @@
   </PropertyGroup>
 
   <Import Project="$(solutionDir)\.artifactory\artifactory.build" Condition="Exists('$(solutionDir)\.artifactory\artifactory.build')"/>
+
+  <UsingTask TaskName="CleanNugetConfig" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <SolutionDirectory ParameterType="System.String" Required="true" />
+      <Result ParameterType="System.Int32" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Reference Include="System.Core" />
+      <Reference Include="System.Xml" />
+      <Reference Include="System.Xml.Linq"/>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Net" />
+      <Using Namespace="System.Xml.Linq" />
+      <Using Namespace="Microsoft.Build.Framework" />
+      <Using Namespace="Microsoft.Build.Utilities" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+                try {
+                    Log.LogMessage("Downloading latest version of NuGet.exe...");
+                    Log.LogMessage(SolutionDirectory);                   
+                    
+                    SolutionDirectory = Path.GetFullPath(SolutionDirectory);
+                    string nugetConfigPath = SolutionDirectory + ".nuget\\NuGet.Config";
+                    var nugetConfigXml = XDocument.Load(nugetConfigPath);
+                                       
+                    //Look for Artifactory source
+                    if (nugetConfigXml.Root.Element("packageSources") != null)
+                    {
+                      var artifactorySource = nugetConfigXml.Root.Element("packageSources").Elements("add").FirstOrDefault(x => x.Attribute("key").Value.Equals("MSBuild-Artifactory"));
+                      if (artifactorySource != null) 
+                      {
+                          artifactorySource.Remove();
+                      }
+                    }
+                    
+                    //Look for Artifactory-credentials
+                    if (nugetConfigXml.Root.Element("packageSourceCredentials") != null)
+                    {
+                      var artifactorySourceCredential = nugetConfigXml.Root.Element("packageSourceCredentials").Element("MSBuild-Artifactory");
+                      if (artifactorySourceCredential != null)
+                      {
+                          artifactorySourceCredential.Remove();
+                      }
+                    }
+                    nugetConfigXml.Save(nugetConfigPath);                                   
+                    
+                    Result = System.Diagnostics.Process.GetCurrentProcess().Id;
+                    
+                    return true;
+                }
+                catch (Exception ex) {
+                    Log.LogErrorFromException(ex);
+                    Result = -1;
+                    
+                    return false;
+                }
+            ]]>
+      </Code>
+    </Task>
+  </UsingTask>
 </Project>
