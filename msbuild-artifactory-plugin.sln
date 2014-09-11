@@ -28,7 +28,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{106631A7-1235-4350-93B3-18F6CBCCEE5E}"
 	ProjectSection(SolutionItems) = preProject
 		packaging\nupkg\tools\Install.ps1 = packaging\nupkg\tools\Install.ps1
-		Uninstall.ps1 = Uninstall.ps1
+		packaging\nupkg\tools\Uninstall.ps1 = packaging\nupkg\tools\Uninstall.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{789A332B-A136-442F-8226-957723715717}"

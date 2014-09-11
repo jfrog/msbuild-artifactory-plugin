@@ -26,6 +26,7 @@
                         User="$(ArtifactoryUserName)" Password="$(ArtifactoryPassword)" Url="$(Deploy-ArtifactoryUrl)" BuildName="$(buildName)"
                         DeploymentRepository="$(Deploy-Repository)" CurrentVersion="$(CurrentVersion)" DeployEnable="$(Deploy-Enable)"
                         BuildInfoEnable="$(BuildInfo-Enable)"/>
+    <Delete Files="$(solutionDir)\NuGet.Config"/>
   </Target> 
   
 </Project>

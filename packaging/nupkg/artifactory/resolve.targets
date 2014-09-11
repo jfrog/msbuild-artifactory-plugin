@@ -6,7 +6,6 @@
     Setting 'Resolve-Enable' to false in 'artifactory.build' cancels the override.
   -->
 
-
   <ItemGroup Condition="'$(Resolve-ArtifactoryUserName)' == '' " >
     <Resolve-ArtifactoryUserName Include="$(ArtifactoryUserName)"  />
   </ItemGroup>
@@ -31,30 +30,20 @@
   </ItemGroup>
 
   <!-- 
-      Updating the resolution credentials in the NuGet.Config file (under .nuget)  
+      Creating a temp NuGet.Config file for internal use (under solution)   
   -->
-  <Target Name="InitCredentialsPackages" BeforeTargets="RestorePackages">
-    <Exec Command="attrib -R $(NuGetToolsPath)\NuGet.Config" ContinueOnError="true" Condition=" @(ValidateResolution) == 'true' "/>
-    <Exec Command="$(UpdateCommand)" ContinueOnError="true" Condition=" @(ValidateResolution) == 'true' AND @(PackageSource) != '' ">
-      <Output TaskParameter="exitcode" ItemName="exitcodes"/>
-    </Exec>
-
-    <Exec Command="$(AddCommand)" ContinueOnError="true" Condition=" @(ValidateResolution) == 'true' AND '%(exitcodes.identity)'>0 AND @(PackageSource) != '' ">
-    </Exec>
+  <Target Name="InitNugetConfig" BeforeTargets="RestorePackages">
+    <NugetConfig SolutionDirectory="$(solutionDir)" NugetRepository="@(PackageSource)" NugetUser="@(Resolve-ArtifactoryUserName)" NugetPassword="@(Resolve-ArtifactoryPassword)"/>
   </Target>
-
-  <PropertyGroup>
-    <!-- Commands -->
-    <UpdateCommand>$(NuGetCommand) sources Update -Name Artifactory -Source @(PackageSource) -UserName @(Resolve-ArtifactoryUserName) -Password @(Resolve-ArtifactoryPassword) -Config "$(NuGetToolsPath)\NuGet.Config"</UpdateCommand>
-    <AddCommand>$(NuGetCommand) sources Add -Name Artifactory -Source @(PackageSource) -UserName @(Resolve-ArtifactoryUserName) -Password @(Resolve-ArtifactoryPassword) -Config "$(NuGetToolsPath)\NuGet.Config"</AddCommand>
-  </PropertyGroup>
 
   <Import Project="$(solutionDir)\.artifactory\artifactory.build" Condition="Exists('$(solutionDir)\.artifactory\artifactory.build')"/>
 
-  <UsingTask TaskName="CleanNugetConfig" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+  <UsingTask TaskName="NugetConfig" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
     <ParameterGroup>
       <SolutionDirectory ParameterType="System.String" Required="true" />
-      <Result ParameterType="System.Int32" Output="true" />
+      <NugetRepository ParameterType="System.String" Required="true" />
+      <NugetUser ParameterType="System.String" Required="true" />
+      <NugetPassword ParameterType="System.String" Required="true" />
     </ParameterGroup>
     <Task>
       <Reference Include="System.Core" />
@@ -68,44 +57,38 @@
       <Using Namespace="Microsoft.Build.Utilities" />
       <Code Type="Fragment" Language="cs">
         <![CDATA[
+                FileStream nugetConfigFile = null;
                 try {
-                    Log.LogMessage("Downloading latest version of NuGet.exe...");
-                    Log.LogMessage(SolutionDirectory);                   
-                    
-                    SolutionDirectory = Path.GetFullPath(SolutionDirectory);
-                    string nugetConfigPath = SolutionDirectory + ".nuget\\NuGet.Config";
-                    var nugetConfigXml = XDocument.Load(nugetConfigPath);
-                                       
-                    //Look for Artifactory source
-                    if (nugetConfigXml.Root.Element("packageSources") != null)
-                    {
-                      var artifactorySource = nugetConfigXml.Root.Element("packageSources").Elements("add").FirstOrDefault(x => x.Attribute("key").Value.Equals("MSBuild-Artifactory"));
-                      if (artifactorySource != null) 
-                      {
-                          artifactorySource.Remove();
-                      }
-                    }
-                    
-                    //Look for Artifactory-credentials
-                    if (nugetConfigXml.Root.Element("packageSourceCredentials") != null)
-                    {
-                      var artifactorySourceCredential = nugetConfigXml.Root.Element("packageSourceCredentials").Element("MSBuild-Artifactory");
-                      if (artifactorySourceCredential != null)
-                      {
-                          artifactorySourceCredential.Remove();
-                      }
-                    }
-                    nugetConfigXml.Save(nugetConfigPath);                                   
-                    
-                    Result = System.Diagnostics.Process.GetCurrentProcess().Id;
+                      Log.LogMessage("Genereting Nuget.Config file for internal use.");                  
+                      
+                      XElement address = new XElement("configuration",
+                                    new XElement("packageSources",
+                                        new XElement("add", 
+                                        new XAttribute("key","MSBuild-Artifactory"),
+                                        new XAttribute("value",NugetRepository))),
+                                    new XElement("packageSourceCredentials",
+                                        new XElement("MSBuild-Artifactory",
+                                            new XElement("add", 
+                                            new XAttribute("key", "Username"),
+                                            new XAttribute("value", NugetUser)),
+                                            new XElement("add", 
+                                            new XAttribute("key", "ClearTextPassword"),
+                                            new XAttribute("value", NugetPassword))))
+                    );
+
+                    nugetConfigFile = new FileStream(SolutionDirectory + "\\NuGet.Config", FileMode.Create);
+                    address.Save(nugetConfigFile);                   
                     
                     return true;
                 }
                 catch (Exception ex) {
-                    Log.LogErrorFromException(ex);
-                    Result = -1;
-                    
+                    Log.LogErrorFromException(ex);                    
                     return false;
+                }
+                finally {
+                    if(nugetConfigFile != null){
+                        nugetConfigFile.Close();
+                    }
                 }
             ]]>
       </Code>

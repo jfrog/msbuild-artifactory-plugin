@@ -23,7 +23,6 @@ namespace JFrog.Artifactory
         public string SolutionRoot { get; set; }
         public string ProjectPath { get; set; }       
         public string StartTime { get; set; }       
-        public string CurrentVersion { get; set; }
         public string ServerName { get; set; }
         public string ToolVersion { get; set; }
         public string Configuration { get; set; }
@@ -117,7 +116,7 @@ namespace JFrog.Artifactory
             build.url = BuildURI;
             build.vcsRevision = VcsRevision;
 
-            build.version = string.IsNullOrWhiteSpace(CurrentVersion) ? defaultCurrentVersion : CurrentVersion;
+            build.version = defaultCurrentVersion;
 
             //get the current use from the windows OS
             System.Security.Principal.WindowsIdentity user;
