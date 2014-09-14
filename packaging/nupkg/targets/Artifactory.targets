@@ -1,7 +1,7 @@
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <PLUGIN_VERSION>0.9.0</PLUGIN_VERSION>
+    <pluginVersion>0.9.0</pluginVersion>
   </PropertyGroup>
  
   <Import Project="$(solutionDir)\.artifactory\artifactory.build" Condition="'$(NuGetToolsPath)' == '' And Exists('$(solutionDir)\.artifactory\artifactory.build')" />
@@ -17,16 +17,15 @@
     <buildRevision Condition="'$(TF_BUILD)' == 'True'">$(TF_BUILD_SOURCEGETVERSION)</buildRevision>
   </PropertyGroup>
 
-  <UsingTask TaskName="JFrog.Artifactory.ArtifactoryBuild" AssemblyFile="$(solutionDir)\packages\Artifactory.$(PLUGIN_VERSION)\lib\net45\JFrog.Artifactory.dll" />
-  <Target Name="Artifactory" AfterTargets="Build">
+  <UsingTask TaskName="JFrog.Artifactory.ArtifactoryBuild" AssemblyFile="$(solutionDir)\packages\Artifactory.$(pluginVersion)\lib\net45\JFrog.Artifactory.dll" />
+  <Target Name="[ARTIFACTORY]" AfterTargets="Build">
     <ArtifactoryBuild   projRefList="@(ProjectReference)" ProjectName="$(MSBuildProjectName)" SolutionRoot="$(solutionDir)"
                         ProjectPath="$(MSBuildProjectDirectory)" Configuration="$(Configuration)" StartTime="$(startTime)"
                         TfsActive="$(TF_BUILD)" BuildUNCPath="$(buildUNCPath)"   BuildURI="$(buildURI)" BuildReason="$(buildReason)" BuildNumber="$(buildNumber)"
                         VcsRevision="$(buildRevision)"
                         User="$(ArtifactoryUserName)" Password="$(ArtifactoryPassword)" Url="$(Deploy-ArtifactoryUrl)" BuildName="$(buildName)"
-                        DeploymentRepository="$(Deploy-Repository)" CurrentVersion="$(CurrentVersion)" DeployEnable="$(Deploy-Enable)"
+                        DeploymentRepository="$(Deploy-Repository)" DeployEnable="$(Deploy-Enable)"
                         BuildInfoEnable="$(BuildInfo-Enable)"/>
-    <Delete Files="$(solutionDir)\NuGet.Config"/>
   </Target> 
   
 </Project>

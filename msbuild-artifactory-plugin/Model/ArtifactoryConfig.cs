@@ -17,7 +17,10 @@ namespace JFrog.Artifactory.Model
     public class PropertyGroup 
     {
         [XmlElement("ArtifactoryDeploy")]
-        public ArtifactoryDeploy ArtifactoryDeploy { get; set; }     
+        public ArtifactoryDeploy ArtifactoryDeploy { get; set; }
+
+        [XmlElement("EnvironmentVariables")]
+        public EnvironmentVariables EnvironmentVariables { get; set; }  
     }
 
     public class ArtifactoryDeploy 
@@ -28,9 +31,9 @@ namespace JFrog.Artifactory.Model
 
     public class DeployAttribute
     {
-        //[XmlElement("input")]
+        //[XmlElement(ElementName = "Input", IsNullable=false)]
         public string Input { get; set; }
-        //[XmlElement("output")]
+        //[XmlElement(ElementName = "Output", IsNullable = false)]
         public string Output { get; set; }
 
         [XmlElement("Properties")]
@@ -50,5 +53,35 @@ namespace JFrog.Artifactory.Model
         public string key { get; set; }
         [XmlAttribute]
         public string val { get; set; }
+    }
+
+    public class EnvironmentVariables
+    {
+        [XmlElement("Enable")]
+        public string EnableEnvVariable { get; set; }
+
+        [XmlElement("IncludePatterns")]
+        public IncludePatterns IncludePatterns { get; set; }
+
+        [XmlElement("ExcludePatterns")]
+        public ExcludePatterns ExcludePatterns { get; set; }   
+    }
+
+    public class IncludePatterns 
+    {
+        [XmlElement("Pattern")]
+        public List<Pattern> Pattern { get; set; } 
+    }
+
+    public class ExcludePatterns
+    {
+        [XmlElement("Pattern")]
+        public List<Pattern> Pattern { get; set; } 
+    }
+
+    public class Pattern
+    {
+        [XmlAttribute]
+        public string key { get; set; }
     }
 }

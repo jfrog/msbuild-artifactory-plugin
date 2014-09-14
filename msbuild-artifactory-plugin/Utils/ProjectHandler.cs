@@ -16,7 +16,7 @@ namespace JFrog.Artifactory.Utils
     {
         private string ProjectName { get; set; }
         private string ProjectDirectory { get; set; }
-        private ArtifactoryConfig ArtifactoryConfiguration { get; set; }
+        public ArtifactoryConfig ArtifactoryConfiguration { get; set; }
         private List<Property> DefaultProperties { get; set; }
 
         public ProjectHandler(string projectName, string projectDirectory)
@@ -41,7 +41,7 @@ namespace JFrog.Artifactory.Utils
                     {
                         InputPattern = (attr.Input != null ? attr.Input : string.Empty),
                         OutputPattern = (attr.Output != null ? attr.Output : string.Empty),
-                        properties = convertProperties(attr.Properties.Property)
+                        properties = convertProperties(attr.Properties)
                     });
 
                     projectRefModel.artifactoryDeploy.AddRange(result);
@@ -65,17 +65,27 @@ namespace JFrog.Artifactory.Utils
                 System.IO.StreamReader file = new System.IO.StreamReader(artifactoryConfigurationFile.FullName);
                 ArtifactoryConfiguration = (ArtifactoryConfig)reader.Deserialize(file);
 
+                //Validate the xml file
+                if (ArtifactoryConfiguration.PropertyGroup == null || ArtifactoryConfiguration.PropertyGroup.ArtifactoryDeploy == null ||
+                    ArtifactoryConfiguration.PropertyGroup.ArtifactoryDeploy.DeployAttribute == null)
+                {
+                    return false;
+                }
+
                 return true;
             }
 
             return false;
         }
 
-        private List<KeyValuePair<string, string>> convertProperties(List<Property> customProperties) 
+        private List<KeyValuePair<string, string>> convertProperties(Properties customProperties) 
         {
             List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
-            customProperties.ForEach(prop => result.Add(new KeyValuePair<string, string>(prop.key, prop.val)));
-
+            if (customProperties != null)
+            {               
+                customProperties.Property.ForEach(prop => result.Add(new KeyValuePair<string, string>(prop.key, prop.val)));
+            }
+            
             return result;
         }
     }

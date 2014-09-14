@@ -17,7 +17,7 @@ Function dynamicVersioning(){
 	$taskDoc.psbase.PreserveWhitespace = true
 	$taskDoc.Load($taskPath)
 	
-	$taskDoc.Project.PropertyGroup[0].PLUGIN_VERSION = $packageVersion
+	$taskDoc.Project.PropertyGroup[0].pluginVersion = $packageVersion
 	$taskDoc.LoadXml($taskDoc.OuterXml)
 	$taskDoc.Save($taskPath)
 }
@@ -80,7 +80,7 @@ Function Install()
 
 	# Grab the loaded MSBuild project for the project
 	$msbuildProject = [Microsoft.Build.Evaluation.ProjectCollection]::GlobalProjectCollection.GetLoadedProjects([System.IO.Path]::GetFullPath($project.FullName)) | Select-Object -First 1
-	$targetsPath = '$(solutionDir)' + '\.artifactory\targets\Artifactory.targets'
+	$targetsPath = '$(solutionDir)' + '\.artifactory\targets\artifactory.targets'
 	
 	# Add the import and save the project
     $msbuildProject.Xml.AddImport($targetsPath) | out-null

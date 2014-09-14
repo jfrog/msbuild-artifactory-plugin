@@ -13,7 +13,7 @@ namespace JFrog.Artifactory.Model
 {
     class BuildDeploymentHelper
     {
-        public void deploy(ArtifactoryBuild task, Build build, TaskLoggingHelper log) 
+        public void deploy(ArtifactoryBuild task, Build build, BuildInfoLog log) 
         {
             ArtifactoryBuildInfoClient client = new ArtifactoryBuildInfoClient(task.Url, task.User, task.Password, log);
 
@@ -28,14 +28,14 @@ namespace JFrog.Artifactory.Model
                 if (task.BuildInfoEnable != null && task.BuildInfoEnable.Equals("true"))
                 {
                     //Upload Build Info json file to Artifactory
-                    log.LogMessageFromText("Uploading build info to Artifactory...", MessageImportance.High);
+                    log.Info("Uploading build info to Artifactory...");
                     /* Send Build Info  */
                     client.sendBuildInfo(build);
                 }
             }
             catch (Exception e)
             {
-                log.LogError("Exception has append from ArtifactoryBuildInfoClient: " + e.Message);
+                log.Error("Exception has append from ArtifactoryBuildInfoClient: " + e.Message, e);
             }
             finally 
             {

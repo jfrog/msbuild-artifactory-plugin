@@ -75,6 +75,8 @@ namespace JFrog.Artifactory.Utils.regexCapturing
         {
             string input = mapping.input;
             int firstParenthesesIndex = input.IndexOf("(");
+            if (firstParenthesesIndex == -1)
+                return input;
 
             return input.Substring(0, firstParenthesesIndex);
         }

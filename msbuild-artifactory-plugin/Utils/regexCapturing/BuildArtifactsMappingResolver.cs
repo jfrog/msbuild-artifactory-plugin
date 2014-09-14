@@ -18,15 +18,26 @@ namespace JFrog.Artifactory.Utils.regexCapturing
             /*Incase we have none relative pattern, we need to add the project path for the 
              * regular expression not to recognize it as part of the capturing groups. 
              */
-            if (String.IsNullOrWhiteSpace(rootDirectory) || !System.IO.Path.IsPathRooted(rootDirectory))
+            //if (String.IsNullOrWhiteSpace(rootDirectory) || !System.IO.Path.IsPathRooted(rootDirectory))
+            if (!System.IO.Path.IsPathRooted(rootDirectory))
             {
                 mapping.input = projectDirectory + "\\" + mapping.input;
                 rootDirectory = projectDirectory + "\\" + rootDirectory; 
             }
 
-            if (Directory.Exists(rootDirectory))
+            if (Directory.Exists(rootDirectory) || File.Exists(rootDirectory))
             {
-                IEnumerable<string> fileList = Directory.GetFiles(rootDirectory, "*.*", SearchOption.AllDirectories);
+                IEnumerable<string> fileList;
+                //Incase we have a path with a file
+                if (File.Exists(rootDirectory))
+                {
+                    fileList = new string[] { rootDirectory };
+                }
+                else 
+                {
+                    fileList = Directory.GetFiles(rootDirectory, "*.*", SearchOption.AllDirectories);
+                }
+                
 
                 string regexNormalize = mapping.input.Replace("\\", "\\\\");
                 Regex regex = new Regex(regexNormalize);

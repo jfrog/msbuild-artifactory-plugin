@@ -35,18 +35,21 @@ namespace JFrog.Artifactory.Utils
 
             //system variables start
             json.Append("\"properties\":{");
-            var lastKey = model.properties.LastOrDefault();
-
-            String quoteMatch = @"""";
-            String doubleBackSlashMatch = @"\\";
-
-            foreach (var kvp in model.properties)
+            if (model.properties != null)
             {
-                String cleanValue = Regex.Replace(kvp.Value, doubleBackSlashMatch, doubleBackSlashMatch).Replace(quoteMatch, @"\""");
-                json.AppendFormat("\"{0}\":\"{1}\"", kvp.Key, cleanValue);
-                if (kvp.Key != lastKey.Key)
+                var lastKey = model.properties.LastOrDefault();
+
+                String quoteMatch = @"""";
+                String doubleBackSlashMatch = @"\\";
+
+                foreach (var kvp in model.properties)
                 {
-                    json.Append(",");
+                    String cleanValue = Regex.Replace(kvp.Value, doubleBackSlashMatch, doubleBackSlashMatch).Replace(quoteMatch, @"\""");
+                    json.AppendFormat("\"{0}\":\"{1}\"", kvp.Key, cleanValue);
+                    if (kvp.Key != lastKey.Key)
+                    {
+                        json.Append(",");
+                    }
                 }
             }
             json.Append("},");

@@ -48,17 +48,42 @@
      -->
     
     <ArtifactoryDeploy>
+      <!--All files under OBJ and his subfolders -->
       <DeployAttribute>
-        <Input>obj\(.+)\(.+).dll</Input>
+        <Input>obj\(.+).dll</Input>
         <Output>msbuild-artifactory\$1\$2.dll</Output>
         <Properties>
           <Property key="a" val="b" />
           <Property key="a" val="c" />
         </Properties>
       </DeployAttribute>
+
+      <!--Only files under "bin" folder-->
+      <DeployAttribute>
+        <Input>bin\([^\\]+).dll</Input>
+        <Output>multiProject\$1.dll</Output>
+        <Properties>
+          <Property key="root" val="a" />
+        </Properties>
+      </DeployAttribute>
     </ArtifactoryDeploy>
 
     <!--  (?:$)-->
 
+    <!--
+      Comma or space-separated list of environment variables that will be included as part of the published build info.
+      Environment variables may contain the * and the ? wildcards. Include patterns are applied before any exclude patterns.
+     -->
+    <EnvironmentVariables>
+      <Enable>true</Enable>
+      <IncludePatterns>
+        <!--<Pattern key=""/>-->
+      </IncludePatterns>
+      <ExcludePatterns>
+        <Pattern key="*PASSWORD*"/>
+        <Pattern key="*secret?"/>
+      </ExcludePatterns>
+    </EnvironmentVariables>
+  
   </PropertyGroup>
 </Project>

@@ -7,7 +7,6 @@ $solutionDirectory = Split-Path -parent $solution.FileName
 
 Function deleteRefFromNuget()
 {
-
 	write-host "Deleting reference from Nuget.targets file"
 
 	$nugetPath = join-path $solutionDirectory '\.nuget\NuGet.targets'
