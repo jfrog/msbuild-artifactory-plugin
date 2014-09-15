@@ -22,10 +22,9 @@
     <ArtifactoryBuild   projRefList="@(ProjectReference)" ProjectName="$(MSBuildProjectName)" SolutionRoot="$(solutionDir)"
                         ProjectPath="$(MSBuildProjectDirectory)" Configuration="$(Configuration)" StartTime="$(startTime)"
                         TfsActive="$(TF_BUILD)" BuildUNCPath="$(buildUNCPath)"   BuildURI="$(buildURI)" BuildReason="$(buildReason)" BuildNumber="$(buildNumber)"
-                        VcsRevision="$(buildRevision)"
-                        User="$(ArtifactoryUserName)" Password="$(ArtifactoryPassword)" Url="$(DeployArtifactoryUrl)" BuildName="$(buildName)"
-                        DeploymentRepository="$(DeployRepository)" DeployEnable="$(DeployEnable)"
-                        BuildInfoEnable="$(BuildInfoEnable)"/>
+                        VcsRevision="$(buildRevision)" User="$(ArtifactoryUserName)" Password="$(ArtifactoryPassword)" Url="$(DeployArtifactoryUrl)"
+                        BuildName="$(buildName)" DeploymentRepository="$(DeployRepository)" DeployEnable="$(DeployEnable)"
+                        BuildInfoEnable="$(BuildInfoEnable)" ToolVersion="$(MSBuildToolsVersion)"/>
   </Target> 
   
 </Project>

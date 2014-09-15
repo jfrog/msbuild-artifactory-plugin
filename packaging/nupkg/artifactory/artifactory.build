@@ -10,9 +10,7 @@
 
     <!--Enable Artifactory plug-in to interfere Nuget "Package Restore" -->
     <ResolveEnable>true</ResolveEnable>
-    <!--The base Artifactory URL for the resolver-->
     <ResolveArtifactoryUrl>$(ARTIFACTORY_RESOLVE_ADDRESS)</ResolveArtifactoryUrl>
-    <!--The Artifactory (preferably virtual) repository key to resolve from-->
     <ResolveRepository>$(ARTIFACTORY_RESOLVE_REPO)</ResolveRepository>
     <!--
       To override the user credentials for the resolution process, uncomment the two fields below.
@@ -25,11 +23,8 @@
 
     <!--Enable Artifactory plug-in to publish artifacts -->
     <DeployEnable>true</DeployEnable>
-    <!--The base Artifactory URL for the publisher-->
     <DeployArtifactoryUrl>$(ARTIFACTORY_DEPLOY_ADDRESS)</DeployArtifactoryUrl>
-    <!--The Artifactory repository key to publish to-->
     <DeployRepository>$(ARTIFACTORY_DEPLOY_REPO)</DeployRepository>
-
 
     <!--Enable Artifactory plug-in to publish Build Info -->
     <BuildInfoEnable>true</BuildInfoEnable>
@@ -46,11 +41,10 @@
     <!-- 
       Here you can supply path to files (also with Capturing Groups) for the plug-in to publish to Artifactory 
      -->
-    
-    <ArtifactoryDeploy>
+      
       <!--All files under OBJ and his subfolders -->
       <DeployAttribute>
-        <Input>obj\(.+).dll</Input>
+        <Input>obj\(.+)\(.+).dll</Input>
         <Output>msbuild-artifactory\$1\$2.dll</Output>
         <Properties>
           <Property key="a" val="b" />

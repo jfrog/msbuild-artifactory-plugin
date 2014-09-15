@@ -36,12 +36,7 @@ namespace JFrog.Artifactory.Utils
             if (task.TfsActive != null && task.TfsActive.Equals("True"))
             {
                 build.agent = new Agent { name = "TFS", version = "" };
-            }
-
-            build.number = string.IsNullOrWhiteSpace(task.BuildNumber) ? defaultBuildNumber : task.BuildNumber;
-            build.name = task.BuildName ?? defaultBuildName;
-            build.url = task.BuildURI;
-            build.vcsRevision = task.VcsRevision;
+            }           
 
             //get the current use from the windows OS
             System.Security.Principal.WindowsIdentity user;
@@ -52,6 +47,11 @@ namespace JFrog.Artifactory.Utils
             DateTime start = DateTime.ParseExact(task.StartTime, artifactoryDateFormat, null);
             build.startedDateMillis = GetTimeStamp(start);
             build.durationMillis = Convert.ToInt64((DateTime.Now - start).TotalMilliseconds);
+
+            build.number = string.IsNullOrWhiteSpace(task.BuildNumber) ? build.startedDateMillis : task.BuildNumber;
+            build.name = task.BuildName ?? task.ProjectName;
+            build.url = task.BuildURI;
+            build.vcsRevision = task.VcsRevision;
 
             build.properties = AddSystemVariables(artifactoryConfig);
             build.licenseControl = AddLicenseControl(artifactoryConfig, log);
