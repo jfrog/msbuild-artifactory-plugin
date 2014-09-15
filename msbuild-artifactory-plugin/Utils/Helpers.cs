@@ -29,8 +29,33 @@ namespace JFrog.Artifactory.Utils
             json.AppendFormat("\"artifactoryPrincipal\":\"{0}\",", model.artifactoryPrincipal);
             json.AppendFormat("\"url\":\"{0}\",", model.url);
             json.AppendFormat("\"vcsRevision\":\"{0}\",", model.vcsRevision);
-            //TODO license control
-            json.AppendFormat("\"licenseControl\":null,", model.licenseControl);
+
+ 
+            json.Append("\"licenseControl\":{");
+            json.AppendFormat("\"runChecks\":\"{0}\",", model.licenseControl.runChecks);
+            json.AppendFormat("\"includePublishedArtifacts\":\"{0}\",", model.licenseControl.includePublishedArtifacts);
+            json.AppendFormat("\"autoDiscover\":\"{0}\",", model.licenseControl.autoDiscover);         
+            json.Append("\"licenseViolationRecipients\":[");
+
+            var lastRecip = model.licenseControl.licenseViolationsRecipients.LastOrDefault();
+            foreach (string recip in model.licenseControl.licenseViolationsRecipients) 
+            {
+                json.AppendFormat("\"{0}\"", recip);
+                if(!lastRecip.Equals(recip))
+                    json.Append(",");
+            }
+            json.Append("],");
+            json.Append("\"scopes\":[");
+            var lastScope = model.licenseControl.scopes.LastOrDefault();
+            foreach (string scope in model.licenseControl.scopes)
+            {
+                json.AppendFormat("\"{0}\"", scope);
+                if (!lastScope.Equals(scope))
+                    json.Append(",");
+            }
+            json.Append("]");
+
+            json.Append("},");
             json.Append("\"buildRetention\":null,");
 
             //system variables start

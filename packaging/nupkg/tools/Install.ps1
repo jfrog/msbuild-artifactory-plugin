@@ -59,23 +59,25 @@ Function Install()
 	$projectFile = $childProjectFolder.AddFromFile($fileTaskTo)
 	$projectFile = $childProjectFolder.AddFromFile($fileResolveTo)
 
-	write-host "Updating NuGet.targets file... " 
+	
 
 	$nugetPath = join-path $solutionDirectory '\.nuget\NuGet.targets'
+	if((Test-Path $nugetPath ))
+	{
+		write-host "Updating NuGet.targets file... " 
+		$nugetDoc = New-Object xml
+		$nugetDoc.psbase.PreserveWhitespace = true
+		$nugetDoc.Load($nugetPath)
 
-	$nugetDoc = New-Object xml
-	$nugetDoc.psbase.PreserveWhitespace = true
-	$nugetDoc.Load($nugetPath)
+		$resolvePath = '$(solutionDir)' + '\.artifactory\targets\resolve.targets'
 
-	$resolvePath = '$(solutionDir)' + '\.artifactory\targets\resolve.targets'
+		$child = $nugetDoc.Project.AppendChild($nugetDoc.CreateElement("Import"))
+		$child.SetAttribute("Project",$resolvePath);
+		$child.SetAttribute("Condition","Exists('$resolvePath')");
 
-	$child = $nugetDoc.Project.AppendChild($nugetDoc.CreateElement("Import"))
-	$child.SetAttribute("Project",$resolvePath);
-	$child.SetAttribute("Condition","Exists('$resolvePath')");
-
-	$nugetDoc.LoadXml($nugetDoc.OuterXml.Replace(" xmlns=`"`"", ""))
-	$nugetDoc.Save($nugetPath);
-
+		$nugetDoc.LoadXml($nugetDoc.OuterXml.Replace(" xmlns=`"`"", ""))
+		$nugetDoc.Save($nugetPath);
+	}
 	write-host "Updating Project csproj file... " 
 
 	# Grab the loaded MSBuild project for the project
@@ -84,6 +86,8 @@ Function Install()
 	
 	# Add the import and save the project
     $msbuildProject.Xml.AddImport($targetsPath) | out-null
+	$import = $msbuildProject.Xml.Imports | Where-Object { $_.Project.EndsWith('artifactory.targets') }
+	$import.Condition = "Exists('$targetsPath')"
 
 	$project.Save()
 } 
@@ -106,10 +110,32 @@ Function Update()
 
 #[System.Windows.Forms.MessageBox]::Show("We are proceeding with next step.") 
 
+
+# Verifying that we are inside "Update" process.
 if((Test-Path $artifactoryDir )){
-	Update
+	
+	$taskPath = join-path $solutionDirectory '\.artifactory\targets\artifactory.targets'
+	
+	$taskDoc = New-Object xml
+	$taskDoc.psbase.PreserveWhitespace = true
+	$taskDoc.Load($taskPath)
+	$currentVersion = $taskDoc.Project.PropertyGroup[0].pluginVersion
+
+	if($packageVersion -gt $currentVersion)
+	{
+		#[System.Windows.Forms.MessageBox]::Show("Install => Update") 
+		$taskDoc.Save($taskPath)
+		Update
+	}
+	else
+	{
+		#[System.Windows.Forms.MessageBox]::Show("Install => Install") 
+		$taskDoc.Save($taskPath)
+		Install
+	}
 }
 else{
+	#[System.Windows.Forms.MessageBox]::Show("Install => Install") 
 	Install
 }
 

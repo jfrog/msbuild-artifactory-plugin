@@ -21,7 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "artifactory", "artifactory"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "targets", "targets", "{E986C82B-8F29-45B0-BC8B-B7D529ADC670}"
 	ProjectSection(SolutionItems) = preProject
-		packaging\nupkg\targets\Artifactory.targets = packaging\nupkg\targets\Artifactory.targets
+		packaging\nupkg\targets\artifactory.targets = packaging\nupkg\targets\artifactory.targets
 		packaging\nupkg\artifactory\resolve.targets = packaging\nupkg\artifactory\resolve.targets
 	EndProjectSection
 EndProject

@@ -2,27 +2,27 @@
   <!--
 	In order to resolve artifacts (Nuget packages) from Artifactory, we include the Artifactory Nuget repository, 
     as it is configured in the 'artifactory.build' file. 
-    Setting 'Resolve-Enable' to false in 'artifactory.build' cancels the override.
+    Setting 'ResolveEnable' to false in 'artifactory.build' cancels the override.
   -->
-  <ItemGroup Condition="'$(Resolve-ArtifactoryUserName)' == '' " >
-    <Resolve-ArtifactoryUserName Include="$(ArtifactoryUserName)"  />
+  <ItemGroup Condition="'$(ResolveArtifactoryUserName)' == '' " >
+    <ResolveArtifactoryUserName Include="$(ArtifactoryUserName)"  />
   </ItemGroup>
-  <ItemGroup Condition="'$(Resolve-ArtifactoryUserName)' != '' " >
-    <Resolve-ArtifactoryUserName Include="$(Resolve-ArtifactoryUserName)"  />
+  <ItemGroup Condition="'$(ResolveArtifactoryUserName)' != '' " >
+    <ResolveArtifactoryUserName Include="$(ResolveArtifactoryUserName)"  />
   </ItemGroup>
-  <ItemGroup Condition="'$(Resolve-ArtifactoryPassword)' == '' " >
-    <Resolve-ArtifactoryPassword Include="$(ArtifactoryPassword)"  />
+  <ItemGroup Condition="'$(ResolveArtifactoryPassword)' == '' " >
+    <ResolveArtifactoryPassword Include="$(ArtifactoryPassword)"  />
   </ItemGroup>
-  <ItemGroup Condition="'$(Resolve-ArtifactoryPassword)' != '' " >
-    <Resolve-ArtifactoryPassword Include="$(Resolve-ArtifactoryPassword)"  />
+  <ItemGroup Condition="'$(ResolveArtifactoryPassword)' != '' " >
+    <ResolveArtifactoryPassword Include="$(ResolveArtifactoryPassword)"  />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(Resolve-Enable)' == 'true' AND '$(Resolve-ArtifactoryUrl)' != '' AND '$(Resolve-Repository)' != ''  
-                            AND '@(Resolve-ArtifactoryUserName)' != '' AND '@(Resolve-ArtifactoryPassword)' != '' AND '$(NuGetToolsPath)' != '' ">
+  <ItemGroup Condition="'$(ResolveEnable)' == 'true' AND '$(ResolveArtifactoryUrl)' != '' AND '$(ResolveRepository)' != ''  
+                            AND '@(ResolveArtifactoryUserName)' != '' AND '@(ResolveArtifactoryPassword)' != '' AND '$(NuGetToolsPath)' != '' ">
     <ValidateResolution Include="true"/>
   </ItemGroup>
   <ItemGroup Condition=" @(ValidateResolution) == 'true' AND '$(PackageSources)' == '' ">
-    <PackageSource Include="$(Resolve-ArtifactoryUrl)/api/nuget/$(Resolve-Repository)" />
+    <PackageSource Include="$(ResolveArtifactoryUrl)/api/nuget/$(ResolveRepository)" />
   </ItemGroup>
 
   <!-- 
@@ -31,7 +31,7 @@
   <Target Name="[ARTIFACTORY] InitNugetConfig" BeforeTargets="RestorePackages" Condition="@(ValidateResolution) == 'true'">
     <Warning Condition="Exists('$(solutionDir)\NuGet.Config')" Text="[ARTIFACTORY] Artifactory plugin will ignore the NuGet configuration file under the solution level" />
     <Move Condition="Exists('$(solutionDir)\NuGet.Config')" SourceFiles="$(solutionDir)\NuGet.Config" DestinationFiles="$(solutionDir)\NuGet.Config.temp-$([System.DateTime]::Now.ToString(yyyyMMddHHmmssffff))"/>
-    <NugetConfig SolutionDirectory="$(solutionDir)" NugetRepository="@(PackageSource)" NugetUser="@(Resolve-ArtifactoryUserName)" NugetPassword="@(Resolve-ArtifactoryPassword)"/>
+    <NugetConfig SolutionDirectory="$(solutionDir)" NugetRepository="@(PackageSource)" NugetUser="@(ResolveArtifactoryUserName)" NugetPassword="@(ResolveArtifactoryPassword)"/>
   </Target>
   <Target Name="[ARTIFACTORY] CleanInternalNugetConfig" AfterTargets="RestorePackages">
     <Delete Files="$(solutionDir)NuGet.Config" />

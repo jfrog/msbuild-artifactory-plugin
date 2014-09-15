@@ -45,7 +45,7 @@ namespace JFrog.Artifactory.Utils
         private void ExtractBuildProperties() 
         {
             _log.Info("Processing build info...");
-            _buildInfo = BuildInfoExtractor.extractBuild(_task, MainArtifactoryConfiguration);
+            _buildInfo = BuildInfoExtractor.extractBuild(_task, MainArtifactoryConfiguration, _log);
         }
 
         private void ProcessMainProject()

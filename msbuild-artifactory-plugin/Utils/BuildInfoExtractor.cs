@@ -16,10 +16,10 @@ namespace JFrog.Artifactory.Utils
     {
         private const string defaultBuildName = "Not_specified";
         private const string defaultBuildNumber = "1.0";
-        private const string defaultCurrentVersion = "1.0";
         private const string artifactoryDateFormat = "yyyy-MM-ddTHH:mm:ss";
+        private const string validEmailPattern = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*((\\.[A-Za-z]{2,}){1}$)";
 
-        public static Build extractBuild(ArtifactoryBuild task, ArtifactoryConfig artifactoryConfig)
+        public static Build extractBuild(ArtifactoryBuild task, ArtifactoryConfig artifactoryConfig, BuildInfoLog log)
         {
             Build build = new Build
             {
@@ -43,8 +43,6 @@ namespace JFrog.Artifactory.Utils
             build.url = task.BuildURI;
             build.vcsRevision = task.VcsRevision;
 
-            build.version = defaultCurrentVersion;
-
             //get the current use from the windows OS
             System.Security.Principal.WindowsIdentity user;
             user = System.Security.Principal.WindowsIdentity.GetCurrent();
@@ -52,11 +50,12 @@ namespace JFrog.Artifactory.Utils
 
             //Calculate how long it took to do the build
             DateTime start = DateTime.ParseExact(task.StartTime, artifactoryDateFormat, null);
-            build.startedDateMillis = getTimeStamp(start);
+            build.startedDateMillis = GetTimeStamp(start);
             build.durationMillis = Convert.ToInt64((DateTime.Now - start).TotalMilliseconds);
 
             build.properties = AddSystemVariables(artifactoryConfig);
-
+            build.licenseControl = AddLicenseControl(artifactoryConfig, log);
+            
             return build;
         }
 
@@ -180,7 +179,7 @@ namespace JFrog.Artifactory.Utils
 
             foreach(string key in sysVariables.Keys)
             {
-                if (!pathConflicts(includePatterns, excludePatterns, includeRegex, excludeRegex, key)) 
+                if (!PathConflicts(includePatterns, excludePatterns, includeRegex, excludeRegex, key)) 
                 {
                     dicVariables.Add(key, (string)sysVariables[key]);
                 }
@@ -190,7 +189,38 @@ namespace JFrog.Artifactory.Utils
             return dicVariables;
         }
 
-        private static string getTimeStamp(DateTime dateTime)
+        private static LicenseControl AddLicenseControl(ArtifactoryConfig artifactoryConfig, BuildInfoLog log)
+        {
+            LicenseControl licenseControl = new LicenseControl();
+
+            licenseControl.runChecks = artifactoryConfig.PropertyGroup.LicenseControlCheck.EnableLicenseControl;
+            licenseControl.autoDiscover = artifactoryConfig.PropertyGroup.LicenseControlCheck.DisableAutomaticLicenseDiscovery;
+            licenseControl.includePublishedArtifacts = "false";
+            licenseControl.licenseViolationsRecipients = new List<string>();
+            licenseControl.scopes = new List<string>();
+
+            
+            foreach (Recipient recip in artifactoryConfig.PropertyGroup.LicenseControlCheck.LicenseViolationNotification.Recipient)
+            {
+                if (validateEmail(recip))
+                {
+                    licenseControl.licenseViolationsRecipients.Add(recip.email);
+                }
+                else 
+                {
+                    log.Warning("Invalid email address, under License Control violation recipients.");
+                }                            
+            }
+
+            foreach (Scope scope in artifactoryConfig.PropertyGroup.LicenseControlCheck.LimitChecksToTheFollowingScopes.Scope)
+            {
+                licenseControl.scopes.Add(scope.value);
+            }
+
+            return licenseControl;
+        }
+
+        private static string GetTimeStamp(DateTime dateTime)
         {
             DateTime baseDate = new DateTime(1970, 1, 1);
             TimeSpan diff = dateTime - baseDate;
@@ -206,7 +236,7 @@ namespace JFrog.Artifactory.Utils
             return "^" + Regex.Escape(pattern).Replace("\\*", ".*").Replace("\\?", ".") + "$";
         }
 
-        private static bool pathConflicts(List<Pattern> includePatterns, List<Pattern> excludePatterns, Regex includeRegex, Regex excludeRegex, string key)
+        private static bool PathConflicts(List<Pattern> includePatterns, List<Pattern> excludePatterns, Regex includeRegex, Regex excludeRegex, string key)
         {
             if ((includePatterns.Count > 0) && !includeRegex.Match(key).Success)
             {
@@ -219,6 +249,16 @@ namespace JFrog.Artifactory.Utils
             }
 
             return false;
+        }
+
+        private static bool validateEmail(Recipient recipient) 
+        {
+            if (recipient == null && string.IsNullOrWhiteSpace(recipient.email))
+                return false;
+
+            Regex emailRegex = new Regex(validEmailPattern, RegexOptions.IgnoreCase);
+
+            return emailRegex.Match(recipient.email).Success;
         }
     }
 }

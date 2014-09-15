@@ -51,5 +51,13 @@ namespace JFrog.Artifactory.Utils
         {
             _log.LogMessage(MessageImportance.High, PRE_FIX + message);
         }
+
+        /*
+         *  Verbosity: Minimal=>Normal=>Detailed=>Diagnostic 
+         */
+        public void Warning(string message)
+        {
+            _log.LogWarning(PRE_FIX + message);
+        }
     }
 }

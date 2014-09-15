@@ -9,30 +9,30 @@
     <!-- Resolution-->
 
     <!--Enable Artifactory plug-in to interfere Nuget "Package Restore" -->
-    <Resolve-Enable>true</Resolve-Enable>
+    <ResolveEnable>true</ResolveEnable>
     <!--The base Artifactory URL for the resolver-->
-    <Resolve-ArtifactoryUrl>$(ARTIFACTORY_RESOLVE_ADDRESS)</Resolve-ArtifactoryUrl>
+    <ResolveArtifactoryUrl>$(ARTIFACTORY_RESOLVE_ADDRESS)</ResolveArtifactoryUrl>
     <!--The Artifactory (preferably virtual) repository key to resolve from-->
-    <Resolve-Repository>$(ARTIFACTORY_RESOLVE_REPO)</Resolve-Repository>
+    <ResolveRepository>$(ARTIFACTORY_RESOLVE_REPO)</ResolveRepository>
     <!--
       To override the user credentials for the resolution process, uncomment the two fields below.
     -->
-    <!--<Resolve-ArtifactoryUserName>$(ARTIFACTORY_USER_RESOLVE)</Resolve-ArtifactoryUserName>-->
-    <!--<Resolve-ArtifactoryPassword>$(ARTIFACTORY_PASSWORD_RESOLVE)</Resolve-ArtifactoryPassword>-->
+    <!--<ResolveArtifactoryUserName>$(ARTIFACTORY_USER_RESOLVE)</ResolveArtifactoryUserName>-->
+    <!--<ResolveArtifactoryPassword>$(ARTIFACTORY_PASSWORD_RESOLVE)</ResolveArtifactoryPassword>-->
 
 
     <!-- Deployment-->
 
     <!--Enable Artifactory plug-in to publish artifacts -->
-    <Deploy-Enable>true</Deploy-Enable>
+    <DeployEnable>true</DeployEnable>
     <!--The base Artifactory URL for the publisher-->
-    <Deploy-ArtifactoryUrl>$(ARTIFACTORY_DEPLOY_ADDRESS)</Deploy-ArtifactoryUrl>
+    <DeployArtifactoryUrl>$(ARTIFACTORY_DEPLOY_ADDRESS)</DeployArtifactoryUrl>
     <!--The Artifactory repository key to publish to-->
-    <Deploy-Repository>$(ARTIFACTORY_DEPLOY_REPO)</Deploy-Repository>
+    <DeployRepository>$(ARTIFACTORY_DEPLOY_REPO)</DeployRepository>
 
 
     <!--Enable Artifactory plug-in to publish Build Info -->
-    <BuildInfo-Enable>true</BuildInfo-Enable>
+    <BuildInfoEnable>true</BuildInfoEnable>
 
 
     <!--
@@ -68,8 +68,6 @@
       </DeployAttribute>
     </ArtifactoryDeploy>
 
-    <!--  (?:$)-->
-
     <!--
       Comma or space-separated list of environment variables that will be included as part of the published build info.
       Environment variables may contain the * and the ? wildcards. Include patterns are applied before any exclude patterns.
@@ -84,6 +82,20 @@
         <Pattern key="*secret?"/>
       </ExcludePatterns>
     </EnvironmentVariables>
-  
+
+    <!--
+      Check if you wish that automatic license scanning will occur after the build is complete.
+    -->
+    <LicenseControl>
+      <Enable>true</Enable>
+      <LicenseViolationNotification>
+        <Recipient email="liorha@gmail.com"/>
+      </LicenseViolationNotification>
+      <DisableAutomaticLicenseDiscovery>false</DisableAutomaticLicenseDiscovery>
+      <LimitChecksToTheFollowingScopes>
+        <Scope value="Debug"/>
+      </LimitChecksToTheFollowingScopes>
+    </LicenseControl>
+    
   </PropertyGroup>
 </Project>

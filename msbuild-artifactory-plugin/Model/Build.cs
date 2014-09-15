@@ -17,7 +17,7 @@ namespace JFrog.Artifactory.Model
         /// <summary>
         /// build/assembly  version
         /// </summary>
-        public string version { get; set; } 
+        public string version { get { return "1.0.1"; } }
         /// <summary>
         /// project name
         /// </summary>
@@ -129,11 +129,11 @@ namespace JFrog.Artifactory.Model
 
     public class LicenseControl
     {
-        public bool runChecks { get; set; }
-        public bool includePublishedArtifacts { get; set; }
-        public bool autoDiscover { get; set; }
-        public string licenseViolationsRecipientsList { get; set; }
-        public string scopeList { get; set; }
+        public string runChecks { get; set; }
+        public string includePublishedArtifacts { get; set; }
+        public string autoDiscover { get; set; }
+        public List<string> licenseViolationsRecipients { get; set; }
+        public List<string> scopes { get; set; }
 
     }
 

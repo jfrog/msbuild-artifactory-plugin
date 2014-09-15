@@ -20,7 +20,10 @@ namespace JFrog.Artifactory.Model
         public ArtifactoryDeploy ArtifactoryDeploy { get; set; }
 
         [XmlElement("EnvironmentVariables")]
-        public EnvironmentVariables EnvironmentVariables { get; set; }  
+        public EnvironmentVariables EnvironmentVariables { get; set; }
+
+        [XmlElement("LicenseControl")]
+        public LicenseControlCheck LicenseControlCheck { get; set; }  
     }
 
     public class ArtifactoryDeploy 
@@ -83,5 +86,44 @@ namespace JFrog.Artifactory.Model
     {
         [XmlAttribute]
         public string key { get; set; }
+    }
+
+    public class LicenseControlCheck 
+    {
+        [XmlElement("Enable")]
+        public string EnableLicenseControl { get; set; }
+
+        [XmlElement("LicenseViolationNotification")]
+        public LicenseViolationNotification LicenseViolationNotification { get; set; }
+
+        [XmlElement("DisableAutomaticLicenseDiscovery")]
+        public string DisableAutomaticLicenseDiscovery { get; set; }
+
+        [XmlElement("LimitChecksToTheFollowingScopes")]
+        public LimitChecksToTheFollowingScopes LimitChecksToTheFollowingScopes { get; set; }
+    }
+
+    public class LicenseViolationNotification 
+    {
+        [XmlElement("Recipient")]
+        public List<Recipient> Recipient { get; set; } 
+    }
+
+    public class Recipient 
+    {
+        [XmlAttribute]
+        public string email { get; set; }
+    }
+
+    public class LimitChecksToTheFollowingScopes 
+    {
+        [XmlElement("Scope")]
+        public List<Scope> Scope { get; set; } 
+    }
+
+    public class Scope 
+    {
+        [XmlAttribute]
+        public string value { get; set; }
     }
 }
