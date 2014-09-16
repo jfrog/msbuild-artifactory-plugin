@@ -41,7 +41,7 @@
     <!-- 
       Here you can supply path to files (also with Capturing Groups) for the plug-in to publish to Artifactory 
      -->
-      
+    <ArtifactoryDeploy>
       <!--All files under OBJ and his subfolders -->
       <DeployAttribute>
         <Input>obj\(.+)\(.+).dll</Input>
