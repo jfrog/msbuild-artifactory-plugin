@@ -14,11 +14,11 @@ namespace JFrog.Artifactory.Utils
     /// </summary>
     class PreemptiveHttpClient
     {
-        private WebClient _httpClient;
+        private CustomWebClient _httpClient;       
 
-        public PreemptiveHttpClient(string username, string password, int timeout) 
+        public PreemptiveHttpClient(string username, string password) 
         {
-            _httpClient = createHttpClient(username, password, timeout);  
+            _httpClient = createHttpClient(username, password);  
         }
 
         /// <summary>
@@ -81,6 +81,16 @@ namespace JFrog.Artifactory.Utils
             _httpClient.Headers = newHeader;
         }
 
+        public void setProxy(WebProxy proxy) 
+        {
+            _httpClient.Proxy = proxy;
+        }
+
+        public void setConnectionTimeout(int connectionTimeout)
+        {
+            _httpClient._timeout = connectionTimeout;
+        }
+
         public void Dispose()
         {
             if (_httpClient != null)
@@ -89,14 +99,12 @@ namespace JFrog.Artifactory.Utils
             }
         }
 
-        private WebClient createHttpClient(string username, string password, int timeout) 
+        private CustomWebClient createHttpClient(string username, string password) 
         {
-            CustomWebClient client = new CustomWebClient(username, password, timeout);
+            CustomWebClient client = new CustomWebClient(username, password);
             client.Credentials = new NetworkCredential(username, password);
-          
+            
             return client;
-        }
-
-        
+        }        
     }
 }

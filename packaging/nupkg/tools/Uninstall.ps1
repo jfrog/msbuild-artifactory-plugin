@@ -17,7 +17,7 @@ Function deleteRefFromNuget()
 	$nugetDoc.psbase.PreserveWhitespace = true
 	$nugetDoc.Load($nugetPath)
 
-	$resolvePath = '$(solutionDir)' + '\.artifactory\targets\resolve.targets'
+	$resolvePath = '$(solutionDir)' + '\.artifactory\Resolve.targets'
 
 	foreach ($node in $nugetDoc.Project.Import) {
 		if($node.GetAttribute("Project") -eq $resolvePath){
@@ -34,7 +34,7 @@ Function deleteRefFromMainProject()
   # Normalize project path before calling GetLoadedProjects as it performs a string based match
   $msbuildProject = [Microsoft.Build.Evaluation.ProjectCollection]::GlobalProjectCollection.GetLoadedProjects([System.IO.Path]::GetFullPath($project.FullName)) | Select-Object -First 1
 
-  $importToRemove = $msbuildProject.Xml.Imports | Where-Object { $_.Project.EndsWith('artifactory.targets') }
+  $importToRemove = $msbuildProject.Xml.Imports | Where-Object { $_.Project.EndsWith('Deploy.targets') }
   
   # Remove the elements and save the project
   $msbuildProject.Xml.RemoveChild($importToRemove) | out-null
@@ -42,28 +42,7 @@ Function deleteRefFromMainProject()
   $project.Save()
 }
 
-# Verifying that we are inside "Update" process.
-if((Test-Path $artifactoryDir )){	
-	$artifactoryDirectory = Get-ChildItem C:\Work\nuget-project\multi-project\packages | Where-Object {$_.PSIsContainer -eq $true -and $_.Name -match "Artifactory.*"}
-		
-	if($artifactoryDirectory.length -gt 1)
-	{
-		#[System.Windows.Forms.MessageBox]::Show("UnInstall => Update") 		
-	}
-	else
-	{			
-		#[System.Windows.Forms.MessageBox]::Show("UnInstall => UnInstall") 
-		deleteRefFromNuget
-		deleteRefFromMainProject
-	}
-}
-else{
-	#[System.Windows.Forms.MessageBox]::Show("UnInstall => UnInstall") 
-	deleteRefFromNuget
-	deleteRefFromMainProject
-}
+deleteRefFromNuget
+deleteRefFromMainProject
 
 write-host "Artifactory Package UnInstall Script ended"
-
-
-

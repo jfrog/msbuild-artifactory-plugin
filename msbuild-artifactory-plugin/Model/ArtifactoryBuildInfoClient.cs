@@ -19,6 +19,7 @@ namespace JFrog.Artifactory.Utils
     {
         private static String BUILD_REST_URL = "/api/build";
         private static String BUILD_BROWSE_URL = "/webapp/builds";
+        private static readonly int DEFAULT_CONNECTION_TIMEOUT_SECS = 300;
 
         /* Try checksum deploy of files greater than 10KB */
         private static readonly int CHECKSUM_DEPLOY_MIN_FILE_SIZE = 10240; 
@@ -32,10 +33,32 @@ namespace JFrog.Artifactory.Utils
 
         public ArtifactoryBuildInfoClient(string artifactoryUrl, string username, string password, BuildInfoLog log)
         {
-            _artifactoryUrl = artifactoryUrl;
             _httpClient = new ArtifactoryHttpClient(artifactoryUrl, username, password);
             _artifactoryUrl = artifactoryUrl; 
             _log = log;
+        }
+
+        public void setProxy(DeployClient deployClient)
+        {
+            if (deployClient.proxy.IsBypass)
+                return;
+
+            WebProxy proxy = new WebProxy(deployClient.proxy.Host, deployClient.proxy.Port);
+            proxy.UseDefaultCredentials = false;
+            if (deployClient.proxy.IsCredentialsExists) 
+            {
+                proxy.Credentials = new NetworkCredential(deployClient.proxy.Username, deployClient.proxy.Password);
+            }
+            
+            _httpClient.getHttpClient().setProxy(proxy);
+        }
+
+        public void setConnectionTimeout(DeployClient deployClient) 
+        {
+            if (deployClient.timeout == 0)
+                _httpClient.getHttpClient().setConnectionTimeout(DEFAULT_CONNECTION_TIMEOUT_SECS);
+            else
+                _httpClient.getHttpClient().setConnectionTimeout(deployClient.timeout);
         }
 
         public void sendBuildInfo(Build buildInfo) {

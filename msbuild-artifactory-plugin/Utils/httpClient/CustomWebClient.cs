@@ -13,15 +13,22 @@ namespace JFrog.Artifactory.Utils.httpClient
     /// </summary>
     class CustomWebClient : WebClient
     {
-        private int _timeout;
         private string _username;
         private string _password;
         private readonly string CLIENT_VERSION = "unknown";///!!!!!!!! for now
 
+        public int _timeout { set; get; }
+
+        public CustomWebClient(string username, string password)
+        {
+            this._username = username;
+            this._password = password;
+        }
+
         public CustomWebClient(string username, string password, int timeout) {
-            _username = username;
-            _password = password;
-            _timeout = timeout;
+            this._username = username;
+            this._password = password;
+            this._timeout = timeout;
         }
 
         protected override WebRequest GetWebRequest(Uri uri)

@@ -28,12 +28,12 @@
   <!-- 
       Creating a temp NuGet.Config file for internal use (under solution)   
   -->
-  <Target Name="[ARTIFACTORY] InitNugetConfig" BeforeTargets="RestorePackages" Condition="@(ValidateResolution) == 'true'">
+  <Target Name="[Artifactory] InitNugetConfig" BeforeTargets="RestorePackages" Condition="@(ValidateResolution) == 'true'">
     <Warning Condition="Exists('$(solutionDir)\NuGet.Config')" Text="[ARTIFACTORY] Artifactory plugin will ignore the NuGet configuration file under the solution level" />
     <Move Condition="Exists('$(solutionDir)\NuGet.Config')" SourceFiles="$(solutionDir)\NuGet.Config" DestinationFiles="$(solutionDir)\NuGet.Config.temp-$([System.DateTime]::Now.ToString(yyyyMMddHHmmssffff))"/>
     <NugetConfig SolutionDirectory="$(solutionDir)" NugetRepository="@(PackageSource)" NugetUser="@(ResolveArtifactoryUserName)" NugetPassword="@(ResolveArtifactoryPassword)"/>
   </Target>
-  <Target Name="[ARTIFACTORY] CleanInternalNugetConfig" AfterTargets="RestorePackages">
+  <Target Name="[Artifactory] CleanInternalNugetConfig" AfterTargets="RestorePackages">
     <Delete Files="$(solutionDir)NuGet.Config" />
   </Target>
 

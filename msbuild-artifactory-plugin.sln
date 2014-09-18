@@ -16,13 +16,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nupkg", "nupkg", "{2530B43E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "artifactory", "artifactory", "{197C5D76-0D7A-4CD8-A21B-1A5B61BBC82E}"
 	ProjectSection(SolutionItems) = preProject
-		packaging\nupkg\artifactory\artifactory.build = packaging\nupkg\artifactory\artifactory.build
+		packaging\nupkg\artifactory\Artifactory.build = packaging\nupkg\artifactory\Artifactory.build
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "targets", "targets", "{E986C82B-8F29-45B0-BC8B-B7D529ADC670}"
 	ProjectSection(SolutionItems) = preProject
-		packaging\nupkg\targets\artifactory.targets = packaging\nupkg\targets\artifactory.targets
-		packaging\nupkg\artifactory\resolve.targets = packaging\nupkg\artifactory\resolve.targets
+		packaging\nupkg\targets\Deploy.targets = packaging\nupkg\targets\Deploy.targets
+		packaging\nupkg\artifactory\Resolve.targets = packaging\nupkg\artifactory\Resolve.targets
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{106631A7-1235-4350-93B3-18F6CBCCEE5E}"

@@ -24,7 +24,7 @@ namespace JFrog.Artifactory.Utils
             Build build = new Build
             {
                 modules = new List<Module>(),
-            };           
+            };
 
             /* yyyy-MM-ddTHH:mm:ss.906+0000 */
             build.started = string.Format(Build.STARTED_FORMAT, task.StartTime);
@@ -36,7 +36,7 @@ namespace JFrog.Artifactory.Utils
             if (task.TfsActive != null && task.TfsActive.Equals("True"))
             {
                 build.agent = new Agent { name = "TFS", version = "" };
-            }           
+            }
 
             //get the current use from the windows OS
             System.Security.Principal.WindowsIdentity user;
@@ -55,7 +55,9 @@ namespace JFrog.Artifactory.Utils
 
             build.properties = AddSystemVariables(artifactoryConfig);
             build.licenseControl = AddLicenseControl(artifactoryConfig, log);
-            
+
+            ConfigHttpClient(artifactoryConfig, build);
+
             return build;
         }
 
@@ -171,8 +173,8 @@ namespace JFrog.Artifactory.Utils
                 excludeRegexUnion.Remove(excludeRegexUnion.Length - 1, 1);
             }
 
-            Regex includeRegex = new Regex(includeRegexUnion.ToString());
-            Regex excludeRegex = new Regex(excludeRegexUnion.ToString());
+            Regex includeRegex = new Regex(includeRegexUnion.ToString(), RegexOptions.IgnoreCase);
+            Regex excludeRegex = new Regex(excludeRegexUnion.ToString(), RegexOptions.IgnoreCase);
 
             IDictionary sysVariables = Environment.GetEnvironmentVariables();
             var dicVariables = new Dictionary<string, string>();
@@ -194,7 +196,7 @@ namespace JFrog.Artifactory.Utils
             LicenseControl licenseControl = new LicenseControl();
 
             licenseControl.runChecks = artifactoryConfig.PropertyGroup.LicenseControlCheck.EnableLicenseControl;
-            licenseControl.autoDiscover = artifactoryConfig.PropertyGroup.LicenseControlCheck.DisableAutomaticLicenseDiscovery;
+            licenseControl.autoDiscover = artifactoryConfig.PropertyGroup.LicenseControlCheck.EnableLicenseControl;
             licenseControl.includePublishedArtifacts = "false";
             licenseControl.licenseViolationsRecipients = new List<string>();
             licenseControl.scopes = new List<string>();
@@ -259,6 +261,27 @@ namespace JFrog.Artifactory.Utils
             Regex emailRegex = new Regex(validEmailPattern, RegexOptions.IgnoreCase);
 
             return emailRegex.Match(recipient.email).Success;
+        }
+
+        private static void ConfigHttpClient(ArtifactoryConfig artifactoryConfig, Build build)
+        {
+            build.deployClient = new DeployClient();
+            if (!string.IsNullOrWhiteSpace(artifactoryConfig.PropertyGroup.ConnectionTimeout))
+                build.deployClient.timeout = int.Parse(artifactoryConfig.PropertyGroup.ConnectionTimeout);
+
+            ProxySettings proxySettings = artifactoryConfig.PropertyGroup.ProxySettings;
+            if (!string.IsNullOrWhiteSpace(proxySettings.Bypass) && proxySettings.Bypass.Equals("true")) 
+            {
+                build.deployClient.proxy = new Proxy();
+                build.deployClient.proxy.IsBypass = true;
+                return;
+            }
+                
+
+            if (!string.IsNullOrWhiteSpace(proxySettings.UserName) && !string.IsNullOrWhiteSpace(proxySettings.UserName))
+                build.deployClient.proxy = new Proxy(proxySettings.Host, proxySettings.Port, proxySettings.UserName, proxySettings.Password);
+            else
+                build.deployClient.proxy = new Proxy(proxySettings.Host, proxySettings.Port);
         }
     }
 }

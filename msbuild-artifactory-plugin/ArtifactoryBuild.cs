@@ -59,13 +59,12 @@ namespace JFrog.Artifactory
                 //System.Diagnostics.Debugger.Launch();
                 buildInfoLog.Info("Artifactory Post-Build task started");
 
-
                 if (TfsActive != null && TfsActive.Equals("True"))
                 {
-                    buildInfoLog.Info("I`m running inside TFS " +
-                                                "\n TFS_Build_Number: " + BuildNumber +
-                                                "\n TFS_Build_Name: " + BuildName +
-                                                "\n TFS_Vcs_Revision: " + VcsRevision);
+                    buildInfoLog.Info("Running inside TFS " +
+                                            "\n TFS_Build_Number: " + BuildNumber +
+                                            "\n TFS_Build_Name: " + BuildName +
+                                            "\n TFS_Vcs_Revision: " + VcsRevision);
 
                 }
                 SolutionHandler solution = new SolutionHandler(this, buildInfoLog);

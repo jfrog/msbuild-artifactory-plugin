@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <UsingTask TaskName="JFrog.Artifactory.ArtifactoryBuild" AssemblyFile="$(solutionDir)\packages\Artifactory.$(pluginVersion)\lib\net45\JFrog.Artifactory.dll" />
-  <Target Name="[ARTIFACTORY]" AfterTargets="Build">
+  <Target Name="[Artifactory]" AfterTargets="Build">
     <ArtifactoryBuild   projRefList="@(ProjectReference)" ProjectName="$(MSBuildProjectName)" SolutionRoot="$(solutionDir)"
                         ProjectPath="$(MSBuildProjectDirectory)" Configuration="$(Configuration)" StartTime="$(startTime)"
                         TfsActive="$(TF_BUILD)" BuildUNCPath="$(buildUNCPath)"   BuildURI="$(buildURI)" BuildReason="$(buildReason)" BuildNumber="$(buildNumber)"

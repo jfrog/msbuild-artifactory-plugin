@@ -16,6 +16,8 @@ namespace JFrog.Artifactory.Model
         public void deploy(ArtifactoryBuild task, Build build, BuildInfoLog log) 
         {
             ArtifactoryBuildInfoClient client = new ArtifactoryBuildInfoClient(task.Url, task.User, task.Password, log);
+            client.setProxy(build.deployClient);
+            client.setConnectionTimeout(build.deployClient);
 
             try
             {

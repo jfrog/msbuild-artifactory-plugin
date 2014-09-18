@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +24,14 @@ namespace JFrog.Artifactory.Model
         public EnvironmentVariables EnvironmentVariables { get; set; }
 
         [XmlElement("LicenseControl")]
-        public LicenseControlCheck LicenseControlCheck { get; set; }  
+        public LicenseControlCheck LicenseControlCheck { get; set; }
+
+        [XmlElement(ElementName = "ConnectionTimeout")]
+        //[DefaultValue(200)]
+        public string ConnectionTimeout { get; set; }
+
+        [XmlElement("ProxySettings")]
+        public ProxySettings ProxySettings { get; set; } 
     }
 
     public class ArtifactoryDeploy 
@@ -125,5 +133,19 @@ namespace JFrog.Artifactory.Model
     {
         [XmlAttribute]
         public string value { get; set; }
+    }
+
+    public class ProxySettings 
+    {
+        [XmlElement("Bypass")]
+        public string Bypass { get; set; }
+        [XmlElement("Host")]
+        public string Host { get; set; }
+        [XmlElement("Port")]
+        public int Port { get; set; }
+        [XmlElement("UserName")]
+        public string UserName { get; set; }
+        [XmlElement("Password")]
+        public string Password { get; set; } 
     }
 }

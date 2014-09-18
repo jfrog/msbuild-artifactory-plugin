@@ -77,6 +77,8 @@ namespace JFrog.Artifactory.Model
         /// </summary>
         public List<Module> modules { get; set; }
 
+        public DeployClient deployClient { set; get; }
+    
         public Dictionary<string, string> getDefaultProperties()
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
@@ -213,6 +215,45 @@ namespace JFrog.Artifactory.Model
         public List<string> scopes { get; set; }
     }
 
+    public class DeployClient
+    {
+        public int timeout { get; set; }
+        public Proxy proxy { set; get; }
+    }
+
+    public class Proxy 
+    {
+        private string host;
+        private int port;
+        private string username;
+        private string password;
+        private bool isCredentialsExists;
+
+        public Proxy() { }
+
+        public Proxy(string host, int port)
+        {
+            this.host = host;
+            this.port = port;
+            this.isCredentialsExists = false;
+        }
+
+        public Proxy(string host, int port, string username, string password) 
+        {
+            this.host = host;
+            this.port = port;
+            this.username = username;
+            this.password = password;
+            this.isCredentialsExists = true;
+        }
+
+        public string Host { get { return this.host; } }
+        public int Port { get { return this.port; } }
+        public string Username { get { return this.username; } }
+        public string Password { get { return this.password; } }
+        public bool IsCredentialsExists { get { return this.isCredentialsExists; } }
+        public bool IsBypass { get; set; }
+    }
     //public static class Json
     //{
     //    public static const string version = "version";

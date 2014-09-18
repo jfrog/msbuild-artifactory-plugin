@@ -10,7 +10,7 @@ namespace JFrog.Artifactory.Utils
 {
     public class BuildInfoLog
     {
-        private const string PRE_FIX = "[ARTIFACTORY] ";
+        private const string PRE_FIX = "[Artifactory] ";
         private TaskLoggingHelper _log { set; get; }
 
         public BuildInfoLog(TaskLoggingHelper taskLogger)

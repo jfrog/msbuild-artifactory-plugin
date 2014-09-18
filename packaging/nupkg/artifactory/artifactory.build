@@ -1,6 +1,8 @@
 ﻿<Project ToolsVersion="4.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
 
+    <!--MSBuild Artifactory Plugin-->
+    
     <!--Credentials agents the Artifactory-->
     <ArtifactoryUserName>$(ARTIFACTORY_USER)</ArtifactoryUserName>
     <ArtifactoryPassword>$(ARTIFACTORY_PASSWORD)</ArtifactoryPassword>
@@ -18,7 +20,7 @@
     <!--<ResolveArtifactoryUserName>$(ARTIFACTORY_USER_RESOLVE)</ResolveArtifactoryUserName>-->
     <!--<ResolveArtifactoryPassword>$(ARTIFACTORY_PASSWORD_RESOLVE)</ResolveArtifactoryPassword>-->
 
-
+    
     <!-- Deployment-->
 
     <!--Enable Artifactory plug-in to publish artifacts -->
@@ -35,31 +37,49 @@
         The information will be take from TFS.
     -->
     <!--<buildNumber>0.0</buildNumber>-->
-    <!--<buildName>msbuild-artifactory</buildName>-->
+    <!--<buildName>projectName</buildName>-->
 
     
     <!-- 
-      Here you can supply path to files (also with Capturing Groups) for the plug-in to publish to Artifactory 
-     -->
-    <ArtifactoryDeploy>
-      <!--All files under OBJ and his subfolders -->
+      Deployment instructions:
       <DeployAttribute>
+          Scope for deployment attributes
+          Can be multi tag
+      <Input>
+          Here you can supply path to files, that the plugin will collect.
+          The usage of Regular Expressions, are not mandatory.
+          Regular Expressions must be in format of Capturing Group (inside Brackets).
+          More information about Capturing Group, can be found here: http://www.regular-expressions.info/brackets.html
+      <Output>
+          A path inside the Artifactory deployment repository.
+          If you used Regular Expression, using of the $# symbols, are consist to the Capturing Groups, you defined in the Input tag phrase.
+          This mechanism enables you to dynamically construct the target path.
+      <Property>
+          Artifactory properties, that will be attached for every files that the Input tag phrase found.
+          Can be multi tag
+     -->   
+    
+    <ArtifactoryDeploy>
+      <!--Examples-->
+      
+      <!--All Nuget files under OBJ folder -->
+      <!--<DeployAttribute>
+      <Input>bin\(.+).nupkg</Input>
+      <Output>DemoProject\$1.nupkg</Output>
+      <Properties>
+        <Property key="type" val="nupkg" />
+      </Properties>
+      </DeployAttribute>-->
+      
+      <!--All files under OBJ folder and his subfolders -->
+      <!--<DeployAttribute>
         <Input>obj\(.+)\(.+).dll</Input>
-        <Output>msbuild-artifactory\$1\$2.dll</Output>
+        <Output>DemoProject\$1\$2.dll</Output>
         <Properties>
           <Property key="a" val="b" />
           <Property key="a" val="c" />
         </Properties>
-      </DeployAttribute>
-
-      <!--Only files under "bin" folder-->
-      <DeployAttribute>
-        <Input>bin\([^\\]+).dll</Input>
-        <Output>multiProject\$1.dll</Output>
-        <Properties>
-          <Property key="root" val="a" />
-        </Properties>
-      </DeployAttribute>
+      </DeployAttribute>-->
     </ArtifactoryDeploy>
 
     <!--
@@ -72,8 +92,9 @@
         <!--<Pattern key=""/>-->
       </IncludePatterns>
       <ExcludePatterns>
-        <Pattern key="*PASSWORD*"/>
-        <Pattern key="*secret?"/>
+        <Pattern key="*password*"/>
+        <Pattern key="*key*"/>
+        <Pattern key="*secret*"/>
       </ExcludePatterns>
     </EnvironmentVariables>
 
@@ -83,7 +104,7 @@
     <LicenseControl>
       <Enable>true</Enable>
       <LicenseViolationNotification>
-        <Recipient email="liorha@gmail.com"/>
+        <!--<Recipient email="address@gmail.com"/>-->
       </LicenseViolationNotification>
       <DisableAutomaticLicenseDiscovery>false</DisableAutomaticLicenseDiscovery>
       <LimitChecksToTheFollowingScopes>
@@ -91,5 +112,14 @@
       </LimitChecksToTheFollowingScopes>
     </LicenseControl>
     
+    <!--Network Configuration-->
+    <ConnectionTimeout>300</ConnectionTimeout>
+    <ProxySettings>
+      <Bypass>true</Bypass>
+      <Host>127.0.0.1</Host>
+      <Port>8888</Port>
+      <UserName></UserName>
+      <Password></Password>
+    </ProxySettings>
   </PropertyGroup>
 </Project>

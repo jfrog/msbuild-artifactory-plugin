@@ -13,9 +13,7 @@ namespace JFrog.Artifactory.Utils
     /// Handle Client properties like Proxy, timeout, credentials
     /// </summary>
     class ArtifactoryHttpClient
-    {
-        private static readonly int DEFAULT_CONNECTION_TIMEOUT_SECS = 300;
-
+    {      
         private string _artifactoryUrl;
         private string _username;
         private string _password;
@@ -29,18 +27,11 @@ namespace JFrog.Artifactory.Utils
             _password = password;
         }
 
-        public void setTimeout() { }
-
-        public void setProxy() { }
-
         public PreemptiveHttpClient getHttpClient()
         {
             if (deployClient == null)
-            {
-                if (connectionTimeout == 0)
-                    connectionTimeout = DEFAULT_CONNECTION_TIMEOUT_SECS;
-
-                PreemptiveHttpClient client = new PreemptiveHttpClient(_username, _password, connectionTimeout);
+            {              
+                PreemptiveHttpClient client = new PreemptiveHttpClient(_username, _password);
                 deployClient = client;
             }
 
@@ -54,8 +45,5 @@ namespace JFrog.Artifactory.Utils
                 deployClient.Dispose();
             }
         }
-
-        public int connectionTimeout { set; get; } 
-
     }
 }

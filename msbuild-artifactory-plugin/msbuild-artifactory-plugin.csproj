@@ -104,6 +104,7 @@
     <Compile Include="Model\BuildDeploymentHelper.cs" />
     <Compile Include="Model\DeployDetails.cs" />
     <Compile Include="Model\ProjectRefModel.cs" />
+    <Compile Include="Model\ProxySettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\BuildInfoExtractor.cs" />
     <Compile Include="Utils\BuildInfoLog.cs" />
