@@ -270,18 +270,56 @@ namespace JFrog.Artifactory.Utils
                 build.deployClient.timeout = int.Parse(artifactoryConfig.PropertyGroup.ConnectionTimeout);
 
             ProxySettings proxySettings = artifactoryConfig.PropertyGroup.ProxySettings;
+
+            //Check if the user Bypass proxy settings
             if (!string.IsNullOrWhiteSpace(proxySettings.Bypass) && proxySettings.Bypass.Equals("true")) 
-            {
-                build.deployClient.proxy = new Proxy();
-                build.deployClient.proxy.IsBypass = true;
-                return;
+            {             
+                    build.deployClient.proxy = new Proxy();
+                    build.deployClient.proxy.IsBypass = true;
+                    return;             
             }
-                
+
+            /*
+            * Incase that the proxy settings, is not set in the plugin level, we need
+            * to check the settings in the environment variables 
+            */
+            if (string.IsNullOrWhiteSpace(proxySettings.Host)) 
+            {
+                ProxySettings envVariableProxy = proxyEnvVariables();
+                if (envVariableProxy != null)
+                {
+                    artifactoryConfig.PropertyGroup.ProxySettings = envVariableProxy;
+                }               
+            }
 
             if (!string.IsNullOrWhiteSpace(proxySettings.UserName) && !string.IsNullOrWhiteSpace(proxySettings.UserName))
                 build.deployClient.proxy = new Proxy(proxySettings.Host, proxySettings.Port, proxySettings.UserName, proxySettings.Password);
             else
                 build.deployClient.proxy = new Proxy(proxySettings.Host, proxySettings.Port);
+        }
+
+        private static ProxySettings proxyEnvVariables()
+        {
+            string httpHost = Environment.GetEnvironmentVariable("http_proxy");
+            if (string.IsNullOrWhiteSpace(httpHost))
+                return null;
+
+            ProxySettings proxy = new ProxySettings();
+            proxy.UserName = Environment.GetEnvironmentVariable("http_proxy.user");
+            proxy.Password = Environment.GetEnvironmentVariable("http_proxy.password");
+
+            //Regex for capturing the host and the port (if exists).
+            Regex addressPattern = new Regex(@"^\w+://(?<host>[^/]+):(?<port>\d+)/?");
+            Match match = addressPattern.Match(httpHost);
+            if (match.Success) 
+            {
+                if(string.IsNullOrWhiteSpace(match.Groups["port"].Value))
+                    proxy.Port = int.Parse(match.Groups["port"].Value);
+                proxy.Host = match.Groups["host"].Value;
+
+            }         
+
+            return proxy;
         }
     }
 }

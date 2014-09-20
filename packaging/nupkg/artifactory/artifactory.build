@@ -63,13 +63,13 @@
       <!--Examples-->
       
       <!--All Nuget files under OBJ folder -->
-      <!--<DeployAttribute>
+      <DeployAttribute>
       <Input>bin\(.+).nupkg</Input>
       <Output>DemoProject\$1.nupkg</Output>
       <Properties>
         <Property key="type" val="nupkg" />
       </Properties>
-      </DeployAttribute>-->
+      </DeployAttribute>
       
       <!--All files under OBJ folder and his subfolders -->
       <!--<DeployAttribute>
