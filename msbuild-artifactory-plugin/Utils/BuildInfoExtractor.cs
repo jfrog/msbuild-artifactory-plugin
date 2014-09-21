@@ -289,7 +289,13 @@ namespace JFrog.Artifactory.Utils
                 if (envVariableProxy != null)
                 {
                     artifactoryConfig.PropertyGroup.ProxySettings = envVariableProxy;
-                }               
+                }
+                else 
+                {
+                    build.deployClient.proxy = new Proxy();
+                    build.deployClient.proxy.IsBypass = true;
+                    return;  
+                }
             }
 
             if (!string.IsNullOrWhiteSpace(proxySettings.UserName) && !string.IsNullOrWhiteSpace(proxySettings.UserName))
