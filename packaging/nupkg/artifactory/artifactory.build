@@ -46,7 +46,7 @@
           Scope for deployment attributes
           Can be multi tag
       <Input>
-          Here you can supply path to files, that the plugin will collect.
+          Here you can supply path to files, that the plugin will collect, the path is relative for the project or referenced projects.
           The usage of Regular Expressions, are not mandatory.
           Regular Expressions must be in format of Capturing Group (inside Brackets).
           More information about Capturing Group, can be found here: http://www.regular-expressions.info/brackets.html
@@ -100,9 +100,10 @@
 
     <!--
       Check if you wish that automatic license scanning will occur after the build is complete.
+      Only for Artifactory Pro users!
     -->
     <LicenseControl>
-      <Enable>true</Enable>
+      <Enable>false</Enable>
       <LicenseViolationNotification>
         <!--<Recipient email="address@gmail.com"/>-->
       </LicenseViolationNotification>

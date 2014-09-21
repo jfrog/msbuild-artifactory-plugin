@@ -6,7 +6,7 @@
     <title>Artifactory</title>
     <authors>Jfrog</authors>
     <owners>Jfrog</owners>
-    <licenseUrl>http://www.jfrog.com/home/v_privacypolicy</licenseUrl>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <projectUrl>http://www.jfrog.com/</projectUrl>
     <iconUrl>http://www.jfrog.com/wp-content/uploads/2014/05/logo.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
