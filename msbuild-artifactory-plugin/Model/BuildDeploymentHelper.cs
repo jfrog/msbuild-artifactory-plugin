@@ -21,13 +21,13 @@ namespace JFrog.Artifactory.Model
 
             try
             {
-                if (task.DeployEnable != null && task.DeployEnable.Equals("true"))
+                if (task.DeployEnabled != null && task.DeployEnabled.Equals("true"))
                 {
                     /* Deploy every artifacts from the Map< module.name : artifact.name > => List<DeployDetails> */
                     task.deployableArtifactBuilderMap.ToList().ForEach(entry => entry.Value.ForEach(artifact => client.deployArtifact(artifact)));
                 }
 
-                if (task.BuildInfoEnable != null && task.BuildInfoEnable.Equals("true"))
+                if (task.BuildInfoEnabled != null && task.BuildInfoEnabled.Equals("true"))
                 {
                     //Upload Build Info json file to Artifactory
                     log.Info("Uploading build info to Artifactory...");

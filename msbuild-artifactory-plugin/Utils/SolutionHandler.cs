@@ -24,7 +24,7 @@ namespace JFrog.Artifactory.Utils
 
         private void GetMainConfiguration()
         {
-            FileInfo artifactoryConfigurationFile = new FileInfo(_task.SolutionRoot + "\\.artifactory\\artifactory.build");
+            FileInfo artifactoryConfigurationFile = new FileInfo(_task.SolutionRoot + "\\.artifactory\\Artifactory.build");
 
             if (!artifactoryConfigurationFile.Exists)
                 throw new Exception("The main configuration file are missing! (Location: solutionDir\\.artifactory)");

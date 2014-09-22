@@ -148,7 +148,7 @@ namespace JFrog.Artifactory.Utils
         /// <returns></returns>
         private static Dictionary<string, string> AddSystemVariables(ArtifactoryConfig artifactoryConfig)
         {
-            string enable = artifactoryConfig.PropertyGroup.EnvironmentVariables.EnableEnvVariable;
+            string enable = artifactoryConfig.PropertyGroup.EnvironmentVariables.EnabledEnvVariable;
             if (string.IsNullOrWhiteSpace(enable) || !enable.Equals("true"))
                 return new Dictionary<string, string>();
 
@@ -194,14 +194,14 @@ namespace JFrog.Artifactory.Utils
         {
             LicenseControl licenseControl = new LicenseControl();
 
-            licenseControl.runChecks = artifactoryConfig.PropertyGroup.LicenseControlCheck.EnableLicenseControl;
-            licenseControl.autoDiscover = artifactoryConfig.PropertyGroup.LicenseControlCheck.EnableLicenseControl;
+            licenseControl.runChecks = artifactoryConfig.PropertyGroup.LicenseControlCheck.EnabledLicenseControl;
+            licenseControl.autoDiscover = artifactoryConfig.PropertyGroup.LicenseControlCheck.EnabledLicenseControl;
             licenseControl.includePublishedArtifacts = "false";
             licenseControl.licenseViolationsRecipients = new List<string>();
             licenseControl.scopes = new List<string>();
 
             
-            foreach (Recipient recip in artifactoryConfig.PropertyGroup.LicenseControlCheck.LicenseViolationNotification.Recipient)
+            foreach (Recipient recip in artifactoryConfig.PropertyGroup.LicenseControlCheck.LicenseViolationRecipients.Recipient)
             {
                 if (validateEmail(recip))
                 {
@@ -213,7 +213,7 @@ namespace JFrog.Artifactory.Utils
                 }                            
             }
 
-            foreach (Scope scope in artifactoryConfig.PropertyGroup.LicenseControlCheck.LimitChecksToTheFollowingScopes.Scope)
+            foreach (Scope scope in artifactoryConfig.PropertyGroup.LicenseControlCheck.ScopesForLicenseAnalysis.Scope)
             {
                 licenseControl.scopes.Add(scope.value);
             }

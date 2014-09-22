@@ -37,10 +37,10 @@ namespace JFrog.Artifactory.Utils
                 {
                     projectRefModel.artifactoryDeploy = new List<ProjectModel.DeployAttribute>();
 
-                    var result = ArtifactoryConfiguration.PropertyGroup.ArtifactoryDeploy.DeployAttribute.Select(attr => new ProjectModel.DeployAttribute()
+                    var result = ArtifactoryConfiguration.PropertyGroup.Deployments.Deploy.Select(attr => new ProjectModel.DeployAttribute()
                     {
-                        InputPattern = (attr.Input != null ? attr.Input : string.Empty),
-                        OutputPattern = (attr.Output != null ? attr.Output : string.Empty),
+                        InputPattern = (attr.InputPattern != null ? attr.InputPattern : string.Empty),
+                        OutputPattern = (attr.OutputPattern != null ? attr.OutputPattern : string.Empty),
                         properties = convertProperties(attr.Properties)
                     });
 
@@ -58,7 +58,7 @@ namespace JFrog.Artifactory.Utils
          */
         public bool parseArtifactoryConfigFile(string projectArtifactoryConfigPath)
         {
-            FileInfo artifactoryConfigurationFile = new FileInfo(projectArtifactoryConfigPath + "artifactory.build");
+            FileInfo artifactoryConfigurationFile = new FileInfo(projectArtifactoryConfigPath + "Artifactory.build");
             if (artifactoryConfigurationFile.Exists)
             {
                 System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(ArtifactoryConfig));
@@ -66,8 +66,8 @@ namespace JFrog.Artifactory.Utils
                 ArtifactoryConfiguration = (ArtifactoryConfig)reader.Deserialize(file);
 
                 //Validate the xml file
-                if (ArtifactoryConfiguration.PropertyGroup == null || ArtifactoryConfiguration.PropertyGroup.ArtifactoryDeploy == null ||
-                    ArtifactoryConfiguration.PropertyGroup.ArtifactoryDeploy.DeployAttribute == null)
+                if (ArtifactoryConfiguration.PropertyGroup == null || ArtifactoryConfiguration.PropertyGroup.Deployments == null ||
+                    ArtifactoryConfiguration.PropertyGroup.Deployments.Deploy == null)
                 {
                     return false;
                 }

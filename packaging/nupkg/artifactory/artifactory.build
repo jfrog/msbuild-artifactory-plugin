@@ -3,7 +3,7 @@
 
     <!--MSBuild Artifactory Plugin-->
     
-    <!--Credentials agents the Artifactory-->
+    <!--Credentials for Artifactory-->
     <ArtifactoryUserName>$(ARTIFACTORY_USER)</ArtifactoryUserName>
     <ArtifactoryPassword>$(ARTIFACTORY_PASSWORD)</ArtifactoryPassword>
 
@@ -11,83 +11,87 @@
     <!-- Resolution-->
 
     <!--Enable Artifactory plug-in to interfere Nuget "Package Restore" -->
-    <ResolveEnable>true</ResolveEnable>
+    <ResolveEnabled>true</ResolveEnabled>
+    <!--Root URL of the Artifactory server. e.g., http://domain:port/artifactory-->
     <ResolveArtifactoryUrl>$(ARTIFACTORY_RESOLVE_ADDRESS)</ResolveArtifactoryUrl>
+    <!--NuGet repository key to resolve from. Usually remote or virtual repository-->
     <ResolveRepository>$(ARTIFACTORY_RESOLVE_REPO)</ResolveRepository>
     <!--
       To override the user credentials for the resolution process, uncomment the two fields below.
     -->
-    <!--<ResolveArtifactoryUserName>$(ARTIFACTORY_USER_RESOLVE)</ResolveArtifactoryUserName>-->
-    <!--<ResolveArtifactoryPassword>$(ARTIFACTORY_PASSWORD_RESOLVE)</ResolveArtifactoryPassword>-->
+    <!--<ResolveArtifactoryUserName>$(ARTIFACTORY_RESOLVE_USER)</ResolveArtifactoryUserName>-->
+    <!--<ResolveArtifactoryPassword>$(ARTIFACTORY_RESOLVE_PASSWORD)</ResolveArtifactoryPassword>-->
 
     
     <!-- Deployment-->
 
     <!--Enable Artifactory plug-in to publish artifacts -->
-    <DeployEnable>true</DeployEnable>
+    <DeployEnabled>true</DeployEnabled>
+    <!--Root URL of the Artifactory server. e.g., http://domain:port/artifactory-->
     <DeployArtifactoryUrl>$(ARTIFACTORY_DEPLOY_ADDRESS)</DeployArtifactoryUrl>
+    <!--Local repository key to publish artifacts to-->
     <DeployRepository>$(ARTIFACTORY_DEPLOY_REPO)</DeployRepository>
 
     <!--Enable Artifactory plug-in to publish Build Info -->
-    <BuildInfoEnable>true</BuildInfoEnable>
+    <BuildInfoEnabled>true</BuildInfoEnabled>
 
 
     <!--
-        Incase the build is running under TFS, comment the two fields bellow.
-        The information will be take from TFS.
+        If the build is not running under TFS, uncomment the two elements below. 
+        THe build name and number can be passed as build/environment variables.
     -->
-    <!--<buildNumber>0.0</buildNumber>-->
-    <!--<buildName>projectName</buildName>-->
+    <!--<BuildName>$(BUILD_NAME)</BuildName>-->
+    <!--<BuildNumber>$(BUILD_NUMBER)</BuildNumber>-->
 
     
     <!-- 
-      Deployment instructions:
-      <DeployAttribute>
-          Scope for deployment attributes
-          Can be multi tag
-      <Input>
+      Under Deployment you can add multiple sets of files to deploy to Artifactory. Each Deploy element contains the following:
+      <Deploy>
+          Scope for deployment attributes.
+      <InputPattern>
           Here you can supply path to files, that the plugin will collect, the path is relative for the project or referenced projects.
           The usage of Regular Expressions, are not mandatory.
           Regular Expressions must be in format of Capturing Group (inside Brackets).
           More information about Capturing Group, can be found here: http://www.regular-expressions.info/brackets.html
-      <Output>
+      <OutputPattern>
           A path inside the Artifactory deployment repository.
           If you used Regular Expression, using of the $# symbols, are consist to the Capturing Groups, you defined in the Input tag phrase.
           This mechanism enables you to dynamically construct the target path.
-      <Property>
+      <Properties>
           Artifactory properties, that will be attached for every files that the Input tag phrase found.
           Can be multi tag
      -->   
     
-    <ArtifactoryDeploy>
+    <Deployments>
       <!--Examples-->
       
-      <!--All Nuget files under OBJ folder -->
-      <DeployAttribute>
-      <Input>bin\(.+).nupkg</Input>
-      <Output>DemoProject\$1.nupkg</Output>
-      <Properties>
-        <Property key="type" val="nupkg" />
-      </Properties>
-      </DeployAttribute>
+      <!--All Nuget files under bin folder deployed to the root of the deploy repository-->
+      <!--
+      <Deploy>
+        <InputPattern>bin\(.+).nupkg</InputPattern>
+        <OutputPattern>$1.nupkg</OutputPattern>
+      </Deploy>
+      -->
       
-      <!--All files under OBJ folder and his subfolders -->
-      <!--<DeployAttribute>
-        <Input>obj\(.+)\(.+).dll</Input>
-        <Output>DemoProject\$1\$2.dll</Output>
+      <!--All DLL files one or more level under obj folder deployed with custom properties under the 'myproject' folder of the deploy repository.-->
+      <!--
+      <Deploy>
+        <InputPattern>obj\(.+)\(.+).dll</InputPattern>
+        <OutputPattern>myproject/$1/$2.dll</OutputPattern>
         <Properties>
-          <Property key="a" val="b" />
-          <Property key="a" val="c" />
+          <Property key="qa" val="ready" />
+          <Property key="myprop" val="myval" />
         </Properties>
-      </DeployAttribute>-->
-    </ArtifactoryDeploy>
+      </Deploy>
+      -->
+    </Deployments>
 
     <!--
       Comma or space-separated list of environment variables that will be included as part of the published build info.
       Environment variables may contain the * and the ? wildcards. Include patterns are applied before any exclude patterns.
      -->
     <EnvironmentVariables>
-      <Enable>true</Enable>
+      <Enabled>false</Enabled>
       <IncludePatterns>
         <!--<Pattern key=""/>-->
       </IncludePatterns>
@@ -103,14 +107,14 @@
       Only for Artifactory Pro users!
     -->
     <LicenseControl>
-      <Enable>false</Enable>
-      <LicenseViolationNotification>
+      <Enabled>false</Enabled>
+      <LicenseViolationRecipients>
         <!--<Recipient email="address@gmail.com"/>-->
-      </LicenseViolationNotification>
-      <DisableAutomaticLicenseDiscovery>false</DisableAutomaticLicenseDiscovery>
-      <LimitChecksToTheFollowingScopes>
-        <Scope value="Debug"/>
-      </LimitChecksToTheFollowingScopes>
+      </LicenseViolationRecipients>
+      <EnableAutomaticLicenseDiscovery>enable</EnableAutomaticLicenseDiscovery>
+      <ScopesForLicenseAnalysis>
+        <!--<Scope value="Debug"/>-->
+      </ScopesForLicenseAnalysis>
     </LicenseControl>
     
     <!--Network Configuration-->

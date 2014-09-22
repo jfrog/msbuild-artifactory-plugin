@@ -17,8 +17,8 @@ namespace JFrog.Artifactory.Model
 
     public class PropertyGroup 
     {
-        [XmlElement("ArtifactoryDeploy")]
-        public ArtifactoryDeploy ArtifactoryDeploy { get; set; }
+        [XmlElement("Deployments")]
+        public Deployments Deployments { get; set; }
 
         [XmlElement("EnvironmentVariables")]
         public EnvironmentVariables EnvironmentVariables { get; set; }
@@ -34,18 +34,18 @@ namespace JFrog.Artifactory.Model
         public ProxySettings ProxySettings { get; set; } 
     }
 
-    public class ArtifactoryDeploy 
+    public class Deployments 
     {
-        [XmlElement("DeployAttribute")]
-        public List<DeployAttribute> DeployAttribute { get; set; }   
+        [XmlElement("Deploy")]
+        public List<Deploy> Deploy { get; set; }   
     }
 
-    public class DeployAttribute
+    public class Deploy
     {
         //[XmlElement(ElementName = "Input", IsNullable=false)]
-        public string Input { get; set; }
+        public string InputPattern { get; set; }
         //[XmlElement(ElementName = "Output", IsNullable = false)]
-        public string Output { get; set; }
+        public string OutputPattern { get; set; }
 
         [XmlElement("Properties")]
         public Properties Properties { get; set; }
@@ -68,8 +68,8 @@ namespace JFrog.Artifactory.Model
 
     public class EnvironmentVariables
     {
-        [XmlElement("Enable")]
-        public string EnableEnvVariable { get; set; }
+        [XmlElement("Enabled")]
+        public string EnabledEnvVariable { get; set; }
 
         [XmlElement("IncludePatterns")]
         public IncludePatterns IncludePatterns { get; set; }
@@ -98,20 +98,20 @@ namespace JFrog.Artifactory.Model
 
     public class LicenseControlCheck 
     {
-        [XmlElement("Enable")]
-        public string EnableLicenseControl { get; set; }
+        [XmlElement("Enabled")]
+        public string EnabledLicenseControl { get; set; }
 
-        [XmlElement("LicenseViolationNotification")]
-        public LicenseViolationNotification LicenseViolationNotification { get; set; }
+        [XmlElement("LicenseViolationRecipients")]
+        public LicenseViolationRecipients LicenseViolationRecipients { get; set; }
 
-        [XmlElement("DisableAutomaticLicenseDiscovery")]
-        public string DisableAutomaticLicenseDiscovery { get; set; }
+        [XmlElement("EnableAutomaticLicenseDiscovery")]
+        public string EnableAutomaticLicenseDiscovery { get; set; }
 
-        [XmlElement("LimitChecksToTheFollowingScopes")]
-        public LimitChecksToTheFollowingScopes LimitChecksToTheFollowingScopes { get; set; }
+        [XmlElement("ScopesForLicenseAnalysis")]
+        public ScopesForLicenseAnalysis ScopesForLicenseAnalysis { get; set; }
     }
 
-    public class LicenseViolationNotification 
+    public class LicenseViolationRecipients 
     {
         [XmlElement("Recipient")]
         public List<Recipient> Recipient { get; set; } 
@@ -123,7 +123,7 @@ namespace JFrog.Artifactory.Model
         public string email { get; set; }
     }
 
-    public class LimitChecksToTheFollowingScopes 
+    public class ScopesForLicenseAnalysis 
     {
         [XmlElement("Scope")]
         public List<Scope> Scope { get; set; } 
