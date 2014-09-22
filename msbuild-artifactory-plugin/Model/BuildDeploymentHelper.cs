@@ -38,6 +38,7 @@ namespace JFrog.Artifactory.Model
             catch (Exception e)
             {
                 log.Error("Exception has append from ArtifactoryBuildInfoClient: " + e.Message, e);
+                throw new Exception("Exception has append from ArtifactoryBuildInfoClient: " + e.Message, e);
             }
             finally 
             {

@@ -2,13 +2,16 @@
 using JFrog.Artifactory.Utils;
 using JFrog.Artifactory.Utils.regexCapturing;
 using Microsoft.Build.BuildEngine;
+using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NuGet;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 
 namespace JFrog.Artifactory
@@ -55,6 +58,8 @@ namespace JFrog.Artifactory
         {
             try
             {
+                //GetEnvironmentVariable(this.BuildEngine, "soultionDir", false);
+
                 buildInfoLog = new BuildInfoLog(Log);
                 //System.Diagnostics.Debugger.Launch();
                 buildInfoLog.Info("Artifactory Post-Build task started");
@@ -78,12 +83,60 @@ namespace JFrog.Artifactory
             catch (Exception ex)
             {
                 buildInfoLog.Error("Exception from Artifactory Task: " + ex.Message, ex);
-                return false;
+                /*By returning false in exception, the task will not fail the all build.*/
+                throw new Exception("Exception from Artifactory Task: " + ex.Message);
+                //return false;
             }
             finally 
             {
                 deployableArtifactBuilderMap.Clear();
-            }
-        }    
+            } 
+        }
+
+        //const BindingFlags bindingFlags = BindingFlags.NonPublic | BindingFlags.FlattenHierarchy | BindingFlags.Instance | BindingFlags.Public;
+        //public IEnumerable GetEnvironmentVariable(this IBuildEngine buildEngine, string key, bool throwIfNotFound)
+        //{
+        //    var projectInstance = GetProjectInstance(buildEngine);
+
+        //    var items = projectInstance.Items
+        //        .Where(x => string.Equals(x.ItemType, key, StringComparison.InvariantCultureIgnoreCase)).ToList();
+        //    if (items.Count > 0)
+        //    {
+        //        return items.Select(x => x.EvaluatedInclude);
+        //    }
+
+
+        //    var properties = projectInstance.Properties
+        //        .Where(x => string.Equals(x.Name, key, StringComparison.InvariantCultureIgnoreCase)).ToList();
+        //    if (properties.Count > 0)
+        //    {
+        //        return properties.Select(x => x.EvaluatedValue);
+        //    }
+
+        //    if (throwIfNotFound)
+        //    {
+        //        throw new Exception(string.Format("Could not extract from '{0}' environmental variables.", key));
+        //    }
+
+        //    return null;
+        //}
+
+        // ProjectInstance GetProjectInstance(IBuildEngine buildEngine)
+        //{
+        //    var buildEngineType = buildEngine.GetType();
+        //    var targetBuilderCallbackField = buildEngineType.GetField("targetBuilderCallback", bindingFlags);
+        //    if (targetBuilderCallbackField == null)
+        //    {
+        //        throw new Exception("Could not extract targetBuilderCallback from " + buildEngineType.FullName);
+        //    }
+        //    var targetBuilderCallback = targetBuilderCallbackField.GetValue(buildEngine);
+        //    var targetCallbackType = targetBuilderCallback.GetType();
+        //    var projectInstanceField = targetCallbackType.GetField("projectInstance", bindingFlags);
+        //    if (projectInstanceField == null)
+        //    {
+        //        throw new Exception("Could not extract projectInstance from " + targetCallbackType.FullName);
+        //    }
+        //    return (ProjectInstance)projectInstanceField.GetValue(targetBuilderCallback);
+        //}
     }
 }

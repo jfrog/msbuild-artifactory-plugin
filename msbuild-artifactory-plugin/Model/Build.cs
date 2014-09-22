@@ -12,7 +12,7 @@ namespace JFrog.Artifactory.Model
     /// </summary>
     public class Build
     {
-        public readonly static string STARTED_FORMAT = "{0}.000+0000";
+        public readonly static string STARTED_FORMAT = "{0}";//.000+0000";
 
         /// <summary>
         /// build/assembly  version

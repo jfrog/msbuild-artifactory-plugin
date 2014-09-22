@@ -26,9 +26,4 @@
                         BuildName="$(buildName)" DeploymentRepository="$(DeployRepository)" DeployEnable="$(DeployEnable)"
                         BuildInfoEnable="$(BuildInfoEnable)" ToolVersion="$(MSBuildToolsVersion)"/>
   </Target>
-  <Target Name="StopBuild" AfterTargets="[Artifactory]">
-    <Error Text="An error has occurred, build stopped." />
-    <Message Text="An error has occurred, build stopped." />
-  </Target>
-  
 </Project>

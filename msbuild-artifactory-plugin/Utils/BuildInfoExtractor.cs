@@ -16,7 +16,7 @@ namespace JFrog.Artifactory.Utils
     {
         private const string defaultBuildName = "Not_specified";
         private const string defaultBuildNumber = "1.0";
-        private const string artifactoryDateFormat = "yyyy-MM-ddTHH:mm:ss";
+        private const string artifactoryDateFormat = "yyyy-MM-dd'T'HH:mm:ss.ssszzzz";
         private const string validEmailPattern = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*((\\.[A-Za-z]{2,}){1}$)";
 
         public static Build extractBuild(ArtifactoryBuild task, ArtifactoryConfig artifactoryConfig, BuildInfoLog log)
@@ -26,7 +26,6 @@ namespace JFrog.Artifactory.Utils
                 modules = new List<Module>(),
             };
 
-            /* yyyy-MM-ddTHH:mm:ss.906+0000 */
             build.started = string.Format(Build.STARTED_FORMAT, task.StartTime);
             build.artifactoryPrincipal = task.User;
             build.buildAgent = new BuildAgent { name = "MSBuild", version = task.ToolVersion };
