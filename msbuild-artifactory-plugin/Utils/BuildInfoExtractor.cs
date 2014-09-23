@@ -68,8 +68,8 @@ namespace JFrog.Artifactory.Utils
             var module = new Module(project.AssemblyName);
 
             string localSource = Path.Combine(_task.SolutionRoot, "packages");
-            string[] directoryPaths = Directory.GetDirectories(_task.SolutionRoot, project.AssemblyName, SearchOption.AllDirectories);
-            string[] packageConfigPath = Directory.GetFiles(directoryPaths[0], "packages.config", SearchOption.TopDirectoryOnly);
+            //string[] directoryPaths = Directory.GetDirectories(_task.SolutionRoot, project.AssemblyName, SearchOption.AllDirectories);
+            string[] packageConfigPath = Directory.GetFiles(project.projectDirectory, "packages.config", SearchOption.AllDirectories);
 
             if (project.artifactoryDeploy != null)
             {
@@ -175,7 +175,9 @@ namespace JFrog.Artifactory.Utils
             Regex includeRegex = new Regex(includeRegexUnion.ToString(), RegexOptions.IgnoreCase);
             Regex excludeRegex = new Regex(excludeRegexUnion.ToString(), RegexOptions.IgnoreCase);
 
-            IDictionary sysVariables = Environment.GetEnvironmentVariables();
+            //System.Environment.GetEnvironmentVariables()
+            //EnvironmentVariableTarget
+            IDictionary sysVariables = Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Process);
             var dicVariables = new Dictionary<string, string>();
 
             foreach(string key in sysVariables.Keys)
@@ -196,7 +198,7 @@ namespace JFrog.Artifactory.Utils
 
             licenseControl.runChecks = artifactoryConfig.PropertyGroup.LicenseControlCheck.EnabledLicenseControl;
             licenseControl.autoDiscover = artifactoryConfig.PropertyGroup.LicenseControlCheck.EnabledLicenseControl;
-            licenseControl.includePublishedArtifacts = "false";
+            licenseControl.includePublishedArtifacts = artifactoryConfig.PropertyGroup.LicenseControlCheck.IncludePublishedArtifacts;
             licenseControl.licenseViolationsRecipients = new List<string>();
             licenseControl.scopes = new List<string>();
 

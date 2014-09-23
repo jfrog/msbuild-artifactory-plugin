@@ -101,6 +101,9 @@ namespace JFrog.Artifactory.Model
         [XmlElement("Enabled")]
         public string EnabledLicenseControl { get; set; }
 
+        [XmlElement("IncludePublishedArtifacts")]
+        public string IncludePublishedArtifacts { get; set; }
+
         [XmlElement("LicenseViolationRecipients")]
         public LicenseViolationRecipients LicenseViolationRecipients { get; set; }
 

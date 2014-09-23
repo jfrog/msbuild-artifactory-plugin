@@ -112,6 +112,7 @@
         <!--<Recipient email="address@gmail.com"/>-->
       </LicenseViolationRecipients>
       <EnableAutomaticLicenseDiscovery>enable</EnableAutomaticLicenseDiscovery>
+      <IncludePublishedArtifacts>true</IncludePublishedArtifacts>
       <ScopesForLicenseAnalysis>
         <!--<Scope value="Debug"/>-->
       </ScopesForLicenseAnalysis>
