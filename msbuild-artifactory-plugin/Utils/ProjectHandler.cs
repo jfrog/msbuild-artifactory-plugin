@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 
 namespace JFrog.Artifactory.Utils
@@ -56,14 +57,15 @@ namespace JFrog.Artifactory.Utils
         /*
          * Trying to read the "artifactory.build" file for deployment configuration.
          */
-        public bool parseArtifactoryConfigFile(string projectArtifactoryConfigPath)
+        public bool parseArtifactoryConfigFile(string projectArtifactoryConfigPath, ArtifactoryBuild task)
         {
             FileInfo artifactoryConfigurationFile = new FileInfo(projectArtifactoryConfigPath + "Artifactory.build");
             if (artifactoryConfigurationFile.Exists)
             {
+
+                StringBuilder xmlContent = SolutionHandler.MsbuildInterpreter(artifactoryConfigurationFile, task);
                 System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(ArtifactoryConfig));
-                System.IO.StreamReader file = new System.IO.StreamReader(artifactoryConfigurationFile.FullName);
-                ArtifactoryConfiguration = (ArtifactoryConfig)reader.Deserialize(file);
+                ArtifactoryConfiguration = (ArtifactoryConfig)reader.Deserialize(new System.IO.StringReader(xmlContent.ToString()));
 
                 //Validate the xml file
                 if (ArtifactoryConfiguration.PropertyGroup == null || ArtifactoryConfiguration.PropertyGroup.Deployments == null ||

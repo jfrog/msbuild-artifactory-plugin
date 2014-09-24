@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace JFrog.Artifactory.Utils
@@ -29,9 +30,9 @@ namespace JFrog.Artifactory.Utils
             if (!artifactoryConfigurationFile.Exists)
                 throw new Exception("The main configuration file are missing! (Location: solutionDir\\.artifactory)");
 
+            StringBuilder xmlContent = MsbuildInterpreter(artifactoryConfigurationFile, _task);
             System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(ArtifactoryConfig));
-            System.IO.StreamReader file = new System.IO.StreamReader(artifactoryConfigurationFile.FullName);
-            MainArtifactoryConfiguration = (ArtifactoryConfig)reader.Deserialize(file);
+            MainArtifactoryConfiguration = (ArtifactoryConfig)reader.Deserialize(new System.IO.StringReader(xmlContent.ToString()));
         }
 
         public void Execute() 
@@ -56,7 +57,7 @@ namespace JFrog.Artifactory.Utils
                  * Trying to check if Artifactory configuration file exists (overrides) in the sub module level.
                  *  If not we will use the configurations from the solution level
                  */
-            if (!mainProjectParser.parseArtifactoryConfigFile(_task.ProjectPath))
+            if (!mainProjectParser.parseArtifactoryConfigFile(_task.ProjectPath, _task))
             {
                 mainProjectParser.ArtifactoryConfiguration = MainArtifactoryConfiguration;
             }
@@ -82,7 +83,7 @@ namespace JFrog.Artifactory.Utils
                  * Trying to check if Artifactory configuration file exists (overrides) in the sub module level.
                  *  If not we will use the configurations from the solution level
                  */
-                if (!projectParser.parseArtifactoryConfigFile(task.GetMetadata("RelativeDir")))
+                if (!projectParser.parseArtifactoryConfigFile(task.GetMetadata("RelativeDir"), _task))
                 {
                     projectParser.ArtifactoryConfiguration = MainArtifactoryConfiguration;
                 }
@@ -94,10 +95,28 @@ namespace JFrog.Artifactory.Utils
             }
         }
 
-        //add system variables to the json file
-            //log.Info("Collecting system variables...");
-            //build.properties = AddSystemVariables();
+        /// <summary>
+        /// Replacing all the MSBuild properties placeholder $()
+        /// </summary>
+        /// <param name="artifactoryConfigurationFile">Full file path</param>
+        /// <param name="task">MSBuild implemented Task</param>
+        /// <returns>New file content after replacement.</returns>
+        public static StringBuilder MsbuildInterpreter(FileInfo artifactoryConfigurationFile, ArtifactoryBuild task)
+        {
+            StringBuilder xmlContent = new StringBuilder(artifactoryConfigurationFile.OpenText().ReadToEnd());
 
-
+            Regex propertiesPattern = new Regex(@"(\$\([\w]+\))");
+            MatchCollection matchCollection = propertiesPattern.Matches(xmlContent.ToString());
+            foreach (var match in matchCollection)
+            {
+                string propertyKey = match.ToString().Replace("$(", string.Empty).Replace(")", string.Empty);
+                IEnumerable<String> msbuildProperty = BuildEngineExtensions.GetEnvironmentVariable(task.BuildEngine, propertyKey, false);
+                if (msbuildProperty != null)
+                {
+                    xmlContent = xmlContent.Replace(match.ToString(), msbuildProperty.First());
+                }
+            }
+            return xmlContent;
+        }
     }
 }
