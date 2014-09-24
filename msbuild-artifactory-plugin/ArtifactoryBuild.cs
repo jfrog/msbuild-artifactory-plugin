@@ -60,13 +60,8 @@ namespace JFrog.Artifactory
         {
             try
             {
-                
-
-               // IEnumerable<String> x = BuildEngineExtensions.GetEnvironmentVariable(BuildEngine, "ARTIFACTORY_RESOLVE_ADDRESS", true);
-
-               // string c = x.First();
-
-                //GetEnvironmentVariable(this.BuildEngine, "soultionDir", false);
+                //Incase the MSBuild process is up, and the global variable is still exist.
+                deployableArtifactBuilderMap.Clear();
 
                 buildInfoLog = new BuildInfoLog(Log);
                 //System.Diagnostics.Debugger.Launch();

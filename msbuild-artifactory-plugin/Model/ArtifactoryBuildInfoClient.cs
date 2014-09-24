@@ -33,6 +33,12 @@ namespace JFrog.Artifactory.Utils
 
         public ArtifactoryBuildInfoClient(string artifactoryUrl, string username, string password, BuildInfoLog log)
         {
+            //Removing ending slash
+            if (artifactoryUrl.EndsWith("/")) 
+            {
+                artifactoryUrl = artifactoryUrl.Remove(artifactoryUrl.LastIndexOf('/'));
+            }
+
             _httpClient = new ArtifactoryHttpClient(artifactoryUrl, username, password);
             _artifactoryUrl = artifactoryUrl; 
             _log = log;
