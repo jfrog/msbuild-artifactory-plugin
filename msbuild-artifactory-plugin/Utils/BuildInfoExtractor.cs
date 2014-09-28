@@ -38,7 +38,7 @@ namespace JFrog.Artifactory.Utils
 
             //Calculate how long it took to do the build
             DateTime start = DateTime.ParseExact(task.StartTime, artifactoryDateFormat, null);
-            build.startedDateMillis = GetTimeStamp(start);
+            build.startedDateMillis = GetTimeStamp();
             build.durationMillis = Convert.ToInt64((DateTime.Now - start).TotalMilliseconds);
 
             build.number = string.IsNullOrWhiteSpace(task.BuildNumber) ? build.startedDateMillis : task.BuildNumber;
@@ -225,12 +225,10 @@ namespace JFrog.Artifactory.Utils
         /// </summary>
         /// <param name="dateTime"></param>
         /// <returns>string double value</returns>
-        private static string GetTimeStamp(DateTime dateTime)
+        private static string GetTimeStamp()
         {
-            DateTime baseDate = new DateTime(1970, 1, 1);
-            TimeSpan diff = dateTime - baseDate;
-
-            return diff.TotalMilliseconds.ToString();
+            int timestemp = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+            return timestemp.ToString();
         }
 
         private static string WildcardToRegex(string pattern)
