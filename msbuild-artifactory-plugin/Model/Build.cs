@@ -61,7 +61,7 @@ namespace JFrog.Artifactory.Model
         /// <summary>
         /// system variables
         /// </summary>
-        public Dictionary<string,string> properties { get; set; }
+        public IDictionary<string,string> properties { get; set; }
 
         /// <summary>
         /// Version control revision (Changeset number in TFS)
@@ -123,11 +123,11 @@ namespace JFrog.Artifactory.Model
     /// <summary>
     /// CI server name and version, for example TFS 2013
     /// </summary>
-    public class Agent
-    {
-        public string name { get; set; }
-        public string version { get; set; }
-    }
+    //public class Agent
+    //{
+    //    public string name { get; set; }
+    //    public string version { get; set; }
+    //}
 
     public class LicenseControl
     {

@@ -51,6 +51,32 @@ namespace JFrog.Artifactory
             return null;
         }
 
+        /// <summary>
+        /// A way to collect all the properties in the MSBuild build context
+        /// </summary>
+        /// <param name="buildEngine">MSBuild implemented Task</param>
+        /// <param name="key">Property key</param>
+        /// <param name="throwIfNotFound"></param>
+        /// <returns>Property value</returns>
+        public static IDictionary<string, string> ContainsEnvironmentVariables(this IBuildEngine buildEngine, string key, bool throwIfNotFound)
+        {
+            var projectInstance = GetProjectInstance(buildEngine);
+
+            var properties = projectInstance.Properties
+                .Where(x => x.Name.ToLower().Contains(key.ToLower())).ToDictionary(x => x.Name, x => x.EvaluatedValue);
+            if (properties.Count > 0)
+            {
+                return properties;
+            }
+
+            if (throwIfNotFound)
+            {
+                throw new Exception(string.Format("Could not extract from '{0}' environmental variables.", key));
+            }
+
+            return new Dictionary<string, string>();
+        }
+
         private static ProjectInstance GetProjectInstance(IBuildEngine buildEngine)
         {
             var buildEngineType = buildEngine.GetType();
@@ -67,6 +93,6 @@ namespace JFrog.Artifactory
                 throw new Exception("Could not extract projectInstance from " + targetCallbackType.FullName);
             }
             return (ProjectInstance)projectInstanceField.GetValue(targetBuilderCallback);
-        }
+        }       
     }
 }

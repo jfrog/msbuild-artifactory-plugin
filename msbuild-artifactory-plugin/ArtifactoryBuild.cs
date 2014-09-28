@@ -1,20 +1,10 @@
 ﻿using JFrog.Artifactory.Model;
 using JFrog.Artifactory.Utils;
-using JFrog.Artifactory.Utils.regexCapturing;
-using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using NuGet;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Xml;
-using System.Xml.Linq;
 
 namespace JFrog.Artifactory
 {
@@ -60,21 +50,20 @@ namespace JFrog.Artifactory
         {
             try
             {
+                buildInfoLog = new BuildInfoLog(Log);
+
                 //Incase the MSBuild process is up, and the global variable is still exist.
                 deployableArtifactBuilderMap.Clear();
 
-                buildInfoLog = new BuildInfoLog(Log);
+                
                 //System.Diagnostics.Debugger.Launch();
                 buildInfoLog.Info("Artifactory Post-Build task started");
 
-                if (TfsActive != null && TfsActive.Equals("True"))
+                if (!string.IsNullOrWhiteSpace(TfsActive) && TfsActive.Equals("True"))
                 {
-                    buildInfoLog.Info("Running inside TFS " +
-                                            "\n TFS_Build_Number: " + BuildNumber +
-                                            "\n TFS_Build_Name: " + BuildName +
-                                            "\n TFS_Vcs_Revision: " + VcsRevision);
-
+                    buildInfoLog.Info("Running inside TFS...");
                 }
+
                 SolutionHandler solution = new SolutionHandler(this, buildInfoLog);
                 solution.Execute();
 

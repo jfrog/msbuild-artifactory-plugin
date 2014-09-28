@@ -59,9 +59,10 @@ namespace JFrog.Artifactory.Utils
             json.Append("\"buildRetention\":null,");
 
             //system variables start
-            json.Append("\"properties\":{");
-            if (model.properties != null)
+
+            if (model.properties != null && model.properties.Count > 0)
             {
+                json.Append("\"properties\":{");
                 var lastKey = model.properties.LastOrDefault();
 
                 String quoteMatch = @"""";
@@ -76,8 +77,8 @@ namespace JFrog.Artifactory.Utils
                         json.Append(",");
                     }
                 }
-            }
-            json.Append("},");
+                json.Append("},");
+            }           
 
             json.Append("\"modules\":[");
             var modulesCount = model.modules.Count();

@@ -5,10 +5,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace JFrog.Artifactory.Utils
 {
@@ -31,11 +29,7 @@ namespace JFrog.Artifactory.Utils
             build.buildAgent = new BuildAgent { name = "MSBuild", version = task.ToolVersion };
             build.type = "MSBuild";
 
-            build.agent = new Agent { name = "MSBuild", version = task.ToolVersion };
-            if (task.TfsActive != null && task.TfsActive.Equals("True"))
-            {
-                build.agent = new Agent { name = "TFS", version = "" };
-            }
+            build.agent = Agent.BuildAgentFactory(task);
 
             //get the current use from the windows OS
             System.Security.Principal.WindowsIdentity user;
@@ -52,7 +46,11 @@ namespace JFrog.Artifactory.Utils
             build.url = task.BuildURI;
             build.vcsRevision = task.VcsRevision;
 
-            build.properties = AddSystemVariables(artifactoryConfig);
+            IDictionary<string, string> buildProperties = AddSystemVariables(artifactoryConfig);
+            buildProperties.AddRange(build.agent.BuildAgentEnvironment());
+
+            //Add build server properties, if exists.
+            build.properties = buildProperties;
             build.licenseControl = AddLicenseControl(artifactoryConfig, log);
 
             ConfigHttpClient(artifactoryConfig, build);
@@ -149,7 +147,7 @@ namespace JFrog.Artifactory.Utils
         private static Dictionary<string, string> AddSystemVariables(ArtifactoryConfig artifactoryConfig)
         {
             string enable = artifactoryConfig.PropertyGroup.EnvironmentVariables.EnabledEnvVariable;
-            if (string.IsNullOrWhiteSpace(enable) || !enable.Equals("true"))
+            if (string.IsNullOrWhiteSpace(enable) || !enable.ToLower().Equals("true"))
                 return new Dictionary<string, string>();
 
             // includePatterns = new List<Pattern>();
@@ -197,12 +195,11 @@ namespace JFrog.Artifactory.Utils
             LicenseControl licenseControl = new LicenseControl();
 
             licenseControl.runChecks = artifactoryConfig.PropertyGroup.LicenseControlCheck.EnabledLicenseControl;
-            licenseControl.autoDiscover = artifactoryConfig.PropertyGroup.LicenseControlCheck.EnabledLicenseControl;
+            licenseControl.autoDiscover = artifactoryConfig.PropertyGroup.LicenseControlCheck.AutomaticLicenseDiscovery;
             licenseControl.includePublishedArtifacts = artifactoryConfig.PropertyGroup.LicenseControlCheck.IncludePublishedArtifacts;
             licenseControl.licenseViolationsRecipients = new List<string>();
             licenseControl.scopes = new List<string>();
-
-            
+           
             foreach (Recipient recip in artifactoryConfig.PropertyGroup.LicenseControlCheck.LicenseViolationRecipients.Recipient)
             {
                 if (validateEmail(recip))
@@ -223,6 +220,11 @@ namespace JFrog.Artifactory.Utils
             return licenseControl;
         }
 
+        /// <summary>
+        /// Get Timestamp sine 1/1/1970
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <returns>string double value</returns>
         private static string GetTimeStamp(DateTime dateTime)
         {
             DateTime baseDate = new DateTime(1970, 1, 1);
@@ -273,7 +275,7 @@ namespace JFrog.Artifactory.Utils
             ProxySettings proxySettings = artifactoryConfig.PropertyGroup.ProxySettings;
 
             //Check if the user Bypass proxy settings
-            if (!string.IsNullOrWhiteSpace(proxySettings.Bypass) && proxySettings.Bypass.Equals("true")) 
+            if (!string.IsNullOrWhiteSpace(proxySettings.Bypass) && proxySettings.Bypass.ToLower().Equals("true")) 
             {             
                     build.deployClient.proxy = new Proxy();
                     build.deployClient.proxy.IsBypass = true;
@@ -282,14 +284,14 @@ namespace JFrog.Artifactory.Utils
 
             /*
             * Incase that the proxy settings, is not set in the plugin level, we need
-            * to check the settings in the environment variables 
+            * to check for proxy settings in the environment variables.
             */
             if (string.IsNullOrWhiteSpace(proxySettings.Host)) 
             {
                 ProxySettings envVariableProxy = proxyEnvVariables();
                 if (envVariableProxy != null)
                 {
-                    artifactoryConfig.PropertyGroup.ProxySettings = envVariableProxy;
+                    proxySettings = envVariableProxy;
                 }
                 else 
                 {
@@ -299,34 +301,51 @@ namespace JFrog.Artifactory.Utils
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(proxySettings.UserName) && !string.IsNullOrWhiteSpace(proxySettings.UserName))
+            if (!string.IsNullOrWhiteSpace(proxySettings.UserName) && !string.IsNullOrWhiteSpace(proxySettings.Password))
                 build.deployClient.proxy = new Proxy(proxySettings.Host, proxySettings.Port, proxySettings.UserName, proxySettings.Password);
             else
                 build.deployClient.proxy = new Proxy(proxySettings.Host, proxySettings.Port);
+
+            build.deployClient.proxy.IsBypass = false;
         }
 
+        /// <summary>
+        /// Trying to find proxy configuration on the environment variables.
+        /// </summary>
+        /// <returns>Proxy instance</returns>
         private static ProxySettings proxyEnvVariables()
         {
+            Uri uri;
             string httpHost = Environment.GetEnvironmentVariable("http_proxy");
-            if (string.IsNullOrWhiteSpace(httpHost))
-                return null;
-
-            ProxySettings proxy = new ProxySettings();
-            proxy.UserName = Environment.GetEnvironmentVariable("http_proxy.user");
-            proxy.Password = Environment.GetEnvironmentVariable("http_proxy.password");
-
-            //Regex for capturing the host and the port (if exists).
-            Regex addressPattern = new Regex(@"^\w+://(?<host>[^/]+):(?<port>\d+)/?");
-            Match match = addressPattern.Match(httpHost);
-            if (match.Success) 
+            if (!string.IsNullOrWhiteSpace(httpHost) && Uri.TryCreate(httpHost, UriKind.Absolute, out uri))
             {
-                if(string.IsNullOrWhiteSpace(match.Groups["port"].Value))
-                    proxy.Port = int.Parse(match.Groups["port"].Value);
-                proxy.Host = match.Groups["host"].Value;
+                ProxySettings proxy = new ProxySettings();
 
-            }         
+                if (!String.IsNullOrEmpty(uri.UserInfo))
+                {
+                    var credentials = uri.UserInfo.Split(':');
+                    if (credentials.Length > 1)
+                    {
+                        proxy.UserName = credentials[0];
+                        proxy.Password = credentials[1];
+                    }
+                }
 
-            return proxy;
+                //Regex for capturing the host and the port (if exists).
+                Regex addressPattern = new Regex(@"^\w+://(?<host>[^/]+):(?<port>\d+)/?");
+                Match match = addressPattern.Match(uri.GetComponents(UriComponents.HttpRequestUrl, UriFormat.SafeUnescaped));
+                if (match.Success)
+                {
+                    if (!string.IsNullOrWhiteSpace(match.Groups["port"].Value))
+                        proxy.Port = int.Parse(match.Groups["port"].Value);
+
+                    proxy.Host = match.Groups["host"].Value;
+                }
+
+                return proxy;
+            }
+
+            return null;
         }
     }
 }

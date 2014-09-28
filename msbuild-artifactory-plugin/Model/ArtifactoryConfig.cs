@@ -107,8 +107,8 @@ namespace JFrog.Artifactory.Model
         [XmlElement("LicenseViolationRecipients")]
         public LicenseViolationRecipients LicenseViolationRecipients { get; set; }
 
-        [XmlElement("EnableAutomaticLicenseDiscovery")]
-        public string EnableAutomaticLicenseDiscovery { get; set; }
+        [XmlElement("AutomaticLicenseDiscovery")]
+        public string AutomaticLicenseDiscovery { get; set; }
 
         [XmlElement("ScopesForLicenseAnalysis")]
         public ScopesForLicenseAnalysis ScopesForLicenseAnalysis { get; set; }

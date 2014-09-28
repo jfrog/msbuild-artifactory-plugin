@@ -1,14 +1,9 @@
 ﻿using JFrog.Artifactory.Model;
 using JFrog.Artifactory.Utils.httpClient;
-using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace JFrog.Artifactory.Utils
 {

@@ -35,20 +35,12 @@
     <!--Enable Artifactory plugin to publish Build Info -->
     <BuildInfoEnabled>true</BuildInfoEnabled>
 
-
-    <!--
-        If the build is not running under TFS, uncomment the two elements below. 
-        The build name and number can be passed as build/environment variables.
-    -->
-    <!--<BuildName>$(BUILD_NAME)</BuildName>-->
-    <!--<BuildNumber>$(BUILD_NUMBER)</BuildNumber>-->
-
     
     <!-- 
       Under <Deployments> you can add multiple <Deploy> elements which define the sets of files to deploy to Artifactory. Each <Deploy> element contains the following:
 
       <InputPattern>
-          Here you can supply path to files, that the plugin will collect. The path is relative to the project and to any other projects referenced in the solution.
+          Here you can supply path to files, that the plugin will collect. The path is relative to the project and to any other projects referenced to him in the solution.
           The usage of Regular Expressions, is not mandatory.
           Regular Expressions must be in format of a Capturing Group (inside Brackets).
           More information about Capturing Group, can be found here: http://www.regular-expressions.info/brackets.html
@@ -66,29 +58,30 @@
       
       <!--All Nuget files under the bin folder deployed to the root of the deploy repository-->
       
-      <Deploy>
+      <!--<Deploy>
         <InputPattern>bin\(.+).nupkg</InputPattern>
-        <!--$1 refers to (.+) capturing group-->
+        --><!--$1 refers to (.+) capturing group--><!--
         <OutputPattern>$1.nupkg</OutputPattern>
-      </Deploy>
+      </Deploy>-->
       
       
       <!--All DLL files one or more level under the obj folder deployed with custom properties under the 'myproject' folder of the deploy repository.-->
       
-      <Deploy>
+      <!--<Deploy>
         <InputPattern>obj\(.+)\(.+).dll</InputPattern>
         <OutputPattern>myproject/$1/$2.dll</OutputPattern>
         <Properties>
           <Property key="qa" val="ready" />
           <Property key="myprop" val="myval" />
         </Properties>
-      </Deploy>
+      </Deploy>-->
       
     </Deployments>
 
+    <!-- Environment Variables-->   
     <!--
-      Comma or space-separated list of environment variables that will be included as part of the published build info.
-      Environment variables may contain the * and the ? wildcards. Include patterns are applied before any exclude patterns.
+      Environment variables that will be included as part of the published build info.
+      Patterns may contain the * and the ? wildcards. Include patterns are applied before any exclude patterns.
      -->
     <EnvironmentVariables>
       <Enabled>false</Enabled>
@@ -102,6 +95,7 @@
       </ExcludePatterns>
     </EnvironmentVariables>
 
+    <!-- License Control-->
     <!--
       Enable if you want a license scan to run automatically after the build is complete.
       Only available with Artifactory Pro!
@@ -111,16 +105,27 @@
       <LicenseViolationRecipients>
         <!--<Recipient email="address@gmail.com"/>-->
       </LicenseViolationRecipients>
-      <!--If Nuget package license is not identified by Artifactory, run license discovery inside the package.RESOURCE INTENSIVE-->
-      <EnableAutomaticLicenseDiscovery>enable</EnableAutomaticLicenseDiscovery>
+      <!--If Nuget package license is not identified by Artifactory, run license discovery inside the package. [RESOURCE INTENSIVE]-->
+      <AutomaticLicenseDiscovery>true</AutomaticLicenseDiscovery>
       <IncludePublishedArtifacts>true</IncludePublishedArtifacts>
       <ScopesForLicenseAnalysis>
         <!--<Scope value="Debug"/>-->
       </ScopesForLicenseAnalysis>
     </LicenseControl>
+
+    <!--
+        If the build is not running under TFS, uncomment the two elements below. 
+        The build name and number can be passed as build/environment variables.
+    -->
+    <!--<BuildName>$(BUILD_NAME)</BuildName>-->
+    <!--<BuildNumber>$(BUILD_NUMBER)</BuildNumber>-->
+    
     
     <!--Network Configuration-->
+    
+    <!--Timeout(seconds) for the plugin deployment client-->
     <ConnectionTimeout>300</ConnectionTimeout>
+    
     <ProxySettings>
       <Bypass>true</Bypass>
       <Host>127.0.0.1</Host>
