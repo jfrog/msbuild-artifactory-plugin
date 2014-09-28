@@ -17,9 +17,9 @@ namespace msbuild_tests
         {
             BuildArtifactsMapping mapping = new BuildArtifactsMapping();
 
-            mapping.input = "obj\\\\Debug\\\\(.+)\\\\(.+).dll";
+            mapping.input = @"obj\Debug\(.+)\(.+).dll";
             string regex = BuildArtifactsMapping.getRegexPattern(mapping);
-            string regexExpect = "(.+)\\\\(.+).dll";
+            string regexExpect = @"(.+)\(.+).dll";
             Assert.AreEqual(regex, regexExpect);
         }
 
@@ -28,21 +28,21 @@ namespace msbuild_tests
         {
             BuildArtifactsMapping mapping = new BuildArtifactsMapping();
             
-            mapping.input = "obj\\\\Debug\\\\(.+)\\\\(.+).dll";
+            mapping.input = @"obj\Debug\(.+)\(.+).dll";
             string path = BuildArtifactsMapping.getRootDirectory(mapping);
-            string pathExpect = "obj\\\\Debug\\\\";
+            string pathExpect = @"obj\Debug\";
             Assert.AreEqual(path, pathExpect);
         }
 
         [Test]
         public void TestPlaceHoldersList()
-        {           
+        {
             BuildArtifactsMapping mapping = new BuildArtifactsMapping();
-            List<string> groupList = null;
+            ISet<Int32> groupList = null;
 
             mapping.output = "a-$1-$2-$3.dll";
             groupList = BuildArtifactsMapping.getPlaceHoldersList(mapping, 3);
-            CollectionAssert.AreEqual(groupList, new List<string>() { "$1", "$2", "$3" });
+            CollectionAssert.AreEqual(groupList, new HashSet<Int32>() { 1, 2, 3 });
 
             AssertExtension.Throws<ArgumentException>(() => BuildArtifactsMapping.getPlaceHoldersList(mapping, 2));
 
@@ -51,11 +51,28 @@ namespace msbuild_tests
         }
 
         [Test]
+        public void TestLessPlaceholdersInOutput()
+        {
+            string projectPath = Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Directory.GetCurrentDirectory()));
+            Dictionary<string, string> resultMap = new Dictionary<string, string>();
+            BuildArtifactsMapping mapping = new BuildArtifactsMapping();
+
+            mapping.input = @"regex_test\(.+)\(.+).dll";
+            mapping.output = @"a/$2.dll";
+
+            BuildArtifactsMappingResolver.matchMappingArtifacts(mapping, projectPath, resultMap);
+            Dictionary<string, string> resultMapExpected = new Dictionary<string, string>();
+
+            CollectionAssert.Contains(resultMap, new KeyValuePair<string, string>(projectPath + @"\regex_test\obj\Debug\JFrog.Artifactory.dll",
+                                                                                                @"a/JFrog.Artifactory.dll"));
+        }
+
+        [Test]
         public void TestMatchMapping()
         {
             BuildArtifactsMapping mapping = new BuildArtifactsMapping();
-            mapping.input = "regex_test\\(.+)\\(.+).dll";
-            mapping.output = "msbuild-test\\$1\\$2.dll";
+            mapping.input = @"regex_test\(.+)\(.+).dll";
+            mapping.output = @"msbuild-test\$1\$2.dll";
             
             Dictionary<string, string> resultMap = new Dictionary<string, string>();
             string projectPath = Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Directory.GetCurrentDirectory()));
@@ -63,28 +80,28 @@ namespace msbuild_tests
             BuildArtifactsMappingResolver.matchMappingArtifacts(mapping, projectPath, resultMap);
 
             Dictionary<string, string> resultMapExpected = new Dictionary<string, string>();
-            resultMapExpected.Add(projectPath + "\\regex_test\\lib\\JFrog.Artifactory.dll",
-                                        "msbuild-test\\lib\\JFrog.Artifactory.dll");
-            resultMapExpected.Add(projectPath + "\\regex_test\\obj\\Debug\\JFrog.Artifactory.dll",
-                                        "msbuild-test\\obj\\Debug\\JFrog.Artifactory.dll");
-            resultMapExpected.Add(projectPath + "\\regex_test\\obj\\Release\\JFrog.Artifactory.dll",
-                                        "msbuild-test\\obj\\Release\\JFrog.Artifactory.dll");
+            resultMapExpected.Add(projectPath + @"\regex_test\lib\JFrog.Artifactory.dll",
+                                        @"msbuild-test\lib\JFrog.Artifactory.dll");
+            resultMapExpected.Add(projectPath + @"\regex_test\obj\Debug\JFrog.Artifactory.dll",
+                                        @"msbuild-test\obj\Debug\JFrog.Artifactory.dll");
+            resultMapExpected.Add(projectPath + @"\regex_test\obj\Release\JFrog.Artifactory.dll",
+                                        @"msbuild-test\obj\Release\JFrog.Artifactory.dll");
 
             CollectionAssert.AreEqual(resultMap, resultMapExpected);
 
 
-            mapping.input = "regex_test\\(.+)\\(.+).dll";
-            mapping.output = "msbuild-test\\$2\\$1.dll";
+            mapping.input = @"regex_test\(.+)\(.+).dll";
+            mapping.output = @"msbuild-test\$2\$1.dll";
 
             resultMap.Clear();
             resultMapExpected.Clear();
             BuildArtifactsMappingResolver.matchMappingArtifacts(mapping, projectPath, resultMap);        
-            resultMapExpected.Add(projectPath + "\\regex_test\\lib\\JFrog.Artifactory.dll",
-                                        "msbuild-test\\JFrog.Artifactory\\lib.dll");
-            resultMapExpected.Add(projectPath + "\\regex_test\\obj\\Debug\\JFrog.Artifactory.dll",
-                                        "msbuild-test\\JFrog.Artifactory\\obj\\Debug.dll");
-            resultMapExpected.Add(projectPath + "\\regex_test\\obj\\Release\\JFrog.Artifactory.dll",
-                                        "msbuild-test\\JFrog.Artifactory\\obj\\Release.dll");
+            resultMapExpected.Add(projectPath + @"\regex_test\lib\JFrog.Artifactory.dll",
+                                        @"msbuild-test\JFrog.Artifactory\lib.dll");
+            resultMapExpected.Add(projectPath + @"\regex_test\obj\Debug\JFrog.Artifactory.dll",
+                                        @"msbuild-test\JFrog.Artifactory\obj\Debug.dll");
+            resultMapExpected.Add(projectPath + @"\regex_test\obj\Release\JFrog.Artifactory.dll",
+                                        @"msbuild-test\JFrog.Artifactory\obj\Release.dll");
 
             
             //Relative directory

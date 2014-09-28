@@ -43,7 +43,7 @@ namespace JFrog.Artifactory.Utils.regexCapturing
                 Regex regex = new Regex(regexNormalize);
                 int inputGroupsNum = regex.GetGroupNumbers().Length - 1;
 
-                List<string> placeHoldersList = BuildArtifactsMapping.getPlaceHoldersList(mapping, inputGroupsNum);
+                ISet<Int32> placeHoldersSet = BuildArtifactsMapping.getPlaceHoldersList(mapping, inputGroupsNum);
 
                 //Console.WriteLine("regexNormalize: " + regexNormalize);
 
@@ -64,8 +64,14 @@ namespace JFrog.Artifactory.Utils.regexCapturing
                         {
                             List<string> replacementList = new List<string>();
                             string repositoryPath = mapping.output;
-                            for (int i = 1; i <= placeHoldersList.Count; i++)
-                                repositoryPath = repositoryPath.Replace(placeHoldersList[i - 1], fileMatcher.Groups[i].Value);
+
+                            foreach (int groupIndex in placeHoldersSet) 
+                            {
+                                repositoryPath = repositoryPath.Replace("$" + groupIndex, fileMatcher.Groups[groupIndex].Value);
+                            }
+
+                            //for (int i = 1; i <= placeHoldersSet.Count; i++)
+                            //    repositoryPath = repositoryPath.Replace(placeHoldersSet[i - 1], fileMatcher.Groups[i].Value);
 
                             if (!resultMap.ContainsKey(file))
                                 resultMap.Add(file, repositoryPath);

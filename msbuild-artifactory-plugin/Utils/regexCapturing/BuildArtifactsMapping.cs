@@ -22,18 +22,18 @@ namespace JFrog.Artifactory.Utils.regexCapturing
             input = left;
             output = right;
         }
-        public static List<string> getPlaceHoldersList(BuildArtifactsMapping mapping, int inputGroupsNum)
+        public static ISet<Int32> getPlaceHoldersList(BuildArtifactsMapping mapping, int inputGroupsNum)
         {
-            List<string> placeHoldersList = new List<string>();
+            HashSet<Int32> placeHoldersSet = new HashSet<Int32>();
 
             if (String.IsNullOrWhiteSpace(mapping.output) || inputGroupsNum < 1) 
             {
                 // No output mapping or input has no capturing groups
-                return placeHoldersList;
+                return placeHoldersSet;
             }
 
             Match placeHoldersMatcher = Regex.Match(mapping.output, PLACE_HOLDER_PATTERN);
-            int capturingNumber = 1;
+           // int capturingNumber = 1;
             while (placeHoldersMatcher.Success)
             {
                 int placeHolderGroupNum;
@@ -53,12 +53,12 @@ namespace JFrog.Artifactory.Utils.regexCapturing
                     throw new ArgumentException(String.Format("Place holder '{0}' from mapping output '{1}' is not a valid number", group, mapping.output), e.InnerException);
                 }
 
-                placeHoldersList.Add("$" + capturingNumber);
-                capturingNumber++;
+                placeHoldersSet.Add(placeHolderGroupNum);
+               // capturingNumber++;
                 placeHoldersMatcher = placeHoldersMatcher.NextMatch();
             }
 
-            return placeHoldersList;
+            return placeHoldersSet;
         }
 
         public static string getRegexPattern(BuildArtifactsMapping mapping)
