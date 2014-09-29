@@ -12,7 +12,6 @@
     <BuildNumber Condition="'$(TF_BUILD)' == 'True'">$(TF_BUILD_BUILDNUMBER)</BuildNumber>
     <BuildName Condition="'$(TF_BUILD)' == 'True'">$(TF_BUILD_BUILDDEFINITIONNAME)</BuildName>
     <BuildUNCPath Condition="'$(TF_BUILD)' == 'True'">$(TF_BUILD_DROPLOCATION)</BuildUNCPath>
-    <BuildURI Condition="'$(TF_BUILD)' == 'True'">$(TF_BUILD_BUILDURI)</BuildURI>
     <BuildReason Condition="'$(TF_BUILD)' == 'True'">$(TF_BUILD_BUILDREASON)</BuildReason>
     <BuildRevision Condition="'$(TF_BUILD)' == 'True'">$(TF_BUILD_SOURCEGETVERSION)</BuildRevision>
   </PropertyGroup>
@@ -21,7 +20,7 @@
   <Target Name="[Artifactory]" AfterTargets="Build">
     <ArtifactoryBuild   projRefList="@(ProjectReference)" ProjectName="$(MSBuildProjectName)" SolutionRoot="$(solutionDir)"
                         ProjectPath="$(MSBuildProjectDirectory)" Configuration="$(Configuration)" StartTime="$(StartTime)"
-                        TfsActive="$(TF_BUILD)" BuildUNCPath="$(BuildUNCPath)"   BuildURI="$(BuildURI)" BuildReason="$(BuildReason)" BuildNumber="$(BuildNumber)"
+                        TfsActive="$(TF_BUILD)" BuildUNCPath="$(BuildUNCPath)" BuildReason="$(BuildReason)" BuildNumber="$(BuildNumber)"
                         VcsRevision="$(BuildRevision)" User="$(ArtifactoryUserName)" Password="$(ArtifactoryPassword)" Url="$(DeployArtifactoryUrl)"
                         BuildName="$(BuildName)" DeploymentRepository="$(DeployRepository)" DeployEnabled="$(DeployEnabled)"
                         BuildInfoEnabled="$(BuildInfoEnabled)" ToolVersion="$(MSBuildToolsVersion)"/>

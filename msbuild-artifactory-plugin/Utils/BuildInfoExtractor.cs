@@ -43,14 +43,11 @@ namespace JFrog.Artifactory.Utils
 
             build.number = string.IsNullOrWhiteSpace(task.BuildNumber) ? build.startedDateMillis : task.BuildNumber;
             build.name = task.BuildName ?? task.ProjectName;
-            build.url = task.BuildURI;
+            build.url = build.agent.BuildAgentUrl();
             build.vcsRevision = task.VcsRevision;
 
-            IDictionary<string, string> buildProperties = AddSystemVariables(artifactoryConfig);
-            buildProperties.AddRange(build.agent.BuildAgentEnvironment());
-
             //Add build server properties, if exists.
-            build.properties = buildProperties;
+            build.properties = AddSystemVariables(artifactoryConfig, build);
             build.licenseControl = AddLicenseControl(artifactoryConfig, log);
 
             ConfigHttpClient(artifactoryConfig, build);
@@ -144,7 +141,7 @@ namespace JFrog.Artifactory.Utils
         /// Gather all windows system variables and their values
         /// </summary>
         /// <returns></returns>
-        private static Dictionary<string, string> AddSystemVariables(ArtifactoryConfig artifactoryConfig)
+        private static Dictionary<string, string> AddSystemVariables(ArtifactoryConfig artifactoryConfig, Build build)
         {
             string enable = artifactoryConfig.PropertyGroup.EnvironmentVariables.EnabledEnvVariable;
             if (string.IsNullOrWhiteSpace(enable) || !enable.ToLower().Equals("true"))
@@ -186,6 +183,7 @@ namespace JFrog.Artifactory.Utils
                 }
             }
 
+            dicVariables.AddRange(build.agent.BuildAgentEnvironment());
 
             return dicVariables;
         }

@@ -133,5 +133,11 @@
       <UserName></UserName>
       <Password></Password>
     </ProxySettings>
+
+    <!--TFS Integration-->
+    
+    <!--In order to build full url address to the TFS build page, the plugin needs the Team Project name-->
+    <!--<TEAM_PROJECT>$(TEAM_PROJECT_NAME)</TEAM_PROJECT>-->
+    
   </PropertyGroup>
 </Project>

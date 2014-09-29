@@ -29,5 +29,7 @@ namespace JFrog.Artifactory.Model
         /// </summary>
         /// <returns></returns>
         public abstract IDictionary<string, string> BuildAgentEnvironment();
+
+        public abstract string BuildAgentUrl();
     }
 }

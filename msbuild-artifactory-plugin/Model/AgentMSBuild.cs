@@ -17,5 +17,10 @@ namespace JFrog.Artifactory.Model
         {          
             return new Dictionary<string, string>();
         }
+
+        public override string BuildAgentUrl()
+        {
+            return string.Empty;
+        }
     }
 }

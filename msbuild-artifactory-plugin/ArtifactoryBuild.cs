@@ -34,7 +34,7 @@ namespace JFrog.Artifactory
         public string TfsActive { get; set; }
         public string BuildNumber { get; set; }
         public string BuildUNCPath { get; set; }
-        public string BuildURI { get; set; }
+        //public string BuildURI { get; set; }
         public string BuildName { get; set; }
         public string BuildReason { get; set; }
         public string VcsRevision { get; set; }
