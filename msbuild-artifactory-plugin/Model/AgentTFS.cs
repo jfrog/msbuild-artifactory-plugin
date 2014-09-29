@@ -37,7 +37,7 @@ namespace JFrog.Artifactory.Model
 
         public override string BuildAgentUrl() 
         {
-            StringBuilder tfsUrl = new StringBuilder("$(TF_BUILD_COLLECTIONURI)/$(TEAM_PROJECT)/_build#buildUri=$(TF_BUILD_BUILDURI)");
+            StringBuilder tfsUrl = new StringBuilder("$(TF_BUILD_COLLECTIONURI)/$(TEAM_PROJECT)/_build#buildUri=$(TF_BUILD_BUILDURI)&_a=summary");
             IEnumerable<String> tfsCollectionURI = BuildEngineExtensions.GetEnvironmentVariable(buildEngine, "TF_BUILD_COLLECTIONURI", false);
             IEnumerable<String> tfsTeamProject = BuildEngineExtensions.GetEnvironmentVariable(buildEngine, "TEAM_PROJECT", false);
             IEnumerable<String> tfsBuildURI = BuildEngineExtensions.GetEnvironmentVariable(buildEngine, "TF_BUILD_BUILDURI", false);
