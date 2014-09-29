@@ -68,6 +68,26 @@ namespace msbuild_tests
         }
 
         [Test]
+        public void TestComplexRegex()
+        {
+            string projectPath = Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Directory.GetCurrentDirectory()));
+            Dictionary<string, string> resultMap = new Dictionary<string, string>();
+            BuildArtifactsMapping mapping = new BuildArtifactsMapping();
+
+            //Enforce only file with digits
+            mapping.input = @"regex_test\(.+)\(.+[\d].+)";
+            mapping.output = @"a/$2.dll";
+
+            BuildArtifactsMappingResolver.matchMappingArtifacts(mapping, projectPath, resultMap);
+            Dictionary<string, string> resultMapExpected = new Dictionary<string, string>();
+
+            //CollectionAssert.Contains(resultMap, new KeyValuePair<string, string>(
+            //                                projectPath + @"\regex_test\lib\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs",
+            //                                              @"a/TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs"
+            //                         ));
+        }
+
+        [Test]
         public void TestMatchMapping()
         {
             BuildArtifactsMapping mapping = new BuildArtifactsMapping();
@@ -102,11 +122,6 @@ namespace msbuild_tests
                                         @"msbuild-test\JFrog.Artifactory\obj\Debug.dll");
             resultMapExpected.Add(projectPath + @"\regex_test\obj\Release\JFrog.Artifactory.dll",
                                         @"msbuild-test\JFrog.Artifactory\obj\Release.dll");
-
-            
-            //Relative directory
-            //resultMapExpected.Add("regex_test\\obj\\Release\\JFrog.Artifactory.dll",
-            //                            "msbuild-test\\regex_test\\obj\\Release\\JFrog.Artifactory.dll");
 
             //none exists folder need to check
             CollectionAssert.AreEqual(resultMap, resultMapExpected);

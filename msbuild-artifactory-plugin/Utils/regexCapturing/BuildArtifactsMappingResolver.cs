@@ -37,15 +37,13 @@ namespace JFrog.Artifactory.Utils.regexCapturing
                 {
                     fileList = Directory.GetFiles(rootDirectory, "*.*", SearchOption.AllDirectories);
                 }
-                
 
-                string regexNormalize = mapping.input.Replace("\\", "\\\\");
+
+                string regexNormalize = NormalizeRegexInput(mapping);
                 Regex regex = new Regex(regexNormalize);
                 int inputGroupsNum = regex.GetGroupNumbers().Length - 1;
 
                 ISet<Int32> placeHoldersSet = BuildArtifactsMapping.getPlaceHoldersList(mapping, inputGroupsNum);
-
-                //Console.WriteLine("regexNormalize: " + regexNormalize);
 
                 foreach (string file in fileList)
                 {
@@ -70,18 +68,26 @@ namespace JFrog.Artifactory.Utils.regexCapturing
                                 repositoryPath = repositoryPath.Replace("$" + groupIndex, fileMatcher.Groups[groupIndex].Value);
                             }
 
-                            //for (int i = 1; i <= placeHoldersSet.Count; i++)
-                            //    repositoryPath = repositoryPath.Replace(placeHoldersSet[i - 1], fileMatcher.Groups[i].Value);
-
                             if (!resultMap.ContainsKey(file))
                                 resultMap.Add(file, repositoryPath);
                         }
-
-                        //Console.WriteLine("file: " + file);
-                        //Console.WriteLine("output: " + resultMap[file].ToString());
                     }
                 }
             }
+        }
+
+        private static string NormalizeRegexInput(BuildArtifactsMapping mapping)
+        {
+            string regexNormalize = mapping.input.Replace("\\", "\\\\");
+            Regex reg = new Regex(@"(\(.*?\))");
+            Match matchParentheses = reg.Match(regexNormalize);
+            while (matchParentheses.Success) 
+            {
+                regexNormalize = regexNormalize.Replace(matchParentheses.Value, Regex.Unescape(matchParentheses.Value));
+                matchParentheses = matchParentheses.NextMatch();
+            }
+
+            return regexNormalize;
         }
     }
 }
