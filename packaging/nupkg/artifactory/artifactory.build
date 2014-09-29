@@ -136,7 +136,7 @@
 
     <!--TFS Integration-->
     
-    <!--In order to build full url address to the TFS build page, the plugin needs the Team Project name-->
+    <!--In order to get a full http url address to the TFS build page through the Artifactory Build info , the plugin needs the Team Project name-->
     <!--<TEAM_PROJECT>$(TEAM_PROJECT_NAME)</TEAM_PROJECT>-->
     
   </PropertyGroup>
