@@ -10,7 +10,7 @@
     <projectUrl>http://www.jfrog.com/</projectUrl>
     <iconUrl>http://www.jfrog.com/wp-content/uploads/2014/05/logo.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Artifactory for C# .NET users - Beta</description>
+    <description>Artifactory for C# .NET users</description>
     <summary>Artifactory for C# .NET users - Beta</summary>
     <releaseNotes>first upload to nuget , for testing by jfrog only.</releaseNotes>
     <copyright>Copyright 2014</copyright>
