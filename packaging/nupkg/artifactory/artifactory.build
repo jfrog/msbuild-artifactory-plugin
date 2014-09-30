@@ -1,7 +1,10 @@
 ﻿<Project ToolsVersion="4.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
 
-    <!--MSBuild Artifactory Plugin-->
+    <!--
+      MSBuild Artifactory Plugin
+      For more details, please go to the plugin Wiki site - http://www.jfrog.com/confluence/display/RTF/MSBuild+Artifactory+Plugin
+    -->
     
     <!--Credentials for Artifactory-->
     <ArtifactoryUserName>$(ARTIFACTORY_USER)</ArtifactoryUserName>

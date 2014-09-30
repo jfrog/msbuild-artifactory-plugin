@@ -138,12 +138,12 @@
   </Target>
   -->
   <PropertyGroup>
-    <PLUGIN_VERSION>0.9.0</PLUGIN_VERSION>
+    <PLUGIN_VERSION>1.0.0</PLUGIN_VERSION>
   </PropertyGroup>
   <Target Name="Nuget-package" AfterTargets="Build">
     <RemoveDir Directories="lib\$(PLUGIN_VERSION)" />
     <MakeDir Directories="lib\$(PLUGIN_VERSION)" />
-    <Exec Command="$(NuGetCommand) pack $(SolutionDir)\packaging\msbuild-artifactory-plugin.nuspec -OutputDirectory lib\$(PLUGIN_VERSION) -Version $(PLUGIN_VERSION)" Condition=" $(BUILD_NUMBER) == '' " />
-    <Exec Command="$(NuGetCommand) pack $(SolutionDir)\packaging\msbuild-artifactory-plugin.nuspec -OutputDirectory lib\$(PLUGIN_VERSION) -Version $(PLUGIN_VERSION).$(BUILD_NUMBER)" Condition=" $(BUILD_NUMBER) != '' " />
+    <Exec Command="$(NuGetCommand) pack $(SolutionDir)\packaging\msbuild-artifactory-plugin.nuspec -OutputDirectory lib\$(PLUGIN_VERSION) -Version $(PLUGIN_VERSION)" Condition=" $(CI_BUILD_NUMBER) == '' " />
+    <Exec Command="$(NuGetCommand) pack $(SolutionDir)\packaging\msbuild-artifactory-plugin.nuspec -OutputDirectory lib\$(PLUGIN_VERSION) -Version $(PLUGIN_VERSION).$(CI_BUILD_NUMBER)" Condition=" $(CI_BUILD_NUMBER) != '' " />
   </Target>
 </Project>
