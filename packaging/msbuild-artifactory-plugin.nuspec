@@ -2,17 +2,17 @@
 <package >
   <metadata>
     <id>Artifactory</id>
-    <version>0.9.0</version>
+    <version>1.0.0</version>
     <title>Artifactory</title>
     <authors>Jfrog</authors>
     <owners>Jfrog</owners>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
-    <projectUrl>http://www.jfrog.com/</projectUrl>
+    <projectUrl>https://github.com/JFrogDev/msbuild-artifactory-plugin</projectUrl>
     <iconUrl>http://www.jfrog.com/wp-content/uploads/2014/05/logo.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Artifactory for C# .NET users</description>
-    <summary>Artifactory for C# .NET users - Beta</summary>
-    <releaseNotes>first upload to nuget , for testing by jfrog only.</releaseNotes>
+    <summary>Artifactory for C# .NET users</summary>
+    <releaseNotes>First upload to nuget.</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <language />
     <tags>artifactory</tags>
