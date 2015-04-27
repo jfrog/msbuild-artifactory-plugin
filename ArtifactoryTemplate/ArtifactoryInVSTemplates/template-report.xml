@@ -1,14 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TemplateReport>
-  <ItemTemplates>
-    <ItemTemplate Path="ItemTemplates\Artifactory\ArtifactoryAssets\Definitions\CSharp.vstemplate" Name="Artifactory" Description="Artifactory plugin configuration files, can be usefully after update." ProjectType="CSharp" ProjectSubType="" />
-    <ItemTemplate Path="ItemTemplates\Artifactory\ArtifactoryAssets\Definitions\VB.vstemplate" Name="Artifactory" Description="Artifactory plugin configuration files, can be usefully after update." ProjectType="CSharp" ProjectSubType="" />
-    <ItemTemplate Path="ItemTemplates\Artifactory\ArtifactoryAssets\Definitions\Web.csharp.vstemplate" Name="Artifactory" Description="Artifactory plugin configuration files, can be usefully after update." ProjectType="CSharp" ProjectSubType="" />
-    <ItemTemplate Path="ItemTemplates\Artifactory\ArtifactoryAssets\Definitions\Web.VB.vstemplate" Name="Artifactory" Description="Artifactory plugin configuration files, can be usefully after update." ProjectType="CSharp" ProjectSubType="" />
-  </ItemTemplates>
+  <ItemTemplates />
   <ProjectTemplates>
     <ProjectTemplate Path="..\ArtifactoryDeployer\_Definitions\_project.vstemplate.xml" Name="Artifactory" Description="Project description here" ProjectType="CSharp" ProjectSubType="" />
-    <ProjectTemplate Path="..\ArtifactoryDeployerVB\_Definitions\_project.vstemplate.xml" Name="Artifactory" Description="Project description here" ProjectType="VisualBasic" ProjectSubType="" />
   </ProjectTemplates>
   <Snippets />
 </TemplateReport>

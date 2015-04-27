@@ -20,6 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
+	<OutputPath>lib\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -28,7 +29,8 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>lib\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -142,12 +144,13 @@
   </ItemGroup>
   
   <Target Name="Nuget-package" AfterTargets="Build">
-    <RemoveDir Directories="lib" RemovedDirectories="true"/>
+    <RemoveDir Directories="lib\$(PLUGIN_VERSION)" RemovedDirectories="true"/>
     <MakeDir Directories="lib\$(PLUGIN_VERSION)" />
     <Exec Command="$(NuGetCommand) pack $(SolutionDir)\packaging\msbuild-artifactory-plugin.nuspec -OutputDirectory lib\$(PLUGIN_VERSION) -Version $(PLUGIN_VERSION)" Condition=" $(CI_BUILD_NUMBER) == '' " />
     <Exec Command="$(NuGetCommand) pack $(SolutionDir)\packaging\msbuild-artifactory-plugin.nuspec -OutputDirectory lib\$(PLUGIN_VERSION) -Version $(PLUGIN_VERSION).$(CI_BUILD_NUMBER)" Condition=" $(CI_BUILD_NUMBER) != '' " />
 
     <Copy SourceFiles="@(NugetSourceFiles)" DestinationFolder="@(NugetSourceFiles->'$(solutionDir)\ArtifactoryTemplate\ArtifactoryInVSTemplates\packages\')"/>
+
   </Target>
   <Import Project="$(TemplateBuilderTargets)" Condition="Exists('$(TemplateBuilderTargets)')" Label="TemplateBuilder" />
 </Project>

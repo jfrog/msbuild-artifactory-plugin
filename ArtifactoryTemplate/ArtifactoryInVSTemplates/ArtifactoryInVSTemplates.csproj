@@ -67,23 +67,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
+  </ItemGroup>  
   <ItemGroup>
-    <None Include="ItemTemplates\Artifactory\ArtifactoryAssets\.artifactory\Artifactory.build" />
-    <None Include="ItemTemplates\Artifactory\ArtifactoryAssets\.artifactory\Deploy.targets" />
-    <None Include="ItemTemplates\Artifactory\ArtifactoryAssets\.artifactory\Resolve.targets" />
-    <Content Include="ItemTemplates\Artifactory\ArtifactoryAssets\Definitions\CSharp.vstemplate">
+    <None Include="packages.config">
       <SubType>Designer</SubType>
-    </Content>
-    <Content Include="ItemTemplates\Artifactory\ArtifactoryAssets\Definitions\VB.vstemplate" />
-    <Content Include="ItemTemplates\Artifactory\ArtifactoryAssets\Definitions\Web.csharp.vstemplate">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="ItemTemplates\Artifactory\ArtifactoryAssets\Definitions\Web.VB.vstemplate" />
-    <Content Include="logo.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    </None>
     <Content Include="packages\Artifactory.2.0.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -93,11 +81,17 @@
     <Content Include="packages\Nuget.Core.2.8.2.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <None Include="packages.config" />
+    <None Include="Properties\template-builder.props">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
-  </ItemGroup>
+	<Content Include="logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+  </ItemGroup> 
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
       <Visible>False</Visible>
@@ -127,12 +121,6 @@
     <TemplateReference Include="ArtifactoryDeployer.csproj">
       <PathToProject>../ArtifactoryDeployer/ArtifactoryDeployer.csproj</PathToProject>
     </TemplateReference>
-    <TemplateReference Include="ArtifactoryDeployerVB.vbproj">
-      <PathToProject>../ArtifactoryDeployerVB/ArtifactoryDeployerVB.vbproj</PathToProject>
-    </TemplateReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="ItemTemplates\Artifactory\ArtifactoryAssets\icon.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="TemplateBuilder">
@@ -154,14 +142,13 @@
     <VSIX_OUTPUT Condition="$(Configuration) == 'Debug'">bin\Debug</VSIX_OUTPUT>
     <VSIX_OUTPUT Condition="$(Configuration) == 'Release'">bin\Release</VSIX_OUTPUT>
   </PropertyGroup>
-  
   <Target Name="VSIX-build" AfterTargets="Build">
-    
-    <RemoveDir Directories="lib" RemovedDirectories="true"/>
-    <Copy Condition=" $(CI_BUILD_NUMBER) == '' " SourceFiles="$(VSIX_OUTPUT)\$(AssemblyName).vsix" DestinationFolder="lib\$(TEMPLATE_VERSION)\"></Copy>
-    <Copy Condition=" $(CI_BUILD_NUMBER) != '' " SourceFiles="$(VSIX_OUTPUT)\$(AssemblyName).vsix" DestinationFolder="lib\$(TEMPLATE_VERSION).$(CI_BUILD_NUMBER)\"></Copy>
+    <RemoveDir Directories="lib" RemovedDirectories="true" />
+    <Copy Condition=" $(CI_BUILD_NUMBER) == '' " SourceFiles="$(VSIX_OUTPUT)\$(AssemblyName).vsix" DestinationFolder="lib\$(TEMPLATE_VERSION)\">
+    </Copy>
+    <Copy Condition=" $(CI_BUILD_NUMBER) != '' " SourceFiles="$(VSIX_OUTPUT)\$(AssemblyName).vsix" DestinationFolder="lib\$(TEMPLATE_VERSION).$(CI_BUILD_NUMBER)\">
+    </Copy>
   </Target>
-  
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
