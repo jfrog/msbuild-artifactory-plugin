@@ -49,6 +49,7 @@ namespace JFrog.Artifactory.Utils
             //Add build server properties, if exists.
             build.properties = AddSystemVariables(artifactoryConfig, build);
             build.licenseControl = AddLicenseControl(artifactoryConfig, log);
+            build.blackDuckGovernance = AddBlackDuck(artifactoryConfig, log);
 
             ConfigHttpClient(artifactoryConfig, build);
 
@@ -216,6 +217,39 @@ namespace JFrog.Artifactory.Utils
             }
 
             return licenseControl;
+        }
+
+        private static BlackDuckGovernance AddBlackDuck(ArtifactoryConfig artifactoryConfig, BuildInfoLog log)
+        {
+            BlackDuckGovernance blackDuckControl = new BlackDuckGovernance();
+            blackDuckControl.runChecks = artifactoryConfig.PropertyGroup.BlackDuckCheck.EnabledBlackDuckCheck;
+            blackDuckControl.appName = artifactoryConfig.PropertyGroup.BlackDuckCheck.CodeCenterApplicationName;
+            blackDuckControl.appVersion = artifactoryConfig.PropertyGroup.BlackDuckCheck.CodeCenterApplicationVersion;
+            blackDuckControl.reportRecipients = new List<string>();
+            blackDuckControl.scopes = new List<string>();
+            blackDuckControl.includePublishedArtifacts = artifactoryConfig.PropertyGroup.BlackDuckCheck.IncludePublishedArtifacts;
+            blackDuckControl.autoCreateMissingComponentRequests = artifactoryConfig.PropertyGroup.BlackDuckCheck.AutoCreateMissingComponent;
+            blackDuckControl.autoDiscardStaleComponentRequests = artifactoryConfig.PropertyGroup.BlackDuckCheck.AutoDiscardStaleComponent;
+
+            foreach (Recipient recip in artifactoryConfig.PropertyGroup.BlackDuckCheck.ComplianceReportRecipients.Recipient)
+            {
+                if (validateEmail(recip))
+                {
+                    blackDuckControl.reportRecipients.Add(recip.email);
+                }
+                else
+                {
+                    log.Warning("Invalid email address, under License Control violation recipients.");
+                }
+            }
+
+            foreach (Scope scope in artifactoryConfig.PropertyGroup.BlackDuckCheck.ScopesForLicenseAnalysis.Scope)
+            {
+                blackDuckControl.scopes.Add(scope.value);
+            }
+
+
+            return blackDuckControl;
         }
 
         /// <summary>

@@ -38,7 +38,8 @@ namespace JFrog.Artifactory.Utils
         {
             ExtractBuildProperties();
             _log.Info("Processing build modules...");
-            ProcessMainProject();
+            
+            ProcessMainProject(_task);
             ProccessModuleRef();
         }
 
@@ -48,8 +49,11 @@ namespace JFrog.Artifactory.Utils
             _buildInfo = BuildInfoExtractor.extractBuild(_task, MainArtifactoryConfiguration, _log);
         }
 
-        private void ProcessMainProject()
+        private void ProcessMainProject(ArtifactoryBuild _task)
         {
+            if (_task.SkipParent != null && _task.SkipParent.Equals("true"))
+                return;
+
          /*Main project*/
             var mainProjectParser = new ProjectHandler(_task.ProjectName, _task.ProjectPath);
             /*
@@ -73,11 +77,9 @@ namespace JFrog.Artifactory.Utils
         /// </summary>
         private void ProccessModuleRef()
         {
-
             foreach (var task in _task.projRefList)
             {
-                var projectParser = new ProjectHandler(task.GetMetadata("Name"), task.GetMetadata("RelativeDir"));
-
+                var projectParser = new ProjectHandler(task.GetMetadata("Name"), task.GetMetadata("RelativeDir"));             
                 /*
                  * Trying to check if Artifactory configuration file exists (overrides) in the sub module level.
                  *  If not we will use the configurations from the solution level

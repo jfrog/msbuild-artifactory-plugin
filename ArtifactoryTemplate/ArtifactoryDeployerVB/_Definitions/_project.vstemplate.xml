@@ -1,0 +1,39 @@
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
+  <TemplateData>
+    <Name>Artifactory</Name>
+    <Description>Project description here</Description>
+    <DefaultName>Artifactory</DefaultName>
+    
+    <ProjectType>VisualBasic</ProjectType>
+    <ProjectSubType></ProjectSubType>
+    <SortOrder>1000</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>    
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <LocationField>Enabled</LocationField>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+    <Icon>artifactory-icon.png</Icon>
+    
+    <!-- Indicates how many parent folders this item template should appear in -->
+    <NumberOfParentCategoriesToRollUp>1</NumberOfParentCategoriesToRollUp>
+  </TemplateData>
+  <TemplateContent>
+    <Project TargetFileName="ArtifactoryDeployerVB.vbproj" File="ArtifactoryDeployerVB.vbproj" ReplaceParameters="true">      
+    </Project>
+  </TemplateContent>
+  <WizardExtension>
+    <Assembly>ArtifactoryWizard, Version=1.0.0.0, Culture=Neutral, PublicKeyToken=null</Assembly>
+    <FullClassName>ArtifactoryWizard.InitScriptWizard</FullClassName>
+  </WizardExtension>
+  <WizardExtension>
+    <Assembly>NuGet.VisualStudio.Interop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</Assembly>
+    <FullClassName>NuGet.VisualStudio.TemplateWizard</FullClassName>
+  </WizardExtension>
+  <WizardData>
+    <packages repository="extension"
+              repositoryId="Artifactory..4167dcd7-28bd-4eed-b301-2bc5a049b030">
+      <package id="NuGet.Core" version="2.8.2" />
+      <package id="Microsoft.Web.Xdt" version="2.1.1" />
+      <package id="Artifactory" version="1.1.0" allowedVersions="[1.1.0,)" />
+    </packages>
+  </WizardData>
+</VSTemplate>
