@@ -106,7 +106,7 @@
     <LicenseControl>
       <Enabled>false</Enabled>
       <LicenseViolationRecipients>
-        <!--<Recipient email="address@gmail.com"/>-->
+        <!--<Recipient email="address@jfrog.com"/>-->
       </LicenseViolationRecipients>
       <!--If Nuget package license is not identified by Artifactory, run license discovery inside the package. [RESOURCE INTENSIVE]-->
       <AutomaticLicenseDiscovery>true</AutomaticLicenseDiscovery>

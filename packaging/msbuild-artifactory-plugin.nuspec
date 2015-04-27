@@ -22,12 +22,8 @@
   </metadata>
   
   <files>
-    <file src="nupkg\artifactory\Artifactory.build" target="artifactory" />
-    <file src="nupkg\artifactory\Resolve.targets" target="artifactory" />
-    <file src="nupkg\targets\Deploy.targets" target="artifactory" />   
-    <file src="nupkg\tools\Install.ps1" target="tools" />
-    <file src="nupkg\tools\Uninstall.ps1" target="tools" />
     <file src="..\msbuild-artifactory-plugin\lib\*.dll" target="lib\net45" /> 
+	  <file src="nupkg\tools\Install.ps1" target="tools" />
   </files>
 
   
