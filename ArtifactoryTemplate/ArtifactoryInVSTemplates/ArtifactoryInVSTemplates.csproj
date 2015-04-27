@@ -149,6 +149,19 @@
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
+  <PropertyGroup>
+    <TEMPLATE_VERSION>1.0.0</TEMPLATE_VERSION>
+    <VSIX_OUTPUT Condition="$(Configuration) == 'Debug'">bin\Debug</VSIX_OUTPUT>
+    <VSIX_OUTPUT Condition="$(Configuration) == 'Release'">bin\Release</VSIX_OUTPUT>
+  </PropertyGroup>
+  
+  <Target Name="VSIX-build" AfterTargets="Build">
+    
+    <RemoveDir Directories="lib" RemovedDirectories="true"/>
+    <Copy Condition=" $(CI_BUILD_NUMBER) == '' " SourceFiles="$(VSIX_OUTPUT)\$(AssemblyName).vsix" DestinationFolder="lib\$(TEMPLATE_VERSION)\"></Copy>
+    <Copy Condition=" $(CI_BUILD_NUMBER) != '' " SourceFiles="$(VSIX_OUTPUT)\$(AssemblyName).vsix" DestinationFolder="lib\$(TEMPLATE_VERSION).$(CI_BUILD_NUMBER)\"></Copy>
+  </Target>
+  
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

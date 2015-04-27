@@ -21,8 +21,8 @@ namespace ArtifactoryWizard
         EnvDTE.Project _project;
         WizardRunKind _runKind;
 
-        private UserInputForm inputForm;
-        private string customMessage;
+        //private UserInputForm inputForm;
+        //private string customMessage;
         string _destinationDirectory;
         string _solutionDir;
 

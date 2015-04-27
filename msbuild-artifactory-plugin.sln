@@ -40,6 +40,11 @@ EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "ArtifactoryDeployerVB", "ArtifactoryTemplate\ArtifactoryDeployerVB\ArtifactoryDeployerVB.vbproj", "{840006E0-8734-4082-8D5F-E68F1096E097}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtifactoryInVSTemplates", "ArtifactoryTemplate\ArtifactoryInVSTemplates\ArtifactoryInVSTemplates.csproj", "{8EA23549-56A4-47B5-9230-2B1187A7D1FB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3280F70A-8A97-4DB7-9379-8F0732FAE84F} = {3280F70A-8A97-4DB7-9379-8F0732FAE84F}
+		{840006E0-8734-4082-8D5F-E68F1096E097} = {840006E0-8734-4082-8D5F-E68F1096E097}
+		{9CAD74E7-637B-43DA-90FD-B9A61939043E} = {9CAD74E7-637B-43DA-90FD-B9A61939043E}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
