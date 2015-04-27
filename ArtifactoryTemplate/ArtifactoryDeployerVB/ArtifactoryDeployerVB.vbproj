@@ -105,6 +105,11 @@
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <None Include=".artifactory\Artifactory.build" />
+    <None Include=".artifactory\Deploy.targets" />
+    <None Include=".artifactory\Resolve.targets" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <Target Name="Clean">
   </Target>

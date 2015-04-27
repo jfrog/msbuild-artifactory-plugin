@@ -40,7 +40,7 @@
               repositoryId="Artifactory..4167dcd7-28bd-4eed-b301-2bc5a049b030">
       <package id="NuGet.Core" version="2.8.2" />
       <package id="Microsoft.Web.Xdt" version="2.1.1" />
-      <package id="Artifactory" version="1.1.0" allowedVersions="[1.1.0,)" />
+      <package id="Artifactory" version="2.0.0" />
     </packages>
   </WizardData>
 </VSTemplate>
