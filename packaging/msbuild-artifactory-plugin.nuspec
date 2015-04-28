@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Artifactory</id>
-    <version>1.1.0</version>
+    <version>0.9.0</version>
     <title>Artifactory</title>
     <authors>Jfrog</authors>
     <owners>Jfrog</owners>

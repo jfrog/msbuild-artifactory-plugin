@@ -63,7 +63,7 @@
       
       <!--<Deploy>
         <InputPattern>bin\(.+).nupkg</InputPattern>
-        --><!--$1 refers to (.+) capturing group--><!--
+        <!--$1 refers to (.+) capturing group-->
         <OutputPattern>$1.nupkg</OutputPattern>
       </Deploy>-->
       
