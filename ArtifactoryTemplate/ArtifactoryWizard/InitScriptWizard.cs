@@ -56,23 +56,19 @@ namespace ArtifactoryWizard
             {
                 MessageBox.Show(ex.ToString());
             }
-
-
-           // MessageBox.Show("Wizard");
             //Console.Write("Wizard!!!");
         }
 
 
         public void BeforeOpeningFile(EnvDTE.ProjectItem projectItem)
         {
-            //MessageBox.Show("Wizard");
             //throw new NotImplementedException();
         }
 
         public void ProjectFinishedGenerating(EnvDTE.Project project)
         {
             _project = project;
-            
+            var p = Microsoft.Build.Evaluation.ProjectCollection.GlobalProjectCollection.GetLoadedProjects(_project.FullName).ElementAt(0);
             String artifactoryConfLocation = Path.Combine(project.FullName, "..\\.artifactory");
             System.IO.Directory.CreateDirectory(Path.Combine(_solutionDir, ".artifactory"));
             Project folder = ((Solution2)_dte.Solution).AddSolutionFolder(".artifactory");
@@ -95,8 +91,6 @@ namespace ArtifactoryWizard
                     pi.Delete();
                 }
             }
-            
-            //throw new NotImplementedException();
         }
 
         public void ProjectItemFinishedGenerating(EnvDTE.ProjectItem projectItem)
@@ -106,6 +100,8 @@ namespace ArtifactoryWizard
 
         public void RunFinished()
         {
+            UpdatePackagesfolderLocation();    
+
             AddImportToNuget();
 
             //AddImportToProj();
@@ -116,7 +112,6 @@ namespace ArtifactoryWizard
         public bool ShouldAddProjectItem(string filePath)
         {
             return true;
-            //throw new NotImplementedException();
         }
 
         public void projectRun() 
@@ -126,7 +121,7 @@ namespace ArtifactoryWizard
         }
 
         //Override the packages.config file with limitation on the Artifactory nuget version "allowedVersions"
-        private void addNugetVersionRange() 
+        private void AddNugetVersionRange() 
         {
             String packagesConfig = _project.FullName + "\\..\\packages.config";
             XmlDocument xmlDoc = new XmlDocument();
@@ -136,6 +131,41 @@ namespace ArtifactoryWizard
             attr.Value = "[1.1.0,)";
             matches.Item(0).Attributes.Append(attr);
             xmlDoc.Save(packagesConfig);      
+        }
+
+        private void UpdatePackagesfolderLocation() 
+        {
+            var p = Microsoft.Build.Evaluation.ProjectCollection.GlobalProjectCollection.GetLoadedProjects(_project.FullName).ElementAt(0);
+            string packagesFolderLocation = "$(solutionDir)";
+            foreach (var item in p.GetItems("Reference"))
+            {
+                if (item.EvaluatedInclude.Equals("JFrog.Artifactory"))
+                {
+                    if (item.Metadata.Count > 0)
+                    {
+                        var m = item.Metadata.FirstOrDefault(x => x.Name.Contains("HintPath"));
+                        if (m != null)
+                        {
+                            packagesFolderLocation = m.EvaluatedValue.Substring(0, m.EvaluatedValue.IndexOf("packages"));
+                        }
+                    }
+                }
+
+                string deployTargetsFile = Path.Combine(_solutionDir, @".artifactory\Deploy.targets");
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.Load(deployTargetsFile);
+
+                for (int i = 0; xmlDoc.FirstChild.ChildNodes.Count > i; i++)
+                {
+                    var child = xmlDoc.FirstChild.ChildNodes.Item(i);
+                    if (child.Name.Equals("PropertyGroup") && child.FirstChild.Name.Equals("NugetPackagesLocation"))
+                    {
+                        child.FirstChild.InnerText = packagesFolderLocation;
+                        break;
+                    }
+                }
+                xmlDoc.Save(deployTargetsFile);
+            }   
         }
 
         private void AddImportToNuget() 

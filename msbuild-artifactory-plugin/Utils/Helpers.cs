@@ -30,99 +30,12 @@ namespace JFrog.Artifactory.Utils
             json.AppendFormat("\"url\":\"{0}\",", model.url);
             json.AppendFormat("\"vcsRevision\":\"{0}\",", model.vcsRevision);
 
-
-            json.Append("\"licenseControl\":{");
-            json.AppendFormat("\"runChecks\":\"{0}\",", model.licenseControl.runChecks);
-            json.AppendFormat("\"includePublishedArtifacts\":\"{0}\",", model.licenseControl.includePublishedArtifacts);
-            json.AppendFormat("\"autoDiscover\":\"{0}\",", model.licenseControl.autoDiscover);
-            json.Append("\"licenseViolationRecipients\":[");
-
-            var lastRecip = model.licenseControl.licenseViolationsRecipients.LastOrDefault();
-            foreach (string recip in model.licenseControl.licenseViolationsRecipients)
-            {
-                json.AppendFormat("\"{0}\"", recip);
-                if (!lastRecip.Equals(recip))
-                    json.Append(",");
-            }
-            json.Append("],");
-            json.Append("\"scopes\":[");
-            var lastScope = model.licenseControl.scopes.LastOrDefault();
-            foreach (string scope in model.licenseControl.scopes)
-            {
-                json.AppendFormat("\"{0}\"", scope);
-                if (!lastScope.Equals(scope))
-                    json.Append(",");
-            }
-            json.Append("]");
-            json.Append("},");
-
-            //BlackDuck 
-
-            json.Append("\"governance\":{");
-            json.Append("\"blackDuckProperties\":{");
-            json.AppendFormat("\"runChecks\":\"{0}\",", model.blackDuckGovernance.runChecks);
-            json.AppendFormat("\"appName\":\"{0}\",", model.blackDuckGovernance.appName);
-            json.AppendFormat("\"appVersion\":\"{0}\",", model.blackDuckGovernance.appVersion);
-
-            if (model.blackDuckGovernance.reportRecipients.Count > 0) 
-            {
-                json.Append("\"reportRecipients\":");
-                lastRecip = model.blackDuckGovernance.reportRecipients.LastOrDefault();
-                string recipes = string.Empty;
-                foreach (string recip in model.blackDuckGovernance.reportRecipients)
-                {
-                    recipes += recip;
-                    if (!lastRecip.Equals(recip))
-                        recipes += " ";
-                }
-                json.AppendFormat("\"{0}\"", recipes);
-                json.Append(",");
-            }
-
-            if (model.blackDuckGovernance.scopes.Count > 0)
-            {
-                json.Append("\"scopes\":");
-                lastScope = model.blackDuckGovernance.scopes.LastOrDefault();
-                string scopes = string.Empty;
-                foreach (string scope in model.blackDuckGovernance.scopes)
-                {
-                    scopes += scope;
-                    if (!lastScope.Equals(scope))
-                        scopes += " ";
-                }
-                json.AppendFormat("\"{0}\"", scopes);
-                json.Append(",");
-            }
-            
-            json.AppendFormat("\"includePublishedArtifacts\":\"{0}\",", model.blackDuckGovernance.includePublishedArtifacts);
-            json.AppendFormat("\"autoCreateMissingComponentRequests\":\"{0}\",", model.blackDuckGovernance.autoCreateMissingComponentRequests);
-            json.AppendFormat("\"autoDiscardStaleComponentRequests\":\"{0}\"", model.blackDuckGovernance.autoDiscardStaleComponentRequests);
-            json.Append("}");
-            json.Append("},");
+            createLicenseControl(json, model);
+            createBlackDuck(json, model);
 
             json.Append("\"buildRetention\":null,");
 
-            //system variables start
-
-            if (model.properties != null && model.properties.Count > 0)
-            {
-                json.Append("\"properties\":{");
-                var lastKey = model.properties.LastOrDefault();
-
-                String quoteMatch = @"""";
-                String doubleBackSlashMatch = @"\\";
-
-                foreach (var kvp in model.properties)
-                {
-                    String cleanValue = Regex.Replace(kvp.Value, doubleBackSlashMatch, doubleBackSlashMatch).Replace(quoteMatch, @"\""");
-                    json.AppendFormat("\"{0}\":\"{1}\"", kvp.Key, cleanValue);
-                    if (kvp.Key != lastKey.Key)
-                    {
-                        json.Append(",");
-                    }
-                }
-                json.Append("},");
-            }
+            createEnvVar(json, model);           
 
             json.Append("\"modules\":[");
             var modulesCount = model.modules.Count();
@@ -191,5 +104,110 @@ namespace JFrog.Artifactory.Utils
             //module end
             sb.Append("}");
         }
+
+        //Artifactory License Control
+        private static void createLicenseControl(StringBuilder json, Build model) 
+        {
+            json.Append("\"licenseControl\":{");
+            json.AppendFormat("\"runChecks\":\"{0}\",", model.licenseControl.runChecks);
+            json.AppendFormat("\"includePublishedArtifacts\":\"{0}\",", model.licenseControl.includePublishedArtifacts);
+            json.AppendFormat("\"autoDiscover\":\"{0}\",", model.licenseControl.autoDiscover);
+            json.Append("\"licenseViolationRecipients\":[");
+
+            var lastRecip = model.licenseControl.licenseViolationsRecipients.LastOrDefault();
+            foreach (string recip in model.licenseControl.licenseViolationsRecipients)
+            {
+                json.AppendFormat("\"{0}\"", recip);
+                if (!lastRecip.Equals(recip))
+                    json.Append(",");
+            }
+            json.Append("],");
+            json.Append("\"scopes\":[");
+            var lastScope = model.licenseControl.scopes.LastOrDefault();
+            foreach (string scope in model.licenseControl.scopes)
+            {
+                json.AppendFormat("\"{0}\"", scope);
+                if (!lastScope.Equals(scope))
+                    json.Append(",");
+            }
+            json.Append("]");
+            json.Append("},");
+        
+        }
+
+        //BlackDuck
+        private static void createBlackDuck(StringBuilder json, Build model) 
+        {             
+            if (model.blackDuckGovernance == null)
+                return;
+
+            json.Append("\"governance\":{");
+            json.Append("\"blackDuckProperties\":{");
+            json.AppendFormat("\"runChecks\":\"{0}\",", model.blackDuckGovernance.runChecks);
+            json.AppendFormat("\"appName\":\"{0}\",", model.blackDuckGovernance.appName);
+            json.AppendFormat("\"appVersion\":\"{0}\",", model.blackDuckGovernance.appVersion);
+
+            if (model.blackDuckGovernance.reportRecipients.Count > 0)
+            {
+                json.Append("\"reportRecipients\":");
+                var lastRecip = model.blackDuckGovernance.reportRecipients.LastOrDefault();
+                string recipes = string.Empty;
+                foreach (string recip in model.blackDuckGovernance.reportRecipients)
+                {
+                    recipes += recip;
+                    if (!lastRecip.Equals(recip))
+                        recipes += " ";
+                }
+                json.AppendFormat("\"{0}\"", recipes);
+                json.Append(",");
+            }
+
+            if (model.blackDuckGovernance.scopes.Count > 0)
+            {
+                json.Append("\"scopes\":");
+                var lastScope = model.blackDuckGovernance.scopes.LastOrDefault();
+                string scopes = string.Empty;
+                foreach (string scope in model.blackDuckGovernance.scopes)
+                {
+                    scopes += scope;
+                    if (!lastScope.Equals(scope))
+                        scopes += " ";
+                }
+                json.AppendFormat("\"{0}\"", scopes);
+                json.Append(",");
+            }
+
+            json.AppendFormat("\"includePublishedArtifacts\":\"{0}\",", model.blackDuckGovernance.includePublishedArtifacts);
+            json.AppendFormat("\"autoCreateMissingComponentRequests\":\"{0}\",", model.blackDuckGovernance.autoCreateMissingComponentRequests);
+            json.AppendFormat("\"autoDiscardStaleComponentRequests\":\"{0}\"", model.blackDuckGovernance.autoDiscardStaleComponentRequests);
+            json.Append("}");
+            json.Append("},");       
+        }
+
+        //system variables start
+        private static void createEnvVar(StringBuilder json, Build model)
+        {        
+            if (model.properties != null && model.properties.Count > 0)
+            {
+                json.Append("\"properties\":{");
+                var lastKey = model.properties.LastOrDefault();
+
+                String quoteMatch = @"""";
+                String doubleBackSlashMatch = @"\\";
+
+                foreach (var kvp in model.properties)
+                {
+                    String cleanValue = Regex.Replace(kvp.Value, doubleBackSlashMatch, doubleBackSlashMatch).Replace(quoteMatch, @"\""");
+                    json.AppendFormat("\"{0}\":\"{1}\"", kvp.Key, cleanValue);
+                    if (kvp.Key != lastKey.Key)
+                    {
+                        json.Append(",");
+                    }
+                }
+                json.Append("},");
+            }
+        }
     }
+
+    
 }

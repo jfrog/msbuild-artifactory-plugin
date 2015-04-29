@@ -18,7 +18,10 @@
   <PropertyGroup>
     <SkipParent Condition=" '$(SkipParent)' == '' ">false</SkipParent>
   </PropertyGroup>
-  <UsingTask TaskName="JFrog.Artifactory.ArtifactoryBuild" AssemblyFile="$(solutionDir)\packages\Artifactory.$(pluginVersion)\lib\net45\JFrog.Artifactory.dll" />
+  <PropertyGroup>
+    <NugetPackagesLocation>$(solutionDir)\</NugetPackagesLocation>
+  </PropertyGroup>
+  <UsingTask TaskName="JFrog.Artifactory.ArtifactoryBuild" AssemblyFile="$(NugetPackagesLocation)packages\Artifactory.$(pluginVersion)\lib\net45\JFrog.Artifactory.dll" />
   <Target Name="[Artifactory]" AfterTargets="Build">
     <ArtifactoryBuild projRefList="@(ProjectReference)" ProjectName="$(MSBuildProjectName)" SolutionRoot="$(solutionDir)" ProjectPath="$(MSBuildProjectDirectory)" Configuration="$(Configuration)" StartTime="$(StartTime)" TfsActive="$(TF_BUILD)" BuildUNCPath="$(BuildUNCPath)" BuildReason="$(BuildReason)" BuildNumber="$(BuildNumber)" VcsRevision="$(BuildRevision)" User="$(ArtifactoryUserName)" Password="$(ArtifactoryPassword)" Url="$(DeployArtifactoryUrl)" BuildName="$(BuildName)" DeploymentRepository="$(DeployRepository)" DeployEnabled="$(DeployEnabled)" BuildInfoEnabled="$(BuildInfoEnabled)" ToolVersion="$(MSBuildToolsVersion)" SkipParent="$(SkipParent)" />
   </Target>

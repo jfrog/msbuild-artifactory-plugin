@@ -139,18 +139,20 @@
   <PropertyGroup Label="TemplateBuilder">
     <TemplateBuilderTargets Condition=" '$(TemplateBuilderTargets)'=='' ">$([System.IO.Path]::GetFullPath( $(MSBuildProjectDirectory)\..\packages\TemplateBuilder.1.1.3\tools\ligershark.templates.targets ))</TemplateBuilderTargets>
   </PropertyGroup>
+  <PropertyGroup>
+    <NUGET_VERSION Condition=" $(CI_BUILD_NUMBER) == '' ">$(PLUGIN_VERSION)</NUGET_VERSION>
+    <NUGET_VERSION Condition=" $(CI_BUILD_NUMBER) != '' ">$(PLUGIN_VERSION).$(CI_BUILD_NUMBER)</NUGET_VERSION>
+  </PropertyGroup>
   <ItemGroup>
-    <NugetSourceFiles Include="lib\$(PLUGIN_VERSION)\*.nupkg"/>
+    <NugetSourceFiles Include="lib\$(PLUGIN_VERSION)\Artifactory.$(NUGET_VERSION).nupkg"/>
   </ItemGroup>
   
   <Target Name="Nuget-package" AfterTargets="Build">
     <RemoveDir Directories="lib\$(PLUGIN_VERSION)" RemovedDirectories="true"/>
     <MakeDir Directories="lib\$(PLUGIN_VERSION)" />
-    <Exec Command="$(NuGetCommand) pack $(SolutionDir)\packaging\msbuild-artifactory-plugin.nuspec -OutputDirectory lib\$(PLUGIN_VERSION) -Version $(PLUGIN_VERSION)" Condition=" $(CI_BUILD_NUMBER) == '' " />
-    <Exec Command="$(NuGetCommand) pack $(SolutionDir)\packaging\msbuild-artifactory-plugin.nuspec -OutputDirectory lib\$(PLUGIN_VERSION) -Version $(PLUGIN_VERSION).$(CI_BUILD_NUMBER)" Condition=" $(CI_BUILD_NUMBER) != '' " />
+    <Exec Command="$(NuGetCommand) pack $(SolutionDir)\packaging\msbuild-artifactory-plugin.nuspec -OutputDirectory lib\$(PLUGIN_VERSION) -Version $(NUGET_VERSION)" />
 
-    <Copy SourceFiles="@(NugetSourceFiles)" DestinationFolder="@(NugetSourceFiles->'$(solutionDir)\ArtifactoryTemplate\ArtifactoryInVSTemplates\packages\')"/>
-
+    <Copy SourceFiles="@(NugetSourceFiles)" DestinationFiles="@(NugetSourceFiles->'$(solutionDir)\ArtifactoryTemplate\ArtifactoryInVSTemplates\packages\Artifactory.$(PLUGIN_VERSION).nupkg')"/>
   </Target>
   <Import Project="$(TemplateBuilderTargets)" Condition="Exists('$(TemplateBuilderTargets)')" Label="TemplateBuilder" />
 </Project>

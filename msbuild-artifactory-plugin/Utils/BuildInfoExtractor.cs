@@ -47,9 +47,9 @@ namespace JFrog.Artifactory.Utils
             build.vcsRevision = task.VcsRevision;
 
             //Add build server properties, if exists.
-            build.properties = AddSystemVariables(artifactoryConfig, build);
-            build.licenseControl = AddLicenseControl(artifactoryConfig, log);
-            build.blackDuckGovernance = AddBlackDuck(artifactoryConfig, log);
+            AddSystemVariables(artifactoryConfig, build);
+            AddLicenseControl(artifactoryConfig, build, log);
+            AddBlackDuck(artifactoryConfig, build, log);
 
             ConfigHttpClient(artifactoryConfig, build);
 
@@ -142,11 +142,14 @@ namespace JFrog.Artifactory.Utils
         /// Gather all windows system variables and their values
         /// </summary>
         /// <returns></returns>
-        private static Dictionary<string, string> AddSystemVariables(ArtifactoryConfig artifactoryConfig, Build build)
+        private static void AddSystemVariables(ArtifactoryConfig artifactoryConfig, Build build)
         {
+            if (artifactoryConfig.PropertyGroup.EnvironmentVariables == null)
+                return;
+
             string enable = artifactoryConfig.PropertyGroup.EnvironmentVariables.EnabledEnvVariable;
             if (string.IsNullOrWhiteSpace(enable) || !enable.ToLower().Equals("true"))
-                return new Dictionary<string, string>();
+                return;
 
             // includePatterns = new List<Pattern>();
             //List<Pattern> excludePatterns = new List<Pattern>();
@@ -186,13 +189,15 @@ namespace JFrog.Artifactory.Utils
 
             dicVariables.AddRange(build.agent.BuildAgentEnvironment());
 
-            return dicVariables;
+            build.properties = dicVariables;
         }
 
-        private static LicenseControl AddLicenseControl(ArtifactoryConfig artifactoryConfig, BuildInfoLog log)
+        private static void AddLicenseControl(ArtifactoryConfig artifactoryConfig, Build build, BuildInfoLog log)
         {
-            LicenseControl licenseControl = new LicenseControl();
+            if (artifactoryConfig.PropertyGroup.LicenseControlCheck == null)
+                return;
 
+            LicenseControl licenseControl = new LicenseControl();
             licenseControl.runChecks = artifactoryConfig.PropertyGroup.LicenseControlCheck.EnabledLicenseControl;
             licenseControl.autoDiscover = artifactoryConfig.PropertyGroup.LicenseControlCheck.AutomaticLicenseDiscovery;
             licenseControl.includePublishedArtifacts = artifactoryConfig.PropertyGroup.LicenseControlCheck.IncludePublishedArtifacts;
@@ -216,11 +221,14 @@ namespace JFrog.Artifactory.Utils
                 licenseControl.scopes.Add(scope.value);
             }
 
-            return licenseControl;
+            build.licenseControl = licenseControl;
         }
 
-        private static BlackDuckGovernance AddBlackDuck(ArtifactoryConfig artifactoryConfig, BuildInfoLog log)
+        private static void AddBlackDuck(ArtifactoryConfig artifactoryConfig, Build build, BuildInfoLog log)
         {
+            if (artifactoryConfig.PropertyGroup.BlackDuckCheck == null)
+                return;
+
             BlackDuckGovernance blackDuckControl = new BlackDuckGovernance();
             blackDuckControl.runChecks = artifactoryConfig.PropertyGroup.BlackDuckCheck.EnabledBlackDuckCheck;
             blackDuckControl.appName = artifactoryConfig.PropertyGroup.BlackDuckCheck.CodeCenterApplicationName;
@@ -248,8 +256,7 @@ namespace JFrog.Artifactory.Utils
                 blackDuckControl.scopes.Add(scope.value);
             }
 
-
-            return blackDuckControl;
+            build.blackDuckGovernance = blackDuckControl;
         }
 
         /// <summary>
