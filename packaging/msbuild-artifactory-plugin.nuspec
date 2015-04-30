@@ -12,8 +12,8 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Artifactory for C# .NET users</description>
     <summary>Artifactory for C# .NET users</summary>
-    <releaseNotes></releaseNotes>
-    <copyright>Copyright 2014</copyright>
+    <releaseNotes>Support for VS template</releaseNotes>
+    <copyright>Copyright 2015</copyright>
     <language />
     <tags>artifactory</tags>
     <dependencies>
