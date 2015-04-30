@@ -16,6 +16,7 @@ bld/
 [Bb]in/
 [Oo]bj/
 msbuild-artifactory-plugin/lib/
+ArtifactoryTemplate/ArtifactoryInVSTemplates/lib/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/

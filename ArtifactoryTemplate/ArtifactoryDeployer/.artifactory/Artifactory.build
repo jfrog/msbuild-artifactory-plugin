@@ -118,8 +118,8 @@
 
     <BlackDuckComplianceCheck>
       <Enabled>false</Enabled>
-      <CodeCenterApplicationName>maven-example-jb</CodeCenterApplicationName>
-      <CodeCenterApplicationVersion>1.0</CodeCenterApplicationVersion>
+      <CodeCenterApplicationName>$(BD_APPLICATION_NAME)</CodeCenterApplicationName>
+      <CodeCenterApplicationVersion>$(BD_APPLICATION_VERSION)</CodeCenterApplicationVersion>
       <ComplianceReportRecipients>
         <!--<Recipient email="address@jfrog.com"/>-->
       </ComplianceReportRecipients>
