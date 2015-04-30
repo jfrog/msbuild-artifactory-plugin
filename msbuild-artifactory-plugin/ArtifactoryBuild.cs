@@ -1,6 +1,5 @@
 ﻿using JFrog.Artifactory.Model;
 using JFrog.Artifactory.Utils;
-using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using System;
@@ -25,6 +24,7 @@ namespace JFrog.Artifactory
         /* Artifactory parameters */
         public string BuildInfoEnabled { get; set; }
         public string DeployEnabled { get; set;}
+        public string SkipParent { get; set; }
         public string User { get; set; }
         public string Password { get; set; }
         public string Url { get; set; }        

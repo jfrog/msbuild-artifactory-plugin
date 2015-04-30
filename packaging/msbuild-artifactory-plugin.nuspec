@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Artifactory</id>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <title>Artifactory</title>
     <authors>Jfrog</authors>
     <owners>Jfrog</owners>
@@ -12,8 +12,8 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Artifactory for C# .NET users</description>
     <summary>Artifactory for C# .NET users</summary>
-    <releaseNotes>First upload to nuget.</releaseNotes>
-    <copyright>Copyright 2014</copyright>
+    <releaseNotes>Support for VS template</releaseNotes>
+    <copyright>Copyright 2015</copyright>
     <language />
     <tags>artifactory</tags>
     <dependencies>
@@ -22,12 +22,8 @@
   </metadata>
   
   <files>
-    <file src="nupkg\artifactory\Artifactory.build" target="artifactory" />
-    <file src="nupkg\artifactory\Resolve.targets" target="artifactory" />
-    <file src="nupkg\targets\Deploy.targets" target="artifactory" />   
-    <file src="nupkg\tools\Install.ps1" target="tools" />
-    <file src="nupkg\tools\Uninstall.ps1" target="tools" />
     <file src="..\msbuild-artifactory-plugin\lib\*.dll" target="lib\net45" /> 
+	<file src="nupkg\tools\Install.ps1" target="tools" />
   </files>
 
   

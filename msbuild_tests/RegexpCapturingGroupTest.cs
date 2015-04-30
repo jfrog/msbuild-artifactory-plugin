@@ -1,14 +1,16 @@
 ﻿using System;
 using JFrog.Artifactory.Utils.regexCapturing;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
-using System.Collections;
 using System.IO;
-using System.Reflection;
 using NUnit.Framework;
 
+///In order to Debug/Run the NUnit test framework through Visual Studio, 
+/// please install "NUnit Test Adapter", from VS TOOLS -> Extensions and Updates.   
 namespace msbuild_tests
 {
+    /// <summary>
+    /// Tests the pattern feature of the deployment section.
+    /// </summary>
     [TestFixture]
     public class RegexpCapturingGroupTest
     {
@@ -76,15 +78,15 @@ namespace msbuild_tests
 
             //Enforce only file with digits
             mapping.input = @"regex_test\(.+)\(.+[\d].+)";
-            mapping.output = @"a/$2.dll";
+            mapping.output = @"a/$2";
 
             BuildArtifactsMappingResolver.matchMappingArtifacts(mapping, projectPath, resultMap);
             Dictionary<string, string> resultMapExpected = new Dictionary<string, string>();
 
-            //CollectionAssert.Contains(resultMap, new KeyValuePair<string, string>(
-            //                                projectPath + @"\regex_test\lib\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs",
-            //                                              @"a/TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs"
-            //                         ));
+            CollectionAssert.Contains(resultMap, new KeyValuePair<string, string>(
+                                            projectPath + @"\regex_test\lib\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs",
+                                                          @"a/TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs"
+                                     ));
         }
 
         [Test]

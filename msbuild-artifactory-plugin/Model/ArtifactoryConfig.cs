@@ -26,6 +26,9 @@ namespace JFrog.Artifactory.Model
         [XmlElement("LicenseControl")]
         public LicenseControlCheck LicenseControlCheck { get; set; }
 
+        [XmlElement("BlackDuckComplianceCheck")]
+        public BlackDuckCheck BlackDuckCheck { get; set; }
+
         [XmlElement(ElementName = "ConnectionTimeout")]
         //[DefaultValue(200)]
         public string ConnectionTimeout { get; set; }
@@ -112,6 +115,33 @@ namespace JFrog.Artifactory.Model
 
         [XmlElement("ScopesForLicenseAnalysis")]
         public ScopesForLicenseAnalysis ScopesForLicenseAnalysis { get; set; }
+    }
+
+    public class BlackDuckCheck 
+    {
+        [XmlElement("Enabled")]
+        public string EnabledBlackDuckCheck { get; set; }
+
+        [XmlElement("CodeCenterApplicationName")]
+        public string CodeCenterApplicationName { get; set; }
+
+        [XmlElement("CodeCenterApplicationVersion")]
+        public string CodeCenterApplicationVersion { get; set; }
+
+        [XmlElement("ComplianceReportRecipients")]
+        public LicenseViolationRecipients ComplianceReportRecipients { get; set; }
+
+        [XmlElement("ScopesForLicenseAnalysis")]
+        public ScopesForLicenseAnalysis ScopesForLicenseAnalysis { get; set; }
+
+        [XmlElement("IncludePublishedArtifacts")]
+        public string IncludePublishedArtifacts { get; set; }
+
+        [XmlElement("AutoCreateMissingComponent")]
+        public string AutoCreateMissingComponent { get; set; }
+
+        [XmlElement("AutoDiscardStaleComponent")]
+        public string AutoDiscardStaleComponent { get; set; }
     }
 
     public class LicenseViolationRecipients 

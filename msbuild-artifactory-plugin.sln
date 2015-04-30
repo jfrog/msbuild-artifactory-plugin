@@ -14,21 +14,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nupkg", "nupkg", "{2530B43E
 		packaging\msbuild-artifactory-plugin.nuspec = packaging\msbuild-artifactory-plugin.nuspec
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "artifactory", "artifactory", "{197C5D76-0D7A-4CD8-A21B-1A5B61BBC82E}"
-	ProjectSection(SolutionItems) = preProject
-		packaging\nupkg\artifactory\Artifactory.build = packaging\nupkg\artifactory\Artifactory.build
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "targets", "targets", "{E986C82B-8F29-45B0-BC8B-B7D529ADC670}"
-	ProjectSection(SolutionItems) = preProject
-		packaging\nupkg\targets\Deploy.targets = packaging\nupkg\targets\Deploy.targets
-		packaging\nupkg\artifactory\Resolve.targets = packaging\nupkg\artifactory\Resolve.targets
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{106631A7-1235-4350-93B3-18F6CBCCEE5E}"
 	ProjectSection(SolutionItems) = preProject
 		packaging\nupkg\tools\Install.ps1 = packaging\nupkg\tools\Install.ps1
-		packaging\nupkg\tools\Uninstall.ps1 = packaging\nupkg\tools\Uninstall.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{789A332B-A136-442F-8226-957723715717}"
@@ -41,6 +29,17 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "notices", "notices", "{F0100960-6542-45BD-8F17-13A32357A4D7}"
 	ProjectSection(SolutionItems) = preProject
 		LICENSE.txt = LICENSE.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ArtifactoryTemplate", "ArtifactoryTemplate", "{EF7D0A95-9D40-4A7D-879B-156722AB4F89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtifactoryDeployer", "ArtifactoryTemplate\ArtifactoryDeployer\ArtifactoryDeployer.csproj", "{9CAD74E7-637B-43DA-90FD-B9A61939043E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtifactoryWizard", "ArtifactoryTemplate\ArtifactoryWizard\ArtifactoryWizard.csproj", "{27B66800-3707-4737-B47A-290B19185F2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtifactoryInVSTemplates", "ArtifactoryTemplate\ArtifactoryInVSTemplates\ArtifactoryInVSTemplates.csproj", "{8EA23549-56A4-47B5-9230-2B1187A7D1FB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3280F70A-8A97-4DB7-9379-8F0732FAE84F} = {3280F70A-8A97-4DB7-9379-8F0732FAE84F}
 	EndProjectSection
 EndProject
 Global
@@ -77,14 +76,39 @@ Global
 		{2ADE7952-4BD2-48DD-BA86-44AE3D1F897C}.Release|x64.Build.0 = Release|x64
 		{2ADE7952-4BD2-48DD-BA86-44AE3D1F897C}.Release|x86.ActiveCfg = Release|x86
 		{2ADE7952-4BD2-48DD-BA86-44AE3D1F897C}.Release|x86.Build.0 = Release|x86
+		{9CAD74E7-637B-43DA-90FD-B9A61939043E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CAD74E7-637B-43DA-90FD-B9A61939043E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CAD74E7-637B-43DA-90FD-B9A61939043E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9CAD74E7-637B-43DA-90FD-B9A61939043E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9CAD74E7-637B-43DA-90FD-B9A61939043E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CAD74E7-637B-43DA-90FD-B9A61939043E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CAD74E7-637B-43DA-90FD-B9A61939043E}.Release|x64.ActiveCfg = Release|Any CPU
+		{9CAD74E7-637B-43DA-90FD-B9A61939043E}.Release|x86.ActiveCfg = Release|Any CPU
+		{27B66800-3707-4737-B47A-290B19185F2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27B66800-3707-4737-B47A-290B19185F2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27B66800-3707-4737-B47A-290B19185F2B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{27B66800-3707-4737-B47A-290B19185F2B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{27B66800-3707-4737-B47A-290B19185F2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27B66800-3707-4737-B47A-290B19185F2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27B66800-3707-4737-B47A-290B19185F2B}.Release|x64.ActiveCfg = Release|Any CPU
+		{27B66800-3707-4737-B47A-290B19185F2B}.Release|x86.ActiveCfg = Release|Any CPU
+		{8EA23549-56A4-47B5-9230-2B1187A7D1FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EA23549-56A4-47B5-9230-2B1187A7D1FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EA23549-56A4-47B5-9230-2B1187A7D1FB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8EA23549-56A4-47B5-9230-2B1187A7D1FB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8EA23549-56A4-47B5-9230-2B1187A7D1FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EA23549-56A4-47B5-9230-2B1187A7D1FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EA23549-56A4-47B5-9230-2B1187A7D1FB}.Release|x64.ActiveCfg = Release|Any CPU
+		{8EA23549-56A4-47B5-9230-2B1187A7D1FB}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2530B43E-6385-4F8E-A9D2-4FEC1800D815} = {36019A31-F497-41FD-A174-5F012828BF7B}
-		{197C5D76-0D7A-4CD8-A21B-1A5B61BBC82E} = {2530B43E-6385-4F8E-A9D2-4FEC1800D815}
-		{E986C82B-8F29-45B0-BC8B-B7D529ADC670} = {2530B43E-6385-4F8E-A9D2-4FEC1800D815}
 		{106631A7-1235-4350-93B3-18F6CBCCEE5E} = {2530B43E-6385-4F8E-A9D2-4FEC1800D815}
+		{9CAD74E7-637B-43DA-90FD-B9A61939043E} = {EF7D0A95-9D40-4A7D-879B-156722AB4F89}
+		{27B66800-3707-4737-B47A-290B19185F2B} = {EF7D0A95-9D40-4A7D-879B-156722AB4F89}
+		{8EA23549-56A4-47B5-9230-2B1187A7D1FB} = {EF7D0A95-9D40-4A7D-879B-156722AB4F89}
 	EndGlobalSection
 EndGlobal
