@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="Artifactory..4167dcd7-28bd-4eed-b301-2bc5a049b030" Version="1.0.0" Language="en-US" Publisher="JFrog" />
+    <Identity Id="Artifactory..4167dcd7-28bd-4eed-b301-2bc5a049b030" Version="2.0.0" Language="en-US" Publisher="JFrog" />
     <DisplayName>Artifactory Template Package</DisplayName>
     <Description>Artifactory VSIX Project.</Description>
     <MoreInfo>http://www.jfrog.com/confluence/display/RTF/MSBuild+Artifactory+Plugin</MoreInfo>
