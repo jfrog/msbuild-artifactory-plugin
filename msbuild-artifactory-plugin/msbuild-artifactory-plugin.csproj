@@ -144,13 +144,13 @@
     <NUGET_VERSION Condition=" $(CI_BUILD_NUMBER) != '' ">$(PLUGIN_VERSION).$(CI_BUILD_NUMBER)</NUGET_VERSION>
   </PropertyGroup>
   <ItemGroup>
-    <NugetSourceFiles Include="lib\$(PLUGIN_VERSION)\Artifactory.$(NUGET_VERSION).nupkg"/>
+    <NugetSourceFiles Include="lib\nupkg\$(PLUGIN_VERSION)\Artifactory.$(NUGET_VERSION).nupkg"/>
   </ItemGroup>
   
   <Target Name="Nuget-package" AfterTargets="Build">
-    <RemoveDir Directories="lib\$(PLUGIN_VERSION)" RemovedDirectories="true"/>
-    <MakeDir Directories="lib\$(PLUGIN_VERSION)" />
-    <Exec Command="$(NuGetCommand) pack $(SolutionDir)\packaging\msbuild-artifactory-plugin.nuspec -OutputDirectory lib\$(PLUGIN_VERSION) -Version $(NUGET_VERSION)" />
+    <RemoveDir Directories="lib\nupkg" RemovedDirectories="true"/>
+    <MakeDir Directories="lib\nupkg\$(PLUGIN_VERSION)" />
+    <Exec Command="$(NuGetCommand) pack $(SolutionDir)\packaging\msbuild-artifactory-plugin.nuspec -OutputDirectory lib\nupkg\$(PLUGIN_VERSION) -Version $(NUGET_VERSION)" />
 
     <Copy SourceFiles="@(NugetSourceFiles)" DestinationFiles="@(NugetSourceFiles->'$(solutionDir)\ArtifactoryTemplate\ArtifactoryInVSTemplates\packages\Artifactory.$(PLUGIN_VERSION).nupkg')"/>
   </Target>
