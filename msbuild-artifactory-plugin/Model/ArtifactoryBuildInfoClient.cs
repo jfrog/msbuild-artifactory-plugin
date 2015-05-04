@@ -29,7 +29,7 @@ namespace JFrog.Artifactory.Utils
         public ArtifactoryBuildInfoClient(string artifactoryUrl, string username, string password, BuildInfoLog log)
         {
             //Removing ending slash
-            if (artifactoryUrl.EndsWith("/")) 
+            if ((!string.IsNullOrEmpty(artifactoryUrl)) && artifactoryUrl.EndsWith("/")) 
             {
                 artifactoryUrl = artifactoryUrl.Remove(artifactoryUrl.LastIndexOf('/'));
             }
