@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-	<OutputPath>lib\</OutputPath>
+    <OutputPath>lib\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -30,7 +30,7 @@
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <OutputPath>lib\</OutputPath>
-	<DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -73,10 +73,24 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <!--
     <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.Build.Engine, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Build.Utilities.v12.0, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+	-->
+    <Reference Include="Microsoft.Build">
+      <HintPath>$(MSBuildToolsPath)\Microsoft.Build.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Build.Framework">
+      <HintPath>$(MSBuildToolsPath)\Microsoft.Build.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Build.Utilities">
+      <HintPath>$(MSBuildToolsPath)\Microsoft.Build.Utilities.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Build.Tasks.Core">
+      <HintPath>$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Web.XmlTransform">
       <HintPath>..\packages\Microsoft.Web.Xdt.2.1.1\lib\net40\Microsoft.Web.XmlTransform.dll</HintPath>
     </Reference>
@@ -124,7 +138,9 @@
     <Compile Include="Utils\SolutionHandler.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
@@ -142,17 +158,16 @@
   <PropertyGroup>
     <NUGET_VERSION Condition=" $(CI_BUILD_NUMBER) == '' ">$(PLUGIN_VERSION)</NUGET_VERSION>
     <NUGET_VERSION Condition=" $(CI_BUILD_NUMBER) != '' ">$(PLUGIN_VERSION).$(CI_BUILD_NUMBER)</NUGET_VERSION>
+    <NUGET_NUSPEC>"$(SolutionDir)\packaging\msbuild-artifactory-plugin.nuspec"</NUGET_NUSPEC>
   </PropertyGroup>
   <ItemGroup>
-    <NugetSourceFiles Include="lib\nupkg\$(PLUGIN_VERSION)\Artifactory.$(NUGET_VERSION).nupkg"/>
+    <NugetSourceFiles Include="lib\nupkg\$(PLUGIN_VERSION)\Artifactory.$(NUGET_VERSION).nupkg" />
   </ItemGroup>
-  
   <Target Name="Nuget-package" AfterTargets="Build">
-    <RemoveDir Directories="lib\nupkg" RemovedDirectories="true"/>
+    <RemoveDir Directories="lib\nupkg" RemovedDirectories="true" />
     <MakeDir Directories="lib\nupkg\$(PLUGIN_VERSION)" />
-    <Exec Command="$(NuGetCommand) pack $(SolutionDir)\packaging\msbuild-artifactory-plugin.nuspec -OutputDirectory lib\nupkg\$(PLUGIN_VERSION) -Version $(NUGET_VERSION)" />
-
-    <Copy SourceFiles="@(NugetSourceFiles)" DestinationFiles="@(NugetSourceFiles->'$(solutionDir)\ArtifactoryTemplate\ArtifactoryInVSTemplates\packages\Artifactory.$(PLUGIN_VERSION).nupkg')"/>
+    <Exec Command="$(NuGetCommand) pack $(NUGET_NUSPEC) -OutputDirectory lib\nupkg\$(PLUGIN_VERSION) -Version $(NUGET_VERSION)" />
+    <Copy SourceFiles="@(NugetSourceFiles)" DestinationFiles="@(NugetSourceFiles->'$(solutionDir)\ArtifactoryTemplate\ArtifactoryInVSTemplates\packages\Artifactory.$(PLUGIN_VERSION).nupkg')" />
   </Target>
   <Import Project="$(TemplateBuilderTargets)" Condition="Exists('$(TemplateBuilderTargets)')" Label="TemplateBuilder" />
 </Project>

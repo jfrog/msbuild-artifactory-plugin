@@ -67,7 +67,7 @@ namespace JFrog.Artifactory.Utils
             //string[] directoryPaths = Directory.GetDirectories(_task.SolutionRoot, project.AssemblyName, SearchOption.AllDirectories);
             string[] packageConfigPath = Directory.GetFiles(project.projectDirectory, "packages.config", SearchOption.AllDirectories);
 
-            if (project.artifactoryDeploy != null)
+            if (project.artifactoryDeploy != null && !string.IsNullOrWhiteSpace(_task.DeployEnabled) && _task.DeployEnabled.Equals("true"))
             {
                 foreach (ProjectModel.DeployAttribute deployAttribute in project.artifactoryDeploy)
                 {

@@ -1,12 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "msbuild-artifactory-plugin", "msbuild-artifactory-plugin\msbuild-artifactory-plugin.csproj", "{3280F70A-8A97-4DB7-9379-8F0732FAE84F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "msbuild_tests", "msbuild_tests\msbuild_tests.csproj", "{2ADE7952-4BD2-48DD-BA86-44AE3D1F897C}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "packaging", "packaging", "{36019A31-F497-41FD-A174-5F012828BF7B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nupkg", "nupkg", "{2530B43E-6385-4F8E-A9D2-4FEC1800D815}"
@@ -32,6 +28,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "notices", "notices", "{F010
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ArtifactoryTemplate", "ArtifactoryTemplate", "{EF7D0A95-9D40-4A7D-879B-156722AB4F89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "msbuild-artifactory-plugin", "msbuild-artifactory-plugin\msbuild-artifactory-plugin.csproj", "{3280F70A-8A97-4DB7-9379-8F0732FAE84F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "msbuild_tests", "msbuild_tests\msbuild_tests.csproj", "{2ADE7952-4BD2-48DD-BA86-44AE3D1F897C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtifactoryDeployer", "ArtifactoryTemplate\ArtifactoryDeployer\ArtifactoryDeployer.csproj", "{9CAD74E7-637B-43DA-90FD-B9A61939043E}"
 EndProject
