@@ -38,7 +38,7 @@
   <WizardData>
     <packages repository="extension"
               repositoryId="Artifactory..4167dcd7-28bd-4eed-b301-2bc5a049b032">
-      <package id="Artifactory" version="2.0.0"/>
+      <package id="Artifactory" version="2.1.0"/>
       <package id="NuGet.Core" version="2.8.2" />
       <package id="Microsoft.Web.Xdt" version="2.1.1"/>
     </packages>
