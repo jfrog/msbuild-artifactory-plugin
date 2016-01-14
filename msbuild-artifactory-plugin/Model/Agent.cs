@@ -12,13 +12,21 @@ namespace JFrog.Artifactory.Model
         public string name { get; set; }
         public string version { get; set; }
     
-        protected const string PRE_FIX_ENV = "buildInfo.env.";
+        internal const string PRE_FIX_ENV = "buildInfo.env.";
 
         public static Agent BuildAgentFactory(ArtifactoryBuild task) 
         {
             if (task.TfsActive != null && task.TfsActive.Equals("True"))
             {
-                return new AgentTFS(task);
+                IEnumerable<String> tfsCollectionURI = BuildEngineExtensions.GetEnvironmentVariable(task.BuildEngine, "TF_BUILD_COLLECTIONURI", false);
+                if (tfsCollectionURI != null)
+                {
+                    return new AgentTFS(task);
+                }
+                else
+                {
+                    return new AgentTFS2015(task);
+                }
             }
 
             return new AgentMSBuild(task);

@@ -77,6 +77,25 @@ namespace JFrog.Artifactory
             return new Dictionary<string, string>();
         }
 
+        public static IDictionary<string, string> ContainsEnvironmentVariablesStartingWith(this IBuildEngine buildEngine, string key, bool throwIfNotFound)
+        {
+            var projectInstance = GetProjectInstance(buildEngine);
+
+            var properties = projectInstance.Properties
+                .Where(x => x.Name.ToLower().StartsWith(key.ToLower())).ToDictionary(x => x.Name, x => x.EvaluatedValue);
+            if (properties.Count > 0)
+            {
+                return properties;
+            }
+
+            if (throwIfNotFound)
+            {
+                throw new Exception(string.Format("Could not extract from '{0}' environmental variables.", key));
+            }
+
+            return new Dictionary<string, string>();
+        }
+
         private static ProjectInstance GetProjectInstance(IBuildEngine buildEngine)
         {
             var buildEngineType = buildEngine.GetType();
