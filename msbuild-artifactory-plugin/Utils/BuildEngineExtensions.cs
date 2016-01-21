@@ -99,14 +99,14 @@ namespace JFrog.Artifactory
         private static ProjectInstance GetProjectInstance(IBuildEngine buildEngine)
         {
             var buildEngineType = buildEngine.GetType();
-            var targetBuilderCallbackField = buildEngineType.GetField("targetBuilderCallback", bindingFlags);
+            var targetBuilderCallbackField = buildEngineType.GetField("targetBuilderCallback", bindingFlags) ?? buildEngineType.GetField("_targetBuilderCallback", bindingFlags);
             if (targetBuilderCallbackField == null)
             {
                 throw new Exception("Could not extract targetBuilderCallback from " + buildEngineType.FullName);
             }
             var targetBuilderCallback = targetBuilderCallbackField.GetValue(buildEngine);
             var targetCallbackType = targetBuilderCallback.GetType();
-            var projectInstanceField = targetCallbackType.GetField("projectInstance", bindingFlags);
+            var projectInstanceField = targetCallbackType.GetField("projectInstance", bindingFlags) ?? targetCallbackType.GetField("_projectInstance", bindingFlags);
             if (projectInstanceField == null)
             {
                 throw new Exception("Could not extract projectInstance from " + targetCallbackType.FullName);
