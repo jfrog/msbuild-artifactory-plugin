@@ -111,6 +111,7 @@
     <Compile Include="Model\Agent.cs" />
     <Compile Include="Model\AgentMSBuild.cs" />
     <Compile Include="Model\AgentTFS.cs" />
+    <Compile Include="Model\AgentTFS2015.cs" />
     <Compile Include="Utils\BuildEngineExtensions.cs" />
     <Compile Include="Model\ArtifactoryBuildInfoClient.cs" />
     <Compile Include="Model\ArtifactoryConfig.cs" />

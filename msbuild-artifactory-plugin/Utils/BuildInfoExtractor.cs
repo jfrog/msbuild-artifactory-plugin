@@ -179,15 +179,17 @@ namespace JFrog.Artifactory.Utils
             IDictionary sysVariables = Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Process);
             var dicVariables = new Dictionary<string, string>();
 
+            var environmentVariables = build.agent.BuildAgentEnvironment();
+
             foreach(string key in sysVariables.Keys)
             {
-                if (!PathConflicts(includePatterns, excludePatterns, includeRegex, excludeRegex, key)) 
+                if (!environmentVariables.ContainsKey(string.Concat(Agent.PRE_FIX_ENV, key)) && !PathConflicts(includePatterns, excludePatterns, includeRegex, excludeRegex, key)) 
                 {
                     dicVariables.Add(key, (string)sysVariables[key]);
                 }
             }
 
-            dicVariables.AddRange(build.agent.BuildAgentEnvironment());
+            dicVariables.AddRange(environmentVariables);
 
             build.properties = dicVariables;
         }

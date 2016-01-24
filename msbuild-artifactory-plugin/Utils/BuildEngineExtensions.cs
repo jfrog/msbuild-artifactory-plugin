@@ -77,17 +77,36 @@ namespace JFrog.Artifactory
             return new Dictionary<string, string>();
         }
 
+        public static IDictionary<string, string> ContainsEnvironmentVariablesStartingWith(this IBuildEngine buildEngine, string key, bool throwIfNotFound)
+        {
+            var projectInstance = GetProjectInstance(buildEngine);
+
+            var properties = projectInstance.Properties
+                .Where(x => x.Name.ToLower().StartsWith(key.ToLower())).ToDictionary(x => x.Name, x => x.EvaluatedValue);
+            if (properties.Count > 0)
+            {
+                return properties;
+            }
+
+            if (throwIfNotFound)
+            {
+                throw new Exception(string.Format("Could not extract from '{0}' environmental variables.", key));
+            }
+
+            return new Dictionary<string, string>();
+        }
+
         private static ProjectInstance GetProjectInstance(IBuildEngine buildEngine)
         {
             var buildEngineType = buildEngine.GetType();
-            var targetBuilderCallbackField = buildEngineType.GetField("targetBuilderCallback", bindingFlags);
+            var targetBuilderCallbackField = buildEngineType.GetField("targetBuilderCallback", bindingFlags) ?? buildEngineType.GetField("_targetBuilderCallback", bindingFlags);
             if (targetBuilderCallbackField == null)
             {
                 throw new Exception("Could not extract targetBuilderCallback from " + buildEngineType.FullName);
             }
             var targetBuilderCallback = targetBuilderCallbackField.GetValue(buildEngine);
             var targetCallbackType = targetBuilderCallback.GetType();
-            var projectInstanceField = targetCallbackType.GetField("projectInstance", bindingFlags);
+            var projectInstanceField = targetCallbackType.GetField("projectInstance", bindingFlags) ?? targetCallbackType.GetField("_projectInstance", bindingFlags);
             if (projectInstanceField == null)
             {
                 throw new Exception("Could not extract projectInstance from " + targetCallbackType.FullName);
