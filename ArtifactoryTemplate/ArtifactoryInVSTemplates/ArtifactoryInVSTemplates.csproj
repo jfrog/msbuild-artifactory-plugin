@@ -82,7 +82,7 @@
     <Content Include="packages\Nuget.Core.2.8.2.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="packages\Artifactory.2.1.0.nupkg">
+    <Content Include="packages\Artifactory.2.2.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <None Include="Properties\template-builder.props">
@@ -142,7 +142,7 @@
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
   <PropertyGroup>
-    <TEMPLATE_VERSION>2.1.0</TEMPLATE_VERSION>
+    <TEMPLATE_VERSION>2.2.0</TEMPLATE_VERSION>
     <VSIX_OUTPUT Condition="$(Configuration) == 'Debug'">bin\Debug</VSIX_OUTPUT>
     <VSIX_OUTPUT Condition="$(Configuration) == 'Release'">bin\Release</VSIX_OUTPUT>
   </PropertyGroup>
