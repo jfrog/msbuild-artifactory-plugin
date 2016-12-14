@@ -106,7 +106,7 @@ namespace JFrog.Artifactory.Utils
 
         public void deployArtifact(DeployDetails details) 
         {
-            string deploymentPath = _artifactoryUrl + "/" + details.targetRepository + "/" + details.artifactPath;
+            string deploymentPath = String.IsNullOrEmpty(details.targetRepository) ? _artifactoryUrl + "/" + details.artifactPath : _artifactoryUrl + "/" + details.targetRepository + "/" + details.artifactPath;
             _log.Info("Deploying artifact: " + deploymentPath);
 
             if (tryChecksumDeploy(details, _artifactoryUrl))
