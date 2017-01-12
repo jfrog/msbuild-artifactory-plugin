@@ -67,7 +67,7 @@ namespace JFrog.Artifactory.Utils
             {               
                 sendBuildInfo(buildInfo.ToJsonString());
                 _log.Info("Build successfully deployed. Browse it in Artifactory under " + string.Format(_artifactoryUrl + BUILD_BROWSE_URL) +
-                    "/" + buildInfo.name + "/" + buildInfo.number + "/" + buildInfo.started + "/");
+                    "/" + buildInfo.name + "/" + buildInfo.number);
             }
             catch (Exception ex)
             {

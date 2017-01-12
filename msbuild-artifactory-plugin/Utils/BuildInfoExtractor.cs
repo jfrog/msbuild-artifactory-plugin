@@ -14,7 +14,7 @@ namespace JFrog.Artifactory.Utils
     {
         private const string defaultBuildName = "Not_specified";
         private const string defaultBuildNumber = "1.0";
-        private const string artifactoryDateFormat = "yyyy-MM-dd'T'HH:mm:ss.ssszzzz";
+        private const string artifactoryDateFormat = "yyyy-MM-dd'T'HH:mm:ss.fffzzz";
         private const string validEmailPattern = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*((\\.[A-Za-z]{2,}){1}$)";
 
         public static Build extractBuild(ArtifactoryBuild task, ArtifactoryConfig artifactoryConfig, BuildInfoLog log)
@@ -24,7 +24,7 @@ namespace JFrog.Artifactory.Utils
                 modules = new List<Module>(),
             };
 
-            build.started = string.Format(Build.STARTED_FORMAT, task.StartTime);
+            build.started = getBuildInfoStartTime(task);
             build.artifactoryPrincipal = task.User;
             build.buildAgent = new BuildAgent { name = "MSBuild", version = task.ToolVersion };
             build.type = "MSBuild";
@@ -54,6 +54,19 @@ namespace JFrog.Artifactory.Utils
             ConfigHttpClient(artifactoryConfig, build);
 
             return build;
+        }
+
+        // C# time format is not consistent with Artifactory requirements
+        // C# format: "2017-01-11T11:21:31.31+02:00" the issue is with the ':' in the time zone
+        // Expected:  "2017-01-11T11:21:31.31+0200"
+        private static string getBuildInfoStartTime(ArtifactoryBuild task)
+        {
+            string startTime = string.Format(Build.STARTED_FORMAT, task.StartTime);
+            if (startTime.Contains("+") || startTime.Contains("-"))
+            {
+                startTime = startTime.Remove(startTime.LastIndexOf(":"), 1);
+            }
+            return startTime;
         }
 
         /// <summary>

@@ -4,7 +4,7 @@
   </PropertyGroup>
   <Import Project="$(solutionDir)\.artifactory\Artifactory.build" Condition="'$(NuGetToolsPath)' == '' And Exists('$(solutionDir)\.artifactory\Artifactory.build')" />
   <PropertyGroup>
-    <StartTime>$([System.DateTime]::Now.ToString(yyyy-MM-dd'T'HH:mm:ss.fffzzz))</StartTime>
+    <StartTime>$([System.DateTime]::Now.ToString(yyyy-MM-dd'T'HH:mm:ss.ssszzzz))</StartTime>
     <BuildNumber Condition="'$(TF_BUILD)' == 'True'">$(TF_BUILD_BUILDNUMBER)</BuildNumber>
     <BuildName Condition="'$(TF_BUILD)' == 'True'">$(TF_BUILD_BUILDDEFINITIONNAME)</BuildName>
     <BuildUNCPath Condition="'$(TF_BUILD)' == 'True'">$(TF_BUILD_DROPLOCATION)</BuildUNCPath>
@@ -21,8 +21,12 @@
   <PropertyGroup>
     <NugetPackagesLocation>$(solutionDir)\</NugetPackagesLocation>
   </PropertyGroup>
-  <UsingTask TaskName="JFrog.Artifactory.ArtifactoryBuild" AssemblyFile="$(NugetPackagesLocation)packages\Artifactory.$(pluginVersion)\lib\net45\JFrog.Artifactory.dll" />
-  <Target Name="[Artifactory]" AfterTargets="Build">
-    <ArtifactoryBuild projRefList="@(ProjectReference)" ProjectName="$(MSBuildProjectName)" SolutionRoot="$(solutionDir)" ProjectPath="$(MSBuildProjectDirectory)" Configuration="$(Configuration)" StartTime="$(StartTime)" TfsActive="$(TF_BUILD)" BuildUNCPath="$(BuildUNCPath)" BuildReason="$(BuildReason)" BuildNumber="$(BuildNumber)" VcsRevision="$(BuildRevision)" User="$(ArtifactoryUserName)" Password="$(ArtifactoryPassword)" Url="$(DeployArtifactoryUrl)" BuildName="$(BuildName)" DeploymentRepository="$(DeployRepository)" DeployEnabled="$(DeployEnabled)" BuildInfoEnabled="$(BuildInfoEnabled)" ToolVersion="$(MSBuildToolsVersion)" SkipParent="$(SkipParent)" />
+  <PropertyGroup>
+    <CustomBuildBeforeTargets>Build</CustomBuildBeforeTargets>
+  </PropertyGroup>
+  <UsingTask TaskName="JFrog.Artifactory.ArtifactoryResolve" AssemblyFile="$(NugetPackagesLocation)packages\Artifactory.$(pluginVersion)\lib\net45\JFrog.Artifactory.dll" />
+  <Target Name="BeforeBuild">
+    <Message Text="About to build ORM layer"/>
+    <ArtifactoryResolve projRefList="@(ProjectReference)" ProjectName="$(MSBuildProjectName)" SolutionRoot="$(solutionDir)" ProjectPath="$(MSBuildProjectDirectory)" Configuration="$(Configuration)" StartTime="$(StartTime)" TfsActive="$(TF_BUILD)" BuildUNCPath="$(BuildUNCPath)" BuildReason="$(BuildReason)" BuildNumber="$(BuildNumber)" VcsRevision="$(BuildRevision)" User="$(ArtifactoryUserName)" Password="$(ArtifactoryPassword)" Url="$(DeployArtifactoryUrl)" BuildName="$(BuildName)" DeploymentRepository="$(DeployRepository)" DeployEnabled="$(DeployEnabled)" BuildInfoEnabled="$(BuildInfoEnabled)" ToolVersion="$(MSBuildToolsVersion)" SkipParent="$(SkipParent)" />
   </Target>
 </Project>

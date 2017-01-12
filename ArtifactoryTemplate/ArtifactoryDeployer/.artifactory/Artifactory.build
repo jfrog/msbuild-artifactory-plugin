@@ -32,8 +32,6 @@
     <DeployEnabled>$(DEPLOYED_ENABLED)</DeployEnabled>
     <!--Root URL of the Artifactory server. e.g., http://domain:port/artifactory-->
     <DeployArtifactoryUrl>$(ARTIFACTORY_DEPLOY_ADDRESS)</DeployArtifactoryUrl>
-    <!--Local repository key to publish artifacts to-->
-    <DeployRepository>$(ARTIFACTORY_DEPLOY_REPO)</DeployRepository>
 
     <!--Enable Artifactory plugin to publish Build Info -->
     <BuildInfoEnabled>$(BUILD_INFO_ENABLED)</BuildInfoEnabled>
